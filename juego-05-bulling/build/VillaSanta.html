@@ -2,1801 +2,887 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VillaSanta — Aprende a cuidar el agua de La Paz</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mica — un video, muchos caminos</title>
 <style>
+  :root{
+    --bg: #08090b;
+    --bg-vignette: radial-gradient(ellipse at center, #14161c 0%, #08090b 65%, #050506 100%);
+    --text: #e9e7e2;
+    --text-dim: #83858c;
+    --text-faint: #4c4e56;
+    --accent: #5a86ab;
+    --accent-soft: rgba(90,134,171,0.35);
+    --warn: #a4453f;
+    --warn-soft: rgba(164,69,63,0.35);
+    --line: #2a2c33;
+    --line-soft: #1c1e24;
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+    --sans: 'Helvetica Neue', Arial, sans-serif;
+  }
 
-:root{
-    --bg-deep:#0b1e2d;
-    --bg-glacier:#123449;
-    --ice:#eef8f8;
-    --ice-dim:#cfe6e6;
-    --teal:#2fb8ae;
-    --teal-dark:#1c8c85;
-    --gold:#f2a93b;
-    --clay:#e2574c;
-    --ink:#0e2230;
-    --ink-soft:#4b6572;
-    --radius:18px;
-}
-
-*{
-    box-sizing:border-box;
-}
-
-html,body{
-    margin:0;
-    padding:0;
-    height:100%;
-}
-
-body{
-    font-family:'Manrope',sans-serif;
-    background:
-        radial-gradient(120% 90% at 50% -10%,#1c4560 0%,var(--bg-glacier) 45%,var(--bg-deep) 100%);
-    color:var(--ice);
-    min-height:100vh;
-    overflow-x:hidden;
-}
-
-h1,h2,h3,.display{
-    font-family:'Baloo 2',sans-serif;
-}
-
-button{
-    font-family:inherit;
-    cursor:pointer;
-}
-
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible{
-    outline:3px solid var(--gold);
-    outline-offset:2px;
-}
-
-@media (prefers-reduced-motion: reduce){
-    *{
-        animation-duration:.001s !important;
-        transition-duration:.001s !important;
-    }
-}
-
-/* =========================================================
-   PANTALLA DE INICIO
-========================================================= */
-
-#screen-start{
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:40px 22px;
-}
-
-.peak{
-    font-size:64px;
-    filter:drop-shadow(0 0 18px rgba(47,184,174,.5));
-    animation:bob 3.5s ease-in-out infinite;
-}
-
-@keyframes bob{
-    0%,100%{transform:translateY(0);}
-    50%{transform:translateY(-8px);}
-}
-
-.brand{
-    font-size:clamp(34px,9vw,52px);
-    font-weight:800;
-    letter-spacing:1px;
-    color:var(--ice);
-    margin:14px 0 2px;
-    text-shadow:0 0 24px rgba(47,184,174,.45);
-}
-
-.brand span{
-    color:var(--teal);
-}
-
-.tagline{
-    font-size:clamp(15px,3.4vw,19px);
-    color:var(--ice-dim);
-    max-width:480px;
-    line-height:1.55;
-    margin:10px 0 26px;
-}
-
-.startCard{
-    background:rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.14);
-    border-radius:var(--radius);
-    padding:20px 24px;
-    max-width:460px;
-    margin-bottom:28px;
-    text-align:left;
-    line-height:1.7;
-    font-size:14.5px;
-    color:var(--ice-dim);
-}
-
-.startCard b{
-    color:var(--gold);
-}
-
-.primaryBtn{
-    background:var(--teal);
-    color:#08211f;
-    border:none;
-    border-radius:14px;
-    padding:16px 46px;
-    font-size:19px;
-    font-weight:800;
-    font-family:'Baloo 2',sans-serif;
-    letter-spacing:.5px;
-    box-shadow:0 8px 0 var(--teal-dark), 0 14px 26px rgba(0,0,0,.35);
-    transition:transform .12s ease;
-}
-
-.primaryBtn:hover{
-    transform:translateY(-2px);
-}
-
-.primaryBtn:active{
-    transform:translateY(4px);
-    box-shadow:0 3px 0 var(--teal-dark);
-}
-
-.linkBtn{
-    background:none;
-    border:none;
-    color:var(--ice-dim);
-    text-decoration:underline;
-    font-size:13.5px;
-    margin-top:16px;
-}
-
-/* =========================================================
-   HUD SUPERIOR
-========================================================= */
-
-#hud{
-    position:sticky;
-    top:0;
-    z-index:40;
-    display:none;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:8px 10px;
-    padding:12px 18px;
-    background:rgba(11,30,45,.86);
-    backdrop-filter:blur(6px);
-    border-bottom:1px solid rgba(255,255,255,.1);
-}
-
-.hudBrand{
-    font-family:'Baloo 2',sans-serif;
-    font-weight:800;
-    font-size:16px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    white-space:nowrap;
-}
-
-.hudStats{
-    display:flex;
-    gap:14px;
-}
-
-.stat{
-    display:flex;
-    align-items:center;
-    gap:5px;
-    font-weight:800;
-    font-size:15px;
-    background:rgba(255,255,255,.07);
-    border:1px solid rgba(255,255,255,.12);
-    padding:6px 11px;
-    border-radius:999px;
-}
-
-.stat.gold{color:var(--gold);}
-.stat.clay{color:var(--clay);}
-.stat.teal{color:var(--teal);}
-
-/* =========================================================
-   RUTA / MAPA DE LECCIONES
-========================================================= */
-
-#screen-path{
-    display:none;
-    justify-content:center;
-    padding:30px 12px 80px;
-}
-
-#pathWrap{
-    position:relative;
-    width:300px;
-    max-width:92vw;
-}
-
-#pathSvg{
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    overflow:visible;
-}
-
-#pathSvg path{
-    fill:none;
-    stroke:rgba(47,184,174,.4);
-    stroke-width:6;
-    stroke-linecap:round;
-    stroke-dasharray:2 16;
-    animation:flow 1.4s linear infinite;
-}
-
-@keyframes flow{
-    to{stroke-dashoffset:-18;}
-}
-
-.node{
-    position:absolute;
-    transform:translate(-50%,-50%);
-    width:82px;
-    height:82px;
-    border-radius:50%;
-    border:none;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    font-size:30px;
-    background:#213e4e;
-    color:var(--ice-dim);
-    box-shadow:0 8px 0 #16303c, 0 12px 22px rgba(0,0,0,.35);
-    transition:transform .15s ease;
-}
-
-.node .lbl{
-    position:absolute;
-    bottom:-24px;
-    width:150px;
-    text-align:center;
-    font-size:11.5px;
-    font-weight:700;
-    color:var(--ice-dim);
-    left:50%;
-    transform:translateX(-50%);
-}
-
-.node.locked{
-    background:#1a2f3a;
-    color:#4e6874;
-    box-shadow:0 8px 0 #10222b, 0 12px 22px rgba(0,0,0,.3);
-}
-
-.node.locked::after{
-    content:"🔒";
-    font-size:18px;
-    position:absolute;
-}
-
-.node.current{
-    background:var(--teal);
-    color:#08211f;
-    box-shadow:0 8px 0 var(--teal-dark), 0 0 0 6px rgba(47,184,174,.22), 0 12px 26px rgba(0,0,0,.4);
-    animation:pulseNode 1.8s ease-in-out infinite;
-}
-
-@keyframes pulseNode{
-    0%,100%{box-shadow:0 8px 0 var(--teal-dark), 0 0 0 6px rgba(47,184,174,.22), 0 12px 26px rgba(0,0,0,.4);}
-    50%{box-shadow:0 8px 0 var(--teal-dark), 0 0 0 12px rgba(47,184,174,.1), 0 12px 26px rgba(0,0,0,.4);}
-}
-
-.node.done{
-    background:var(--gold);
-    color:#3a2100;
-    box-shadow:0 8px 0 #b9791c, 0 12px 22px rgba(0,0,0,.35);
-}
-
-.node.done .star{
-    position:absolute;
-    top:-10px;
-    right:-6px;
-    font-size:20px;
-}
-
-.node:not(.locked):hover{
-    transform:translate(-50%,-50%) translateY(-3px);
-}
-
-.node.final{
-    width:96px;
-    height:96px;
-    font-size:36px;
-}
-
-.peakDecor{
-    text-align:center;
-    font-size:46px;
-    margin-bottom:6px;
-    opacity:.9;
-}
-
-.cityDecor{
-    text-align:center;
-    font-size:34px;
-    margin-top:34px;
-    opacity:.9;
-}
-
-/* =========================================================
-   OVERLAYS (LECCIÓN, RESULTADOS, ETC.)
-========================================================= */
-
-.overlay{
-    position:fixed;
-    inset:0;
-    z-index:100;
-    background:rgba(6,16,24,.72);
-    backdrop-filter:blur(3px);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:16px;
-}
-
-.sheet{
-    background:var(--ice);
-    color:var(--ink);
-    width:100%;
-    max-width:480px;
-    border-radius:22px;
-    padding:26px 24px 24px;
-    position:relative;
-    box-shadow:0 20px 60px rgba(0,0,0,.5);
-    max-height:92vh;
-    overflow-y:auto;
-}
-
-.sheetClose{
-    position:absolute;
-    top:14px;
-    right:16px;
-    background:none;
-    border:none;
-    font-size:20px;
-    color:var(--ink-soft);
-}
-
-.quizHead{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:16px;
-}
-
-.progressBar{
-    flex:1;
-    height:10px;
-    background:#dfeeee;
-    border-radius:99px;
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{
+    margin:0; padding:0; width:100%; height:100%;
+    background: var(--bg);
     overflow:hidden;
-}
+  }
+  body{
+    font-family: var(--serif);
+    color: var(--text);
+  }
 
-.progressBar > div{
-    height:100%;
-    background:var(--teal);
-    border-radius:99px;
-    transition:width .25s ease;
-}
+  #app{
+    position: fixed; inset:0;
+    background: var(--bg-vignette);
+    display:flex; align-items:center; justify-content:center;
+    padding: 4vh 6vw;
+  }
 
-.heartsRow{
+  .screen-wrap{
+    width: 100%;
+    max-width: 720px;
     display:flex;
-    gap:3px;
-    font-size:16px;
-}
+    flex-direction:column;
+    align-items:center;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 900ms ease, transform 900ms ease;
+  }
+  .screen-wrap.visible{ opacity: 1; transform: translateY(0); }
+  .screen-wrap.fading{
+    opacity: 0; transform: translateY(-4px);
+    transition: opacity 380ms ease, transform 380ms ease;
+  }
 
-.qPrompt{
-    font-family:'Baloo 2',sans-serif;
-    font-size:21px;
-    font-weight:700;
-    line-height:1.35;
-    margin:6px 0 18px;
-}
-
-.opt{
-    display:block;
+  #stage{
     width:100%;
-    text-align:left;
-    background:#fff;
-    border:2px solid #d9e7e7;
-    border-radius:14px;
-    padding:14px 16px;
-    font-size:15px;
-    font-weight:700;
-    color:var(--ink);
-    margin-bottom:10px;
-    transition:border-color .12s ease, background .12s ease;
-}
+    display:flex; flex-direction:column; align-items:center; gap: 1.6rem;
+  }
 
-.opt:not(:disabled):hover{
-    border-color:var(--teal);
-    background:#f1fbfa;
-}
+  .scene-visual{ width: 60px; height: 60px; color: var(--text-dim); opacity:0.9; }
+  .scene-visual svg{ width:100%; height:100%; display:block; }
 
-.opt.correct{
-    border-color:var(--teal-dark);
-    background:#d5f3ee;
-    color:#0d4a44;
-}
+  .para{
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    line-height: 1.8; text-align:center; letter-spacing:0.01em;
+    color: var(--text); max-width: 600px; font-weight:400;
+  }
 
-.opt.wrong{
-    border-color:var(--clay);
-    background:#fbe1df;
-    color:#7c231c;
-}
+  .eyebrow{
+    font-family: var(--sans); font-size:0.7rem; letter-spacing:0.28em;
+    text-transform:uppercase; color: var(--text-faint); text-align:center;
+  }
 
-.opt:disabled{
-    cursor:default;
-}
+  button{ font-family: var(--sans); background:none; cursor:pointer; border:none; }
 
-.feedbackBox{
-    margin-top:6px;
-    padding:14px 16px;
-    border-radius:14px;
-    font-size:13.5px;
-    line-height:1.55;
-    display:none;
-}
+  .continue-btn{
+    border: 1px solid var(--line); color: var(--text-dim);
+    font-size: 0.72rem; letter-spacing:0.22em; text-transform:uppercase;
+    padding: 0.9em 2em; border-radius:2px;
+    transition: border-color 300ms ease, color 300ms ease, letter-spacing 300ms ease;
+  }
+  .continue-btn:hover, .continue-btn:focus-visible{
+    border-color: var(--accent); color: var(--text); letter-spacing:0.30em;
+  }
 
-.feedbackBox.show{
-    display:block;
-}
+  .choices{ display:flex; flex-direction:column; gap:0.9rem; width:100%; max-width:480px; }
+  .choice-btn{
+    border:1px solid var(--line); color:var(--text); font-family:var(--serif);
+    font-size:1.02rem; padding:1em 1.4em; text-align:left; border-radius:2px; position:relative;
+    transition: border-color 320ms ease, background 320ms ease, padding-left 320ms ease;
+  }
+  .choice-btn::before{
+    content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--accent);
+    transform:scaleY(0); transition: transform 320ms ease; transform-origin:bottom;
+  }
+  .choice-btn:hover, .choice-btn:focus-visible{ border-color:var(--line-soft); background:rgba(90,134,171,0.06); padding-left:1.8em; }
+  .choice-btn:hover::before, .choice-btn:focus-visible::before{ transform:scaleY(1); }
 
-.feedbackBox.good{
-    background:#d5f3ee;
-    color:#0d4a44;
-}
+  .diagram-wrap{ display:flex; flex-direction:column; align-items:center; gap:1.6rem; width:100%; }
+  .tree-svg{ width:100%; max-width:640px; height:auto; overflow:visible; }
+  .edge{ stroke-width:1.4; }
+  .edge-other{ stroke:var(--line); stroke-dasharray:3 4; }
+  .edge-chosen{ stroke:var(--accent); stroke-dasharray:260; stroke-dashoffset:260; animation:draw 900ms ease forwards; filter:drop-shadow(0 0 3px var(--accent-soft)); }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  .node-root{ fill:var(--text-dim); stroke:var(--text-dim); }
+  .node-other{ fill:var(--bg); stroke:var(--line); stroke-width:1.2; }
+  .node-chosen{ fill:var(--accent); stroke:var(--accent); }
+  .label-other{ fill:var(--text-faint); font-family:var(--sans); font-size:10.5px; letter-spacing:0.02em; }
+  .label-chosen{ fill:var(--text); font-family:var(--sans); font-size:11px; letter-spacing:0.02em; font-weight:600; }
 
-.feedbackBox.bad{
-    background:#fbe1df;
-    color:#7c231c;
-}
+  .final-title{ font-family:var(--serif); font-size:clamp(2rem,5vw,2.8rem); letter-spacing:0.04em; color:var(--text); text-align:center; }
+  .final-rule{ width:42px; height:1px; background:var(--accent); }
+  .final-ending{ font-size:1.05rem; line-height:1.8; text-align:center; color:var(--text-dim); max-width:560px; font-style:italic; }
 
-.feedbackBox b{
-    display:block;
-    font-family:'Baloo 2',sans-serif;
-    font-size:14.5px;
-    margin-bottom:3px;
-}
+  .restart-btn{
+    margin-top:0.4rem; border:1px solid var(--accent); color:var(--text);
+    font-size:0.72rem; letter-spacing:0.24em; text-transform:uppercase;
+    padding:0.95em 2.2em; border-radius:2px; transition: background 300ms ease;
+  }
+  .restart-btn:hover, .restart-btn:focus-visible{ background: rgba(90,134,171,0.14); }
 
-.sheetFooter{
-    margin-top:18px;
-    display:flex;
-    justify-content:flex-end;
-}
+  /* ---------- Vista de juego (canvas) ---------- */
+  #gameView{
+    width:100%; max-width:340px; margin:0 auto;
+    display:none; flex-direction:column; align-items:center; gap:0.7rem;
+  }
+  .game-frame{
+    width:100%; aspect-ratio: 320 / 460; position:relative;
+    border:1px solid var(--line); border-radius:6px; overflow:hidden;
+    background:#0c0d10;
+  }
+  #gameCanvas{ width:100%; height:100%; display:block; }
+  .game-caption{
+    font-family: var(--sans); font-size:0.68rem; letter-spacing:0.14em;
+    text-transform:uppercase; color: var(--text-faint); text-align:center;
+  }
 
-.continueBtn{
-    background:var(--teal);
-    color:#08211f;
-    border:none;
-    border-radius:12px;
-    padding:12px 28px;
-    font-weight:800;
-    font-family:'Baloo 2',sans-serif;
-    font-size:15.5px;
-    box-shadow:0 5px 0 var(--teal-dark);
-}
-
-.continueBtn:disabled{
-    background:#cfdede;
-    color:#8aa1a1;
-    box-shadow:0 5px 0 #b9cbcb;
-    cursor:not-allowed;
-}
-
-/* Resultado de unidad */
-
-.resultIcon{
-    text-align:center;
-    font-size:56px;
-    margin-bottom:6px;
-}
-
-.resultTitle{
-    text-align:center;
-    font-family:'Baloo 2',sans-serif;
-    font-size:26px;
-    font-weight:800;
-    color:var(--teal-dark);
-    margin-bottom:4px;
-}
-
-.resultSub{
-    text-align:center;
-    color:var(--ink-soft);
-    font-size:14px;
-    margin-bottom:20px;
-}
-
-.resultStats{
-    display:flex;
+  .ctrl-panel{ display:flex; gap:0.7rem; justify-content:center; margin-top:0.2rem; }
+  .ctrl-panel.hidden{ display:none; }
+  .ctrl-btn{
+    width:54px; height:54px; border:1px solid var(--line); border-radius:10px;
+    color:var(--text-dim); font-size:1.3rem; display:flex; align-items:center; justify-content:center;
+    user-select:none; touch-action:none; transition: border-color 180ms, color 180ms, background 180ms;
+  }
+  .ctrl-btn.pressed{ border-color:var(--accent); color:var(--text); background:rgba(90,134,171,0.14); }
+  #ctrlVertical{ flex-direction:column; }
+  #ctrlDpad{
+    display:grid; grid-template-columns:54px 54px 54px; grid-template-rows:54px 54px 54px; gap:6px;
     justify-content:center;
-    gap:14px;
-    margin-bottom:20px;
-}
+  }
+  #ctrlDpad.hidden{ display:none; }
+  #dpadUp{ grid-column:2; grid-row:1; }
+  #dpadLeft{ grid-column:1; grid-row:2; }
+  #dpadRight{ grid-column:3; grid-row:2; }
+  #dpadDown{ grid-column:2; grid-row:3; }
 
-.resultStat{
-    background:#f1fbfa;
-    border:1px solid #d5f3ee;
-    border-radius:14px;
-    padding:12px 16px;
-    text-align:center;
-    min-width:88px;
-}
+  .skip-hint{
+    position:fixed; bottom:1.2rem; right:1.4rem; font-family:var(--sans);
+    font-size:0.6rem; letter-spacing:0.18em; color:var(--text-faint);
+    text-transform:uppercase; opacity:0.5;
+  }
 
-.resultStat .n{
-    font-family:'Baloo 2',sans-serif;
-    font-size:22px;
-    font-weight:800;
-    color:var(--teal-dark);
-}
-
-.resultStat .l{
-    font-size:11px;
-    color:var(--ink-soft);
-    font-weight:700;
-    text-transform:uppercase;
-    letter-spacing:.4px;
-}
-
-.factCard{
-    background:#fff8e8;
-    border:1px solid #f2dfa9;
-    border-radius:14px;
-    padding:14px 16px;
-    font-size:13.5px;
-    line-height:1.55;
-    color:#5c4308;
-    margin-bottom:20px;
-}
-
-.factCard b{
-    display:block;
-    color:#8a6304;
-    font-family:'Baloo 2',sans-serif;
-    margin-bottom:3px;
-}
-
-/* Sin corazones */
-
-.heartsBigRow{
-    text-align:center;
-    font-size:38px;
-    margin-bottom:14px;
-}
-
-/* Pacto final */
-
-.pledgeForm textarea{
-    width:100%;
-    border:2px solid #d9e7e7;
-    border-radius:14px;
-    padding:14px;
-    font-family:inherit;
-    font-size:14.5px;
-    resize:vertical;
-    min-height:90px;
-    color:var(--ink);
-}
-
-.pledgeChips{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    margin:12px 0 16px;
-}
-
-.chip{
-    background:#f1fbfa;
-    border:1.5px solid #cdeae6;
-    color:var(--teal-dark);
-    border-radius:999px;
-    padding:8px 13px;
-    font-size:12.5px;
-    font-weight:700;
-}
-
-.chip:hover{
-    background:#d5f3ee;
-}
-
-.pledgeCard{
-    background:linear-gradient(150deg,#123449,#0b1e2d);
-    color:var(--ice);
-    border-radius:18px;
-    padding:22px;
-    text-align:center;
-    border:1px solid rgba(255,255,255,.15);
-}
-
-.pledgeCard .peakSmall{
-    font-size:34px;
-}
-
-.pledgeCard h3{
-    margin:6px 0 2px;
-    font-size:20px;
-}
-
-.pledgeCard p{
-    color:var(--ice-dim);
-    font-size:13.5px;
-    line-height:1.5;
-}
-
-/* Info del proyecto */
-
-.infoBtn{
-    position:fixed;
-    bottom:16px;
-    right:16px;
-    z-index:30;
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.2);
-    color:var(--ice-dim);
-    border-radius:999px;
-    padding:9px 15px;
-    font-size:12.5px;
-    font-weight:700;
-    display:none;
-}
-
-.personaGrid{
-    display:grid;
-    gap:10px;
-    margin-top:14px;
-}
-
-.personaRow{
-    background:#f1fbfa;
-    border-radius:12px;
-    padding:10px 13px;
-    font-size:13px;
-    line-height:1.5;
-}
-
-.personaRow b{
-    color:var(--teal-dark);
-}
-
+  @media (max-width:520px){
+    .para{ font-size:1.05rem; line-height:1.65; }
+    .choice-btn{ font-size:0.95rem; }
+  }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
 </style>
 </head>
-
 <body>
+<div id="app">
+  <div class="screen-wrap" id="screenWrap">
+    <div id="stage"></div>
+    <div id="gameView">
+      <div class="game-frame"><canvas id="gameCanvas" width="320" height="460"></canvas></div>
+      <div class="game-caption" id="gameCaption"></div>
 
-<!-- =========================================================
-     PANTALLA DE INICIO
-========================================================= -->
-
-<div id="screen-start">
-
-    <div class="peak">🏔️</div>
-
-    <h1 class="brand">VillaSanta<span>.</span></h1>
-
-    <div class="tagline">
-        Aprende, en pocos minutos al día, a cuidar el agua que baja de los
-        glaciares hasta tu grifo en La Paz.
+      <div class="ctrl-panel hidden" id="ctrlLane">
+        <button class="ctrl-btn" id="laneLeft">◀</button>
+        <button class="ctrl-btn" id="laneRight">▶</button>
+      </div>
+      <div class="ctrl-panel hidden" id="ctrlHorizontal">
+        <button class="ctrl-btn" id="hLeft">◀</button>
+        <button class="ctrl-btn" id="hRight">▶</button>
+      </div>
+      <div class="ctrl-panel hidden" id="ctrlVertical">
+        <button class="ctrl-btn" id="vUp">▲</button>
+        <button class="ctrl-btn" id="vDown">▼</button>
+      </div>
+      <div class="ctrl-panel hidden" id="ctrlDpad">
+        <button class="ctrl-btn" id="dpadUp">▲</button>
+        <button class="ctrl-btn" id="dpadLeft">◀</button>
+        <button class="ctrl-btn" id="dpadRight">▶</button>
+        <button class="ctrl-btn" id="dpadDown">▼</button>
+      </div>
     </div>
-
-    <div class="startCard">
-        Diseñado para jóvenes de <b>18 a 25 años</b> de La Paz: lecciones
-        cortas, retos con puntos y datos reales sobre el agua de la ciudad,
-        no afiches genéricos.
-    </div>
-
-    <button class="primaryBtn" onclick="beginApp()">▶ Empezar</button>
-
-    <button class="linkBtn" onclick="openInfo()">🎓 Sobre este prototipo (Player Persona)</button>
-
+  </div>
 </div>
-
-
-<!-- =========================================================
-     HUD
-========================================================= -->
-
-<div id="hud">
-
-    <div class="hudBrand">🏔️ VillaSanta</div>
-
-    <div class="hudStats">
-
-        <div class="stat clay">❤️ <span id="hudHearts">5</span></div>
-
-        <div class="stat teal">💧 <span id="hudXP">0</span></div>
-
-        <div class="stat gold">🔥 <span id="hudStreak">0</span></div>
-
-    </div>
-
-</div>
-
-
-<!-- =========================================================
-     RUTA DE LECCIONES
-========================================================= -->
-
-<div id="screen-path">
-
-    <div id="pathWrap">
-
-        <div class="peakDecor">🏔️❄️</div>
-
-        <svg id="pathSvg"><path id="pathLine" d=""></path></svg>
-
-        <div id="nodesLayer" style="position:relative;"></div>
-
-        <div class="cityDecor">🏙️💧</div>
-
-    </div>
-
-</div>
-
-
-<button class="infoBtn" onclick="openInfo()">🎓 Sobre el proyecto</button>
-
-
-<!-- =========================================================
-     OVERLAY: LECCIÓN / QUIZ
-========================================================= -->
-
-<div class="overlay" id="overlay-quiz">
-
-    <div class="sheet">
-
-        <button class="sheetClose" onclick="closeAllOverlays()">✕</button>
-
-        <div class="quizHead">
-
-            <div class="progressBar"><div id="quizProgressFill" style="width:0%"></div></div>
-
-            <div class="heartsRow" id="quizHearts">❤️❤️❤️❤️❤️</div>
-
-        </div>
-
-        <div class="qPrompt" id="qPrompt">—</div>
-
-        <div id="qOptions"></div>
-
-        <div class="feedbackBox" id="qFeedback"></div>
-
-        <div class="sheetFooter">
-            <button class="continueBtn" id="qContinueBtn" onclick="nextQuestion()" disabled>Continuar</button>
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =========================================================
-     OVERLAY: RESULTADO DE UNIDAD
-========================================================= -->
-
-<div class="overlay" id="overlay-result">
-
-    <div class="sheet">
-
-        <div class="resultIcon" id="resultIcon">🎉</div>
-
-        <div class="resultTitle" id="resultTitle">¡Unidad completada!</div>
-
-        <div class="resultSub" id="resultSub">Buen trabajo cuidando el agua de La Paz.</div>
-
-        <div class="resultStats">
-
-            <div class="resultStat">
-                <div class="n" id="resultCorrect">0/0</div>
-                <div class="l">Correctas</div>
-            </div>
-
-            <div class="resultStat">
-                <div class="n" id="resultXP">+0</div>
-                <div class="l">Puntos</div>
-            </div>
-
-        </div>
-
-        <div class="factCard">
-            <b>💡 Dato de cierre</b>
-            <span id="resultFact">—</span>
-        </div>
-
-        <div class="sheetFooter">
-            <button class="continueBtn" onclick="closeResultToPath()">Seguir en el mapa</button>
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =========================================================
-     OVERLAY: SIN CORAZONES
-========================================================= -->
-
-<div class="overlay" id="overlay-nohearts">
-
-    <div class="sheet">
-
-        <div class="heartsBigRow">💔</div>
-
-        <div class="resultTitle">Te quedaste sin corazones</div>
-
-        <div class="resultSub">
-            No pasa nada: revisa el dato de abajo y vuelve a intentar la unidad.
-        </div>
-
-        <div class="factCard">
-            <b>💡 Recuerda</b>
-            <span id="noHeartsFact">Cada gota cuenta. Vuelve a intentarlo con calma.</span>
-        </div>
-
-        <div class="sheetFooter">
-            <button class="continueBtn" onclick="retryUnit()">Reintentar unidad</button>
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =========================================================
-     OVERLAY: RETO FINAL / PACTO
-========================================================= -->
-
-<div class="overlay" id="overlay-final">
-
-    <div class="sheet">
-
-        <button class="sheetClose" onclick="closeAllOverlays()">✕</button>
-
-        <div class="resultIcon">🚰</div>
-
-        <div class="resultTitle">Cierra el grifo: tu compromiso</div>
-
-        <div class="resultSub">
-            Elige o escribe el hábito que vas a mantener esta semana.
-        </div>
-
-        <div class="pledgeForm">
-
-            <div class="pledgeChips">
-                <button class="chip" onclick="setPledge('Duchas de menos de 5 minutos')">Duchas &lt; 5 min</button>
-                <button class="chip" onclick="setPledge('Cerrar la llave al lavarme los dientes')">Cerrar llave al lavarme los dientes</button>
-                <button class="chip" onclick="setPledge('Reportar fugas que vea en casa o la calle')">Reportar fugas</button>
-                <button class="chip" onclick="setPledge('Reutilizar agua de lavado para las plantas')">Reutilizar agua de lavado</button>
-            </div>
-
-            <textarea id="pledgeText" placeholder="O escribe tu propio compromiso..."></textarea>
-
-        </div>
-
-        <div class="sheetFooter">
-            <button class="continueBtn" onclick="submitPledge()">Sellar mi compromiso</button>
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =========================================================
-     OVERLAY: TARJETA DE COMPROMISO
-========================================================= -->
-
-<div class="overlay" id="overlay-pledgecard">
-
-    <div class="sheet">
-
-        <button class="sheetClose" onclick="closeAllOverlays()">✕</button>
-
-        <div class="pledgeCard">
-            <div class="peakSmall">🏔️💧🏙️</div>
-            <h3>Mi compromiso con el agua de La Paz</h3>
-            <p id="pledgeCardText">—</p>
-        </div>
-
-        <div class="resultStats" style="margin-top:18px;">
-            <div class="resultStat">
-                <div class="n" id="finalXP">0</div>
-                <div class="l">Puntos totales</div>
-            </div>
-            <div class="resultStat">
-                <div class="n" id="finalStreak">0</div>
-                <div class="l">Racha</div>
-            </div>
-        </div>
-
-        <div class="sheetFooter">
-            <button class="continueBtn" onclick="closeAllOverlays()">Listo</button>
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =========================================================
-     OVERLAY: SOBRE EL PROYECTO (PLAYER PERSONA)
-========================================================= -->
-
-<div class="overlay" id="overlay-info">
-
-    <div class="sheet">
-
-        <button class="sheetClose" onclick="closeAllOverlays()">✕</button>
-
-        <div class="resultIcon">🎓</div>
-
-        <div class="resultTitle">Sobre este prototipo</div>
-
-        <div class="resultSub">
-            Guía de práctica — Introducción al desarrollo de videojuegos
-        </div>
-
-        <div class="personaGrid">
-
-            <div class="personaRow">
-                <b>Player Persona:</b> Vale, 22 años, estudiante y trabajadora en
-                La Paz. Vive con su familia, se moviliza en minibús y teleférico.
-            </div>
-
-            <div class="personaRow">
-                <b>Hábitos digitales:</b> usa el celular casi todo el día, sobre
-                todo TikTok e Instagram, y paga sus servicios desde la app del
-                banco sin fijarse mucho en el detalle del consumo de agua.
-            </div>
-
-            <div class="personaRow">
-                <b>Relación con el agua:</b> sabe que a veces se corta el agua en
-                su barrio en época seca, pero no tiene información clara sobre
-                cuánto ahorra (o desperdicia) con cada hábito cotidiano.
-            </div>
-
-            <div class="personaRow">
-                <b>Qué la motiva:</b> retos cortos, rachas, puntos y comparar su
-                progreso con amigos — no los afiches ni spots genéricos de las
-                campañas actuales.
-            </div>
-
-            <div class="personaRow">
-                <b>Por qué VillaSanta:</b> lecciones de 2-3 minutos, gamificadas, con
-                datos concretos sobre el agua de La Paz (glaciares, EPSAS,
-                cortes de servicio) en vez de mensajes abstractos.
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
+<div class="skip-hint">Mica</div>
 
 <script>
-
-/* =====================================================
-   CONTENIDO — UNIDADES Y PREGUNTAS
-===================================================== */
-
-const UNITS=[
-
-    {
-        id:1,
-        title:"Nuestra fuente: los glaciares",
-        icon:"🏔️",
-        questions:[
-
-            {
-                prompt:"¿De dónde proviene buena parte del agua que consume La Paz?",
-                options:[
-                    "Ríos de la Amazonía",
-                    "Deshielo de glaciares y lagunas de la cordillera",
-                    "Agua de mar desalinizada",
-                    "Pozos profundos en el Altiplano"
-                ],
-                correct:1,
-                fact:"La Paz depende en buena parte del agua que baja de glaciares y lagunas altoandinas, como Tuni y Condoriri."
-            },
-
-            {
-                prompt:"¿Qué está pasando con los glaciares cercanos a La Paz?",
-                options:[
-                    "Están creciendo cada año",
-                    "Se mantienen exactamente igual",
-                    "Se están retirando por el cambio climático",
-                    "Ya desaparecieron por completo"
-                ],
-                correct:2,
-                fact:"El retroceso de los glaciares andinos reduce, con el tiempo, la cantidad de agua disponible para la ciudad."
-            },
-
-            {
-                prompt:"¿Qué institución administra el agua potable y el saneamiento en La Paz?",
-                options:[
-                    "EPSAS",
-                    "YPFB",
-                    "ENDE",
-                    "AASANA"
-                ],
-                correct:0,
-                fact:"EPSAS es la empresa pública encargada del servicio de agua potable y saneamiento en La Paz y El Alto."
-            },
-
-            {
-                prompt:"En época seca, ¿qué medida suele aplicarse en algunos barrios cuando el agua escasea?",
-                options:[
-                    "Se aumenta la presión al máximo",
-                    "Cortes o restricciones programadas de agua",
-                    "Se reparte agua embotellada gratis a todos",
-                    "No se aplica ninguna medida"
-                ],
-                correct:1,
-                fact:"En temporadas críticas se aplican cortes o turnos de agua en algunos sectores para administrar el recurso disponible."
-            }
-
-        ]
-    },
-
-    {
-        id:2,
-        title:"Hábitos en casa",
-        icon:"🚿",
-        questions:[
-
-            {
-                prompt:"¿Qué hábito ahorra más agua en la ducha?",
-                options:[
-                    "Duchas cortas y cerrar la llave al enjabonarte",
-                    "Duchas de más de 20 minutos",
-                    "Dejar correr el agua mientras piensas qué hacer",
-                    "Ducharte tres veces al día"
-                ],
-                correct:0,
-                fact:"Reducir el tiempo de ducha y cerrar la llave al enjabonarte puede ahorrar una cantidad importante de agua cada semana."
-            },
-
-            {
-                prompt:"Mientras te lavas los dientes, lo ideal es...",
-                options:[
-                    "Dejar el grifo abierto todo el tiempo",
-                    "Cerrar la llave y abrirla solo para enjuagar",
-                    "Usar dos grifos a la vez",
-                    "Ducharte al mismo tiempo"
-                ],
-                correct:1,
-                fact:"Cerrar la llave mientras te cepillas los dientes es uno de los hábitos más simples y efectivos para ahorrar agua."
-            },
-
-            {
-                prompt:"Un grifo que gotea todo el día...",
-                options:[
-                    "No afecta en nada",
-                    "Puede desperdiciar bastante agua sin que lo notes",
-                    "En realidad ahorra agua",
-                    "Solo es un problema estético"
-                ],
-                correct:1,
-                fact:"Una fuga pequeña y constante, sostenida durante días, termina desperdiciando mucha más agua de la que parece."
-            },
-
-            {
-                prompt:"¿Qué puedes hacer con el agua que usaste para lavar verduras?",
-                options:[
-                    "Botarla siempre por el desagüe",
-                    "Reutilizarla para regar las plantas",
-                    "Congelarla sin motivo",
-                    "Nada, ya no sirve para nada"
-                ],
-                correct:1,
-                fact:"El agua de lavar verduras o frutas se puede reutilizar fácilmente para regar plantas."
-            }
-
-        ]
-    },
-
-    {
-        id:3,
-        title:"Fuera de casa",
-        icon:"🏙️",
-        questions:[
-
-            {
-                prompt:"Si vas a lavar tu auto o moto, ¿qué opción ahorra más agua?",
-                options:[
-                    "Manguera abierta todo el tiempo",
-                    "Balde y trapo",
-                    "Lavarlo con manguera dos veces por semana",
-                    "Da exactamente igual"
-                ],
-                correct:1,
-                fact:"Lavar con balde y trapo, en vez de manguera abierta, reduce muchísimo el consumo de agua por lavado."
-            },
-
-            {
-                prompt:"En la universidad o el trabajo, si ves un caño roto o una fuga visible...",
-                options:[
-                    "La ignoras, no es tu problema",
-                    "La reportas al personal de mantenimiento",
-                    "La grabas para redes y ya",
-                    "Le echas más agua encima"
-                ],
-                correct:1,
-                fact:"Reportar fugas en espacios compartidos evita que se desperdicie agua durante días o semanas sin que nadie lo note."
-            },
-
-            {
-                prompt:"Si vas a regar plantas o un jardín, ¿cuál es el mejor momento?",
-                options:[
-                    "Al mediodía, con el sol más fuerte",
-                    "Temprano en la mañana o al atardecer",
-                    "Nunca hay que regar",
-                    "A cualquier hora, no cambia nada"
-                ],
-                correct:1,
-                fact:"Regar cuando el sol es menos intenso reduce la evaporación, así que se necesita menos agua para el mismo resultado."
-            },
-
-            {
-                prompt:"Si tu barrio tiene baja presión de agua algunos días, una buena práctica es...",
-                options:[
-                    "Almacenar agua de forma responsable cuando hay servicio, sin desperdiciarla",
-                    "Dejar todas las llaves abiertas por si acaso",
-                    "Romper tuberías para reclamar",
-                    "Comprar agua embotellada para absolutamente todo uso"
-                ],
-                correct:0,
-                fact:"Almacenar agua con cuidado, en recipientes limpios y solo lo necesario, ayuda a pasar los cortes sin desperdiciar el recurso."
-            }
-
-        ]
-    },
-
-    {
-        id:4,
-        title:"Mitos vs. realidad",
-        icon:"🔍",
-        questions:[
-
-            {
-                prompt:"Mito: \"Bañarse en tina siempre gasta menos agua que ducharse.\"",
-                options:[
-                    "Verdadero",
-                    "Falso: una ducha corta suele gastar menos que llenar una tina"
-                ],
-                correct:1,
-                fact:"Una ducha breve, con la llave cerrada al enjabonarte, casi siempre usa menos agua que llenar una tina."
-            },
-
-            {
-                prompt:"Mito: \"El agua de lluvia en La Paz es infinita, no hace falta cuidar el agua potable.\"",
-                options:[
-                    "Verdadero",
-                    "Falso: la disponibilidad varía según la temporada"
-                ],
-                correct:1,
-                fact:"La disponibilidad de agua cambia mucho entre época de lluvias y época seca, así que cuidar el agua potable sigue siendo necesario todo el año."
-            },
-
-            {
-                prompt:"Mito: \"Lavar la ropa con la lavadora llena, en vez de varias cargas pequeñas, ahorra agua.\"",
-                options:[
-                    "Verdadero: usar la capacidad completa reduce el número de lavados",
-                    "Falso"
-                ],
-                correct:0,
-                fact:"Concentrar la ropa en menos cargas, usando la capacidad completa de la lavadora, reduce el agua total usada."
-            },
-
-            {
-                prompt:"Mito: \"Cuidar el agua es solo responsabilidad del gobierno, no de las personas.\"",
-                options:[
-                    "Verdadero",
-                    "Falso: los hábitos individuales sí hacen una diferencia real"
-                ],
-                correct:1,
-                fact:"Las políticas públicas importan, pero los hábitos diarios de miles de personas jóvenes también suman una diferencia real."
-            }
-
-        ]
-    }
-
-];
-
-
-/* =====================================================
-   ESTADO
-===================================================== */
-
-let state={
-
-    hearts:5,
-
-    xp:0,
-
-    streak:0,
-
-    unlockedUpTo:1,
-
-    completed:new Set(),
-
-    currentUnitIndex:null,
-
-    qIndex:0,
-
-    correctInUnit:0,
-
-    pledge:""
-
-};
-
-
-/* =====================================================
-   NAVEGACIÓN GENERAL
-===================================================== */
-
-function beginApp(){
-
-    document.getElementById("screen-start").style.display="none";
-
-    document.getElementById("hud").style.display="flex";
-
-    document.getElementById("screen-path").style.display="flex";
-
-    document.querySelector(".infoBtn").style.display="block";
-
-    renderPath();
-
-    updateHUD();
-
-}
-
-
-function closeAllOverlays(){
-
-    document.querySelectorAll(".overlay").forEach(
-        el => el.style.display="none"
-    );
-
-}
-
-
-function openInfo(){
-
-    document.getElementById("overlay-info").style.display="flex";
-
-}
-
-
-function updateHUD(){
-
-    document.getElementById("hudHearts").textContent=state.hearts;
-
-    document.getElementById("hudXP").textContent=state.xp;
-
-    document.getElementById("hudStreak").textContent=state.streak;
-
-}
-
-
-/* =====================================================
-   RENDER DEL MAPA / RUTA
-===================================================== */
-
-const NODE_X=[150,66,234,66,150];
-
-const NODE_Y_GAP=168;
-
-const NODE_Y_START=20;
-
-
-function renderPath(){
-
-    const layer=document.getElementById("nodesLayer");
-
-    layer.innerHTML="";
-
-
-    const totalNodes=UNITS.length+1;
-
-    const points=[];
-
-
-    UNITS.forEach((unit,i)=>{
-
-        const x=NODE_X[i%NODE_X.length];
-
-        const y=NODE_Y_START+i*NODE_Y_GAP;
-
-        points.push({x:x,y:y});
-
-
-        const btn=document.createElement("button");
-
-        let cls="node";
-
-        if(unit.id>state.unlockedUpTo){
-
-            cls+=" locked";
-
-        }
-        else if(state.completed.has(unit.id)){
-
-            cls+=" done";
-
-        }
-        else{
-
-            cls+=" current";
-
-        }
-
-        btn.className=cls;
-
-        btn.style.left=x+"px";
-
-        btn.style.top=y+"px";
-
-        btn.disabled=(unit.id>state.unlockedUpTo);
-
-        btn.onclick=()=>openUnit(unit.id);
-
-
-        btn.innerHTML=
-
-            (state.completed.has(unit.id) ? '<span class="star">⭐</span>' : "")+
-
-            (unit.id>state.unlockedUpTo ? "" : unit.icon)+
-
-            '<span class="lbl">'+unit.title+'</span>';
-
-
-        layer.appendChild(btn);
-
+(function(){
+  "use strict";
+
+  const screenWrap = document.getElementById('screenWrap');
+  const stage = document.getElementById('stage');
+  const gameView = document.getElementById('gameView');
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const captionEl = document.getElementById('gameCaption');
+
+  const state = { decision1: null, subDecision: null };
+
+  /* ============ ICONOS DE ESCENA (interludios narrativos) ============ */
+  const ICONS = {
+    mirror: '<svg viewBox="0 0 72 72" fill="none" stroke="currentColor"><rect x="46" y="8" width="18" height="54" rx="1" stroke-width="1.2" opacity="0.4"/><circle cx="24" cy="18" r="6" stroke-width="1.5"/><path d="M24 24 L24 44 M24 30 L13 22 M24 30 L37 27 M24 44 L15 60 M24 44 L34 58" stroke-width="1.5" stroke-linecap="round"/></svg>',
+    phone: '<svg viewBox="0 0 72 72" fill="none" stroke="currentColor"><rect x="23" y="9" width="24" height="44" rx="3" stroke-width="1.4"/><line x1="29" y1="46" x2="41" y2="46" stroke-width="1.4"/><circle cx="53" cy="16" r="3.2" fill="currentColor" stroke="none"/><circle cx="59" cy="27" r="2.3" fill="currentColor" stroke="none" opacity="0.65"/><circle cx="55" cy="36" r="1.7" fill="currentColor" stroke="none" opacity="0.4"/></svg>',
+    isolation: '<svg viewBox="0 0 72 72" fill="none" stroke="currentColor"><rect x="13" y="13" width="46" height="46" stroke-width="1.2" opacity="0.5"/><line x1="13" y1="13" x2="59" y2="13" stroke-width="1.2"/><path d="M19 19 Q36 27 19 59" stroke-width="1.1" opacity="0.5"/><path d="M53 19 Q36 27 53 59" stroke-width="1.1" opacity="0.5"/><circle cx="36" cy="42" r="5" stroke-width="1.4"/><path d="M36 47 L36 56" stroke-width="1.4" stroke-linecap="round"/></svg>',
+    conflict: '<svg viewBox="0 0 72 72" fill="none" stroke="currentColor"><path d="M10 15 h24 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-14 l-8 8 v-8 h-2 a4 4 0 0 1 -4 -4 v-12 a4 4 0 0 1 4 -4 z" stroke-width="1.3"/><path d="M34 33 h24 a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 h-2 v8 l-8 -8 h-14 a4 4 0 0 1 -4 -4 v-12 a4 4 0 0 1 4 -4 z" stroke-width="1.3"/></svg>',
+    support: '<svg viewBox="0 0 72 72" fill="none" stroke="currentColor"><circle cx="21" cy="20" r="6" stroke-width="1.4"/><path d="M21 26 L21 45 M21 32 L13 40 M21 32 L29 38" stroke-width="1.4" stroke-linecap="round"/><circle cx="51" cy="20" r="6" stroke-width="1.4"/><path d="M51 26 L51 45 M51 32 L59 40 M51 32 L43 37" stroke-width="1.4" stroke-linecap="round"/></svg>',
+    recovery: '<svg viewBox="0 0 72 72" fill="none" stroke="currentColor"><circle cx="36" cy="18" r="6" stroke-width="1.4"/><path d="M36 24 L36 44 M36 30 L24 23 M36 30 L48 26 M36 44 L26 58 M36 44 L46 58" stroke-width="1.4" stroke-linecap="round"/><line x1="9" y1="9" x2="16" y2="16" stroke-width="1.1" opacity="0.5"/><line x1="63" y1="9" x2="56" y2="16" stroke-width="1.1" opacity="0.5"/><line x1="8" y1="30" x2="16" y2="30" stroke-width="1.1" opacity="0.4"/><line x1="64" y1="30" x2="56" y2="30" stroke-width="1.1" opacity="0.4"/></svg>'
+  };
+
+  /* ============ TRANSICIÓN ENTRE PANTALLAS ============ */
+  function transitionTo(renderFn){
+    screenWrap.classList.remove('visible');
+    screenWrap.classList.add('fading');
+    setTimeout(() => {
+      renderFn();
+      screenWrap.classList.remove('fading');
+      void screenWrap.offsetWidth;
+      requestAnimationFrame(() => screenWrap.classList.add('visible'));
+    }, 380);
+  }
+
+  /* ============ PANTALLA DE TEXTO (narrativa) ============ */
+  function showText(icon, paras, idx, onContinue){
+    stopGame();
+    transitionTo(() => {
+      gameView.style.display = 'none';
+      stage.style.display = 'flex';
+      stage.innerHTML = '';
+
+      if (icon){
+        const wrap = document.createElement('div');
+        wrap.className = 'scene-visual';
+        wrap.innerHTML = ICONS[icon];
+        stage.appendChild(wrap);
+      }
+      const p = document.createElement('div');
+      p.className = 'para';
+      p.textContent = paras[idx];
+      stage.appendChild(p);
+
+      const isLast = idx === paras.length - 1;
+      const btn = document.createElement('button');
+      btn.className = 'continue-btn';
+      btn.textContent = 'Continuar';
+      btn.onclick = () => {
+        if (isLast) onContinue();
+        else showText(icon, paras, idx + 1, onContinue);
+      };
+      stage.appendChild(btn);
+      btn.focus();
     });
-
-
-    /*
-       Nodo final: "tu compromiso".
-    */
-
-    const finalUnlocked=
-        UNITS.every(u => state.completed.has(u.id));
-
-    const fx=NODE_X[UNITS.length%NODE_X.length];
-
-    const fy=NODE_Y_START+UNITS.length*NODE_Y_GAP;
-
-    points.push({x:fx,y:fy});
-
-
-    const fbtn=document.createElement("button");
-
-    let fcls="node final";
-
-    if(!finalUnlocked){
-
-        fcls+=" locked";
-
-    }
-    else if(state.pledge){
-
-        fcls+=" done";
-
-    }
-    else{
-
-        fcls+=" current";
-
-    }
-
-    fbtn.className=fcls;
-
-    fbtn.style.left=fx+"px";
-
-    fbtn.style.top=fy+"px";
-
-    fbtn.disabled=!finalUnlocked;
-
-    fbtn.onclick=openFinal;
-
-    fbtn.innerHTML=
-
-        (state.pledge ? '<span class="star">⭐</span>' : "")+
-
-        (finalUnlocked ? "🚰" : "")+
-
-        '<span class="lbl">Tu compromiso</span>';
-
-    layer.appendChild(fbtn);
-
-
-    document.getElementById("pathWrap").style.height=
-        (NODE_Y_START+UNITS.length*NODE_Y_GAP+60)+"px";
-
-
-    drawSvgPath(points);
-
-}
-
-
-function drawSvgPath(points){
-
-    const svg=document.getElementById("pathSvg");
-
-    const wrap=document.getElementById("pathWrap");
-
-    svg.setAttribute(
-        "viewBox",
-        "0 0 300 "+(NODE_Y_START+UNITS.length*NODE_Y_GAP+60)
-    );
-
-
-    let d="M "+points[0].x+" "+points[0].y;
-
-
-    for(let i=0;i<points.length-1;i++){
-
-        const p0=points[i];
-
-        const p1=points[i+1];
-
-        const midY=(p0.y+p1.y)/2;
-
-
-        d+=" C "+p0.x+" "+midY+", "+p1.x+" "+midY+", "+p1.x+" "+p1.y;
-
-    }
-
-
-    document.getElementById("pathLine").setAttribute("d",d);
-
-}
-
-
-/* =====================================================
-   LECCIÓN / QUIZ
-===================================================== */
-
-function openUnit(unitId){
-
-    const idx=UNITS.findIndex(u=>u.id===unitId);
-
-    state.currentUnitIndex=idx;
-
-    state.qIndex=0;
-
-    state.correctInUnit=0;
-
-    state.hearts=5;
-
-    renderQuestion();
-
-    document.getElementById("overlay-quiz").style.display="flex";
-
-}
-
-
-function retryUnit(){
-
-    state.qIndex=0;
-
-    state.correctInUnit=0;
-
-    state.hearts=5;
-
-    closeAllOverlays();
-
-    renderQuestion();
-
-    document.getElementById("overlay-quiz").style.display="flex";
-
-}
-
-
-function currentUnit(){
-
-    return UNITS[state.currentUnitIndex];
-
-}
-
-
-function renderQuestion(){
-
-    const unit=currentUnit();
-
-    const q=unit.questions[state.qIndex];
-
-
-    document.getElementById("qPrompt").textContent=q.prompt;
-
-
-    const pct=Math.round((state.qIndex/unit.questions.length)*100);
-
-    document.getElementById("quizProgressFill").style.width=pct+"%";
-
-
-    document.getElementById("quizHearts").textContent=
-        "❤️".repeat(Math.max(state.hearts,0))+
-        "🖤".repeat(Math.max(5-state.hearts,0));
-
-
-    const optsWrap=document.getElementById("qOptions");
-
-    optsWrap.innerHTML="";
-
-
-    q.options.forEach((optText,i)=>{
-
-        const b=document.createElement("button");
-
-        b.className="opt";
-
-        b.textContent=optText;
-
-        b.onclick=()=>selectAnswer(i,b);
-
-        optsWrap.appendChild(b);
-
-    });
-
-
-    document.getElementById("qFeedback").className="feedbackBox";
-
-    document.getElementById("qFeedback").innerHTML="";
-
-    document.getElementById("qContinueBtn").disabled=true;
-
-}
-
-
-function selectAnswer(i,btnEl){
-
-    const unit=currentUnit();
-
-    const q=unit.questions[state.qIndex];
-
-    const opts=document.querySelectorAll("#qOptions .opt");
-
-    opts.forEach(o=>o.disabled=true);
-
-
-    const feedback=document.getElementById("qFeedback");
-
-    const isCorrect=(i===q.correct);
-
-
-    if(isCorrect){
-
-        btnEl.classList.add("correct");
-
-        state.correctInUnit++;
-
-        state.xp+=10;
-
-        feedback.className="feedbackBox show good";
-
-        feedback.innerHTML="<b>✅ ¡Correcto!</b>"+q.fact;
-
-    }
-    else{
-
-        btnEl.classList.add("wrong");
-
-        opts[q.correct].classList.add("correct");
-
-        state.hearts--;
-
-        feedback.className="feedbackBox show bad";
-
-        feedback.innerHTML="<b>❌ No era esa</b>"+q.fact;
-
-    }
-
-
-    document.getElementById("quizHearts").textContent=
-        "❤️".repeat(Math.max(state.hearts,0))+
-        "🖤".repeat(Math.max(5-state.hearts,0));
-
-
-    updateHUD();
-
-
-    document.getElementById("qContinueBtn").disabled=false;
-
-
-    if(state.hearts<=0){
-
-        document.getElementById("qContinueBtn").disabled=true;
-
-        setTimeout(()=>{
-
-            closeAllOverlays();
-
-            document.getElementById("noHeartsFact").textContent=q.fact;
-
-            document.getElementById("overlay-nohearts").style.display="flex";
-
-        },900);
-
-    }
-
-}
-
-
-function nextQuestion(){
-
-    const unit=currentUnit();
-
-
-    if(state.qIndex<unit.questions.length-1){
-
-        state.qIndex++;
-
-        renderQuestion();
-
-    }
-    else{
-
-        finishUnit();
-
-    }
-
-}
-
-
-function finishUnit(){
-
-    const unit=currentUnit();
-
-    const total=unit.questions.length;
-
-    const perfect=(state.correctInUnit===total);
-
-
-    let bonus=0;
-
-    if(perfect){
-
-        bonus=20;
-
-        state.xp+=bonus;
-
-    }
-
-
-    state.completed.add(unit.id);
-
-    state.streak+=1;
-
-
-    if(unit.id===state.unlockedUpTo && state.unlockedUpTo<=UNITS.length){
-
-        state.unlockedUpTo=unit.id+1;
-
-    }
-
-
-    updateHUD();
-
-
-    document.getElementById("resultIcon").textContent=
-        perfect ? "🏆" : "🎉";
-
-    document.getElementById("resultTitle").textContent=
-        perfect ? "¡Unidad perfecta!" : "¡Unidad completada!";
-
-    document.getElementById("resultSub").textContent=
-        "\""+unit.title+"\" — buen trabajo cuidando el agua de La Paz.";
-
-    document.getElementById("resultCorrect").textContent=
-        state.correctInUnit+"/"+total;
-
-    document.getElementById("resultXP").textContent=
-        "+"+(state.correctInUnit*10+bonus);
-
-    document.getElementById("resultFact").textContent=
-        unit.questions[unit.questions.length-1].fact;
-
-
-    closeAllOverlays();
-
-    document.getElementById("overlay-result").style.display="flex";
-
-}
-
-
-function closeResultToPath(){
-
-    closeAllOverlays();
-
-    renderPath();
-
-}
-
-
-/* =====================================================
-   RETO FINAL / PACTO
-===================================================== */
-
-function openFinal(){
-
-    closeAllOverlays();
-
-    document.getElementById("overlay-final").style.display="flex";
-
-}
-
-
-function setPledge(text){
-
-    document.getElementById("pledgeText").value=text;
-
-}
-
-
-function submitPledge(){
-
-    const text=document.getElementById("pledgeText").value.trim();
-
-    if(!text){
-
-        document.getElementById("pledgeText").focus();
-
+  }
+
+  function showChoices(icon, paras, choices, onChoose){
+    showTextThenChoices(icon, paras, 0, choices, onChoose);
+  }
+  function showTextThenChoices(icon, paras, idx, choices, onChoose){
+    stopGame();
+    transitionTo(() => {
+      gameView.style.display = 'none';
+      stage.style.display = 'flex';
+      stage.innerHTML = '';
+      if (icon){
+        const wrap = document.createElement('div');
+        wrap.className = 'scene-visual';
+        wrap.innerHTML = ICONS[icon];
+        stage.appendChild(wrap);
+      }
+      const p = document.createElement('div');
+      p.className = 'para';
+      p.textContent = paras[idx];
+      stage.appendChild(p);
+
+      const isLast = idx === paras.length - 1;
+      if (!isLast){
+        const btn = document.createElement('button');
+        btn.className = 'continue-btn';
+        btn.textContent = 'Continuar';
+        btn.onclick = () => showTextThenChoices(icon, paras, idx + 1, choices, onChoose);
+        stage.appendChild(btn);
+        btn.focus();
         return;
+      }
+      const wrap = document.createElement('div');
+      wrap.className = 'choices';
+      choices.forEach(c => {
+        const b = document.createElement('button');
+        b.className = 'choice-btn';
+        b.textContent = c.label;
+        b.onclick = () => onChoose(c.value);
+        wrap.appendChild(b);
+      });
+      stage.appendChild(wrap);
+      wrap.querySelector('button').focus();
+    });
+  }
 
+  /* ============ ÁRBOL DE RAMAS (SVG, sin cambios de concepto) ============ */
+  function multilineText(n){
+    const lines = String(n.label).split('\n');
+    const startDy = n.labelPos === 'above' ? -14 - (lines.length - 1) * 14 : 22;
+    let out = `<text x="${n.x}" text-anchor="middle" class="node-label ${n.state === 'chosen' ? 'label-chosen' : 'label-other'}">`;
+    lines.forEach((line, i) => { out += `<tspan x="${n.x}" y="${n.y + startDy + i * 14}">${line}</tspan>`; });
+    out += `</text>`;
+    return out;
+  }
+  function renderTreeSVG(nodes, edges, viewH){
+    const byId = id => nodes.find(n => n.id === id);
+    let svg = `<svg class="tree-svg" viewBox="0 0 640 ${viewH}" xmlns="http://www.w3.org/2000/svg">`;
+    edges.forEach(e => {
+      const a = byId(e.from), b = byId(e.to);
+      svg += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="edge ${e.chosen ? 'edge-chosen' : 'edge-other'}"/>`;
+    });
+    nodes.forEach(n => {
+      const cls = n.state === 'chosen' ? 'node-chosen' : (n.state === 'root' ? 'node-root' : 'node-other');
+      svg += `<circle cx="${n.x}" cy="${n.y}" r="6.5" class="node ${cls}"/>`;
+      svg += multilineText(n);
+    });
+    svg += `</svg>`;
+    return svg;
+  }
+  function buildDecisionTree(chosen){
+    const nodes = [
+      { id:'root', x:320, y:26, label:'El video se viraliza', state:'root', labelPos:'above' },
+      { id:'a', x:120, y:120, label:'Borrar todo y\ndesaparecer', state: chosen==='aislarse'?'chosen':'other', labelPos:'below' },
+      { id:'b', x:320, y:120, label:'Responder y\ndefenderse', state: chosen==='responder'?'chosen':'other', labelPos:'below' },
+      { id:'c', x:520, y:120, label:'Contarle a alguien\nde confianza', state: chosen==='ayuda'?'chosen':'other', labelPos:'below' }
+    ];
+    const edges = [
+      { from:'root', to:'a', chosen: chosen==='aislarse' },
+      { from:'root', to:'b', chosen: chosen==='responder' },
+      { from:'root', to:'c', chosen: chosen==='ayuda' }
+    ];
+    return { nodes, edges, viewH: 170 };
+  }
+  function buildSubTree(chosen){
+    const nodes = [
+      { id:'root', x:320, y:26, label:'¿A quién le cuenta?', state:'root', labelPos:'above' },
+      { id:'amigo', x:140, y:120, label:'Un amigo\ncercano', state: chosen==='amigo'?'chosen':'other', labelPos:'below' },
+      { id:'familiar', x:320, y:120, label:'Un familiar', state: chosen==='familiar'?'chosen':'other', labelPos:'below' },
+      { id:'profesor', x:500, y:120, label:'Un profesor', state: chosen==='profesor'?'chosen':'other', labelPos:'below' }
+    ];
+    const edges = [
+      { from:'root', to:'amigo', chosen: chosen==='amigo' },
+      { from:'root', to:'familiar', chosen: chosen==='familiar' },
+      { from:'root', to:'profesor', chosen: chosen==='profesor' }
+    ];
+    return { nodes, edges, viewH: 170 };
+  }
+  function buildFinalTree(s){
+    const nodes = [
+      { id:'root', x:320, y:22, label:'El video', state:'root', labelPos:'above' },
+      { id:'a', x:110, y:100, label:'Aislarse', state: s.decision1==='aislarse'?'chosen':'other', labelPos:'below' },
+      { id:'b', x:320, y:100, label:'Responder', state: s.decision1==='responder'?'chosen':'other', labelPos:'below' },
+      { id:'c', x:530, y:100, label:'Pedir ayuda', state: s.decision1==='ayuda'?'chosen':'other', labelPos:'below' }
+    ];
+    const edges = [
+      { from:'root', to:'a', chosen: s.decision1==='aislarse' },
+      { from:'root', to:'b', chosen: s.decision1==='responder' },
+      { from:'root', to:'c', chosen: s.decision1==='ayuda' }
+    ];
+    nodes.push({ id:'finalA', x:110, y:178, label:'Aislamiento', state: s.decision1==='aislarse'?'chosen':'other', labelPos:'below' });
+    edges.push({ from:'a', to:'finalA', chosen: s.decision1==='aislarse' });
+    nodes.push({ id:'finalB', x:320, y:178, label:'Conflicto', state: s.decision1==='responder'?'chosen':'other', labelPos:'below' });
+    edges.push({ from:'b', to:'finalB', chosen: s.decision1==='responder' });
+    let viewH = 210;
+    if (s.decision1 === 'ayuda'){
+      const subs = [{ id:'amigo', x:440, label:'Amigo' }, { id:'familiar', x:530, label:'Familiar' }, { id:'profesor', x:620, label:'Profesor' }];
+      subs.forEach(sub => {
+        nodes.push({ id:sub.id, x:sub.x, y:178, label:sub.label, state: s.subDecision===sub.id?'chosen':'other', labelPos:'below' });
+        edges.push({ from:'c', to:sub.id, chosen: s.subDecision===sub.id });
+      });
+      const chosenSub = subs.find(sub => sub.id === s.subDecision);
+      nodes.push({ id:'finalC', x: chosenSub.x, y:262, label:'Recuperación', state:'chosen', labelPos:'below' });
+      edges.push({ from: chosenSub.id, to:'finalC', chosen: true });
+      viewH = 300;
     }
+    return { nodes, edges, viewH };
+  }
 
+  function showBranchDiagram(choiceKey, chosenValue, onContinue){
+    stopGame();
+    const tree = choiceKey === 'decision1' ? buildDecisionTree(chosenValue) : buildSubTree(chosenValue);
+    transitionTo(() => {
+      gameView.style.display = 'none';
+      stage.style.display = 'flex';
+      stage.innerHTML = '';
+      const wrap = document.createElement('div');
+      wrap.className = 'diagram-wrap';
+      const eyebrow = document.createElement('div');
+      eyebrow.className = 'eyebrow';
+      eyebrow.textContent = 'Camino elegido';
+      wrap.appendChild(eyebrow);
+      const svgHolder = document.createElement('div');
+      svgHolder.style.width = '100%';
+      svgHolder.innerHTML = renderTreeSVG(tree.nodes, tree.edges, tree.viewH);
+      wrap.appendChild(svgHolder);
+      const btn = document.createElement('button');
+      btn.className = 'continue-btn';
+      btn.textContent = 'Continuar';
+      btn.onclick = onContinue;
+      wrap.appendChild(btn);
+      stage.appendChild(wrap);
+      btn.focus();
+    });
+  }
 
-    state.pledge=text;
+  function showFinalScreen(cfg){
+    stopGame();
+    const tree = buildFinalTree(state);
+    transitionTo(() => {
+      gameView.style.display = 'none';
+      stage.style.display = 'flex';
+      stage.innerHTML = '';
+      const iconWrap = document.createElement('div');
+      iconWrap.className = 'scene-visual';
+      iconWrap.innerHTML = ICONS[cfg.icon];
+      stage.appendChild(iconWrap);
+      const eyebrow = document.createElement('div');
+      eyebrow.className = 'eyebrow';
+      eyebrow.textContent = 'Final';
+      stage.appendChild(eyebrow);
+      const title = document.createElement('div');
+      title.className = 'final-title';
+      title.textContent = cfg.final;
+      stage.appendChild(title);
+      const rule = document.createElement('div');
+      rule.className = 'final-rule';
+      stage.appendChild(rule);
+      const ending = document.createElement('div');
+      ending.className = 'final-ending';
+      ending.textContent = cfg.endingText;
+      stage.appendChild(ending);
+      const svgHolder = document.createElement('div');
+      svgHolder.style.width = '100%';
+      svgHolder.innerHTML = renderTreeSVG(tree.nodes, tree.edges, tree.viewH);
+      stage.appendChild(svgHolder);
+      const restart = document.createElement('button');
+      restart.className = 'restart-btn';
+      restart.textContent = 'Jugar de nuevo';
+      restart.onclick = () => {
+        state.decision1 = null;
+        state.subDecision = null;
+        startGameFlow();
+      };
+      stage.appendChild(restart);
+      restart.focus();
+    });
+  }
 
-    state.xp+=30;
+  /* ============ MOTOR DE MINIJUEGOS (canvas) ============ */
+  const LOGICAL_W = 320, LOGICAL_H = 460;
+  let rafId = null;
+  let keys = { left:false, right:false, up:false, down:false };
+  let currentMode = null;      // 'lane' | 'hold'
+  let laneMoveCallback = null;
 
-    state.streak+=1;
+  function setupCanvasScale(){
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = LOGICAL_W * dpr;
+    canvas.height = LOGICAL_H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  setupCanvasScale();
 
-    updateHUD();
+  function stopGame(){
+    if (rafId){ cancelAnimationFrame(rafId); rafId = null; }
+    currentMode = null;
+    laneMoveCallback = null;
+    keys.left = keys.right = keys.up = keys.down = false;
+  }
 
+  function clamp(v, mn, mx){ return Math.min(mx, Math.max(mn, v)); }
+  function rand(a, b){ return a + Math.random() * (b - a); }
+  function randInt(a, b){ return Math.floor(rand(a, b + 1)); }
 
-    document.getElementById("pledgeCardText").textContent=
-        "\""+text+"\" — un compromiso de Vale, y de vos, con el agua de La Paz.";
+  function setCaption(text){ captionEl.textContent = text; }
 
-    document.getElementById("finalXP").textContent=state.xp;
+  function showControls(name){
+    ['ctrlLane','ctrlHorizontal','ctrlVertical','ctrlDpad'].forEach(id => {
+      document.getElementById(id).classList.toggle('hidden', id.toLowerCase() !== ('ctrl' + name).toLowerCase());
+    });
+  }
 
-    document.getElementById("finalStreak").textContent=state.streak;
+  function bindHold(el, keyName){
+    const down = (e) => { e.preventDefault(); keys[keyName] = true; el.classList.add('pressed'); };
+    const up = () => { keys[keyName] = false; el.classList.remove('pressed'); };
+    el.addEventListener('pointerdown', down);
+    el.addEventListener('pointerup', up);
+    el.addEventListener('pointerleave', up);
+    el.addEventListener('pointercancel', up);
+  }
+  function bindTap(el, fn){
+    el.addEventListener('pointerdown', (e) => { e.preventDefault(); fn(); });
+  }
 
+  bindTap(document.getElementById('laneLeft'), () => laneMoveCallback && laneMoveCallback(-1));
+  bindTap(document.getElementById('laneRight'), () => laneMoveCallback && laneMoveCallback(1));
+  bindHold(document.getElementById('hLeft'), 'left');
+  bindHold(document.getElementById('hRight'), 'right');
+  bindHold(document.getElementById('vUp'), 'up');
+  bindHold(document.getElementById('vDown'), 'down');
+  bindHold(document.getElementById('dpadUp'), 'up');
+  bindHold(document.getElementById('dpadDown'), 'down');
+  bindHold(document.getElementById('dpadLeft'), 'left');
+  bindHold(document.getElementById('dpadRight'), 'right');
 
-    closeAllOverlays();
+  window.addEventListener('keydown', (e) => {
+    const k = e.key;
+    if (currentMode === 'lane'){
+      if (k === 'ArrowLeft' || k === 'a' || k === 'A') laneMoveCallback && laneMoveCallback(-1);
+      if (k === 'ArrowRight' || k === 'd' || k === 'D') laneMoveCallback && laneMoveCallback(1);
+      return;
+    }
+    if (k === 'ArrowLeft' || k === 'a' || k === 'A') keys.left = true;
+    if (k === 'ArrowRight' || k === 'd' || k === 'D') keys.right = true;
+    if (k === 'ArrowUp' || k === 'w' || k === 'W') keys.up = true;
+    if (k === 'ArrowDown' || k === 's' || k === 'S') keys.down = true;
+  });
+  window.addEventListener('keyup', (e) => {
+    if (currentMode === 'lane') return;
+    const k = e.key;
+    if (k === 'ArrowLeft' || k === 'a' || k === 'A') keys.left = false;
+    if (k === 'ArrowRight' || k === 'd' || k === 'D') keys.right = false;
+    if (k === 'ArrowUp' || k === 'w' || k === 'W') keys.up = false;
+    if (k === 'ArrowDown' || k === 's' || k === 'S') keys.down = false;
+  });
 
-    document.getElementById("overlay-pledgecard").style.display="flex";
+  function startGameScreen(){
+    transitionTo(() => {
+      stage.style.display = 'none';
+      gameView.style.display = 'flex';
+    });
+  }
 
-    renderPath();
+  /* --- Dibujo compartido --- */
+  function clearCanvas(){
+    ctx.fillStyle = '#0c0d10';
+    ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+  }
+  function drawMica(x, y, scale, color){
+    ctx.strokeStyle = color; ctx.lineWidth = 2.2 * scale; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(x, y - 18 * scale, 6 * scale, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y - 12 * scale); ctx.lineTo(x, y + 8 * scale);
+    ctx.moveTo(x, y - 6 * scale); ctx.lineTo(x - 9 * scale, y - 12 * scale);
+    ctx.moveTo(x, y - 6 * scale); ctx.lineTo(x + 9 * scale, y - 2 * scale);
+    ctx.moveTo(x, y + 8 * scale); ctx.lineTo(x - 7 * scale, y + 22 * scale);
+    ctx.moveTo(x, y + 8 * scale); ctx.lineTo(x + 7 * scale, y + 22 * scale);
+    ctx.stroke();
+  }
+  function drawBar(label, value, max, color){
+    ctx.fillStyle = '#4c4e56';
+    ctx.font = '10px Helvetica, Arial, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(label, 18, 22);
+    ctx.strokeStyle = '#2a2c33'; ctx.lineWidth = 1;
+    ctx.strokeRect(18, 28, 200, 8);
+    ctx.fillStyle = color;
+    ctx.fillRect(18, 28, 200 * clamp(value / max, 0, 1), 8);
+  }
 
-}
+  /* --- 1. Baile: recolectar chispas en 3 carriles --- */
+  function gameDance(onComplete, opts){
+    opts = opts || {};
+    const duration = opts.duration || 9000;
+    setCaption(opts.caption || 'Cambia de carril y recoge las chispas');
+    showControls('Lane');
+    currentMode = 'lane';
+    const laneX = [90, 160, 230];
+    let playerLane = 1;
+    laneMoveCallback = (dir) => { playerLane = clamp(playerLane + dir, 0, 2); };
 
+    let sparkles = [], spawnTimer = 0, elapsed = 0, score = 0, last = null, finished = false;
+
+    function loop(ts){
+      if (last === null) last = ts;
+      const dt = ts - last; last = ts; elapsed += dt; spawnTimer += dt;
+
+      if (spawnTimer > 620){ spawnTimer = 0; sparkles.push({ lane: randInt(0, 2), y: -10 }); }
+      sparkles.forEach(s => s.y += dt * 0.17);
+      sparkles = sparkles.filter(s => {
+        if (s.y > 375 && s.y < 415 && s.lane === playerLane){ score++; return false; }
+        return s.y < 450;
+      });
+
+      clearCanvas();
+      laneX.forEach(x => { ctx.strokeStyle = '#1c1e24'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, 40); ctx.lineTo(x, 440); ctx.stroke(); });
+      sparkles.forEach(s => {
+        const x = laneX[s.lane];
+        ctx.fillStyle = '#5a86ab'; ctx.shadowColor = 'rgba(90,134,171,0.6)'; ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.moveTo(x, s.y - 7); ctx.lineTo(x + 5, s.y); ctx.lineTo(x, s.y + 7); ctx.lineTo(x - 5, s.y); ctx.closePath();
+        ctx.fill(); ctx.shadowBlur = 0;
+      });
+      drawMica(laneX[playerLane], 400, 1, '#e9e7e2');
+      drawBar('Chispas: ' + score, score, Math.max(score, 10), '#5a86ab');
+
+      if (elapsed >= duration && !finished){ finished = true; onComplete(score); return; }
+      rafId = requestAnimationFrame(loop);
+    }
+    startGameScreen();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  /* --- 2. Avalancha: esquivar notificaciones que caen --- */
+  function gameAvalancha(onComplete){
+    setCaption('Esquiva las notificaciones que caen');
+    showControls('Horizontal');
+    currentMode = 'hold';
+    let playerX = 160, notifs = [], spawnTimer = 0, elapsed = 0, calma = 100, last = null, finished = false, flash = 0;
+    const duration = 11000;
+
+    function loop(ts){
+      if (last === null) last = ts;
+      const dt = ts - last; last = ts; elapsed += dt; spawnTimer += dt;
+      if (flash > 0) flash -= dt;
+
+      if (keys.left) playerX -= dt * 0.24;
+      if (keys.right) playerX += dt * 0.24;
+      playerX = clamp(playerX, 24, 296);
+
+      const interval = Math.max(360, 900 - elapsed * 0.05);
+      if (spawnTimer > interval){ spawnTimer = 0; notifs.push({ x: rand(30, 290), y: -14 }); }
+      const fallSpeed = 0.13 + elapsed * 0.000025;
+      notifs.forEach(n => n.y += dt * fallSpeed);
+      notifs = notifs.filter(n => {
+        if (Math.abs(n.x - playerX) < 22 && n.y > 405 && n.y < 448){ calma = Math.max(0, calma - 14); flash = 160; return false; }
+        return n.y < 470;
+      });
+
+      clearCanvas();
+      notifs.forEach(n => {
+        ctx.fillStyle = '#a4453f';
+        ctx.beginPath(); ctx.roundRect ? ctx.roundRect(n.x - 12, n.y - 9, 24, 18, 4) : ctx.rect(n.x - 12, n.y - 9, 24, 18);
+        ctx.fill();
+        ctx.fillStyle = '#e9e7e2'; ctx.beginPath(); ctx.arc(n.x + 7, n.y - 7, 2.4, 0, Math.PI * 2); ctx.fill();
+      });
+      drawMica(playerX, 430, 1, '#e9e7e2');
+      drawBar('Calma', calma, 100, calma > 30 ? '#5a86ab' : '#a4453f');
+      if (flash > 0){ ctx.fillStyle = 'rgba(164,69,63,' + (flash / 160 * 0.25) + ')'; ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H); }
+
+      if ((elapsed >= duration || calma <= 0) && !finished){ finished = true; onComplete(); return; }
+      rafId = requestAnimationFrame(loop);
+    }
+    startGameScreen();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  /* --- 3. Encierro: el cuarto se encoge (rama aislarse) --- */
+  function gameEncierro(onComplete){
+    setCaption('El cuarto se encoge. Muévete.');
+    showControls('Dpad');
+    currentMode = 'hold';
+    let px = 160, py = 240, elapsed = 0, last = null, finished = false;
+    const duration = 10000;
+
+    function loop(ts){
+      if (last === null) last = ts;
+      const dt = ts - last; last = ts; elapsed += dt;
+      const t = clamp(elapsed / duration, 0, 1);
+      const margin = 22 + t * 110;
+      const left = margin, right = LOGICAL_W - margin;
+      const top = 50 + margin * 0.7, bottom = LOGICAL_H - 40 - margin * 0.7;
+
+      if (keys.left) px -= dt * 0.13;
+      if (keys.right) px += dt * 0.13;
+      if (keys.up) py -= dt * 0.13;
+      if (keys.down) py += dt * 0.13;
+      px = clamp(px, left + 8, right - 8);
+      py = clamp(py, top + 8, bottom - 8);
+
+      clearCanvas();
+      ctx.strokeStyle = '#2a2c33'; ctx.lineWidth = 1.4;
+      ctx.strokeRect(left, top, right - left, bottom - top);
+      ctx.fillStyle = '#5a86ab';
+      ctx.beginPath(); ctx.arc(px, py, 8, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#4c4e56'; ctx.font = '10px Helvetica, Arial, sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText('El espacio se cierra…', 18, 22);
+
+      if (elapsed >= duration && !finished){ finished = true; onComplete(); return; }
+      rafId = requestAnimationFrame(loop);
+    }
+    startGameScreen();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  /* --- 4. Ola de mensajes: esquivar burbujas (rama responder) --- */
+  function gameOlaMensajes(onComplete){
+    setCaption('Esquiva los mensajes');
+    showControls('Vertical');
+    currentMode = 'hold';
+    let playerY = 240, bubbles = [], spawnTimer = 0, elapsed = 0, energia = 100, last = null, finished = false, flash = 0;
+    const duration = 12000, fixedX = 160;
+
+    function loop(ts){
+      if (last === null) last = ts;
+      const dt = ts - last; last = ts; elapsed += dt; spawnTimer += dt;
+      if (flash > 0) flash -= dt;
+
+      if (keys.up) playerY -= dt * 0.22;
+      if (keys.down) playerY += dt * 0.22;
+      playerY = clamp(playerY, 70, 410);
+
+      const interval = Math.max(340, 850 - elapsed * 0.055);
+      if (spawnTimer > interval){
+        spawnTimer = 0;
+        const fromLeft = Math.random() < 0.5;
+        bubbles.push({ x: fromLeft ? -20 : 340, y: rand(80, 400), vx: (fromLeft ? 1 : -1) * (0.1 + elapsed * 0.00002) });
+      }
+      bubbles.forEach(b => b.x += b.vx * dt);
+      bubbles = bubbles.filter(b => {
+        if (Math.abs(b.x - fixedX) < 20 && Math.abs(b.y - playerY) < 20){ energia = Math.max(0, energia - 16); flash = 160; return false; }
+        return b.x > -40 && b.x < 360;
+      });
+
+      clearCanvas();
+      bubbles.forEach(b => {
+        ctx.fillStyle = '#a4453f';
+        ctx.beginPath(); ctx.arc(b.x, b.y, 10, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(b.x - 3, b.y + 8); ctx.lineTo(b.x - 8, b.y + 15); ctx.lineTo(b.x + 2, b.y + 9); ctx.closePath(); ctx.fill();
+      });
+      drawMica(fixedX, playerY + 18, 1, '#e9e7e2');
+      drawBar('Energía', energia, 100, energia > 30 ? '#5a86ab' : '#a4453f');
+      if (flash > 0){ ctx.fillStyle = 'rgba(164,69,63,' + (flash / 160 * 0.25) + ')'; ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H); }
+
+      if ((elapsed >= duration || energia <= 0) && !finished){ finished = true; onComplete(); return; }
+      rafId = requestAnimationFrame(loop);
+    }
+    startGameScreen();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  /* --- 5. Acercarse: caminar hacia el personaje de confianza --- */
+  function gameAcercarse(onComplete, name){
+    setCaption('Acércate a ' + name);
+    showControls('Dpad');
+    currentMode = 'hold';
+    let px = 50, py = 240, npc = { x: 270, y: 240 }, elapsed = 0, last = null, finished = false, success = false, successTimer = 0;
+    const maxDuration = 16000;
+
+    function loop(ts){
+      if (last === null) last = ts;
+      const dt = ts - last; last = ts; elapsed += dt;
+
+      if (!success){
+        if (keys.left) px -= dt * 0.13;
+        if (keys.right) px += dt * 0.13;
+        if (keys.up) py -= dt * 0.13;
+        if (keys.down) py += dt * 0.13;
+        px = clamp(px, 28, 292);
+        py = clamp(py, 60, 420);
+        const dist = Math.hypot(px - npc.x, py - npc.y);
+        if (dist < 26){ success = true; }
+      } else {
+        successTimer += dt;
+      }
+
+      clearCanvas();
+      ctx.fillStyle = '#4c4e56'; ctx.font = '10px Helvetica, Arial, sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText(success ? '¡La encontraste!' : 'Camina hacia ' + name, 18, 22);
+      drawMica(npc.x, npc.y, 1, '#83858c');
+      ctx.fillStyle = '#83858c'; ctx.font = '10px Helvetica, Arial, sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(name, npc.x, npc.y + 34);
+      drawMica(px, py, 1, success ? '#5a86ab' : '#e9e7e2');
+
+      if ((success && successTimer > 500) || elapsed > maxDuration){
+        if (!finished){ finished = true; onComplete(); return; }
+      }
+      rafId = requestAnimationFrame(loop);
+    }
+    startGameScreen();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  /* ============ FLUJO DE LA HISTORIA ============ */
+  function startGameFlow(){
+    showText('mirror', ["Mica ensaya frente al espejo los pasos de toda la semana."], 0, () => {
+      gameDance((score) => {
+        showText('mirror', ["Sube el video bailando. Se siente ligera, por fin mostrándose tal como es."], 0, () => {
+          showChoices('phone',
+            ["A la mañana siguiente el teléfono no para de vibrar.", "Recortaron su peor fotograma. Ya circula en tres grupos."],
+            [
+              { label: 'Borrar todo y desaparecer', value: 'aislarse' },
+              { label: 'Responder y defenderse', value: 'responder' },
+              { label: 'Contarle a alguien de confianza', value: 'ayuda' }
+            ],
+            (value) => {
+              // Antes de la decisión, un momento de agobio jugable
+              gameAvalancha(() => {
+                state.decision1 = value;
+                showBranchDiagram('decision1', value, () => routeBranch(value));
+              });
+            }
+          );
+        });
+      }, { duration: 9000 });
+    });
+  }
+
+  function routeBranch(value){
+    if (value === 'aislarse') return branchAislarse();
+    if (value === 'responder') return branchResponder();
+    return branchAyuda();
+  }
+
+  function branchAislarse(){
+    showText('isolation', ["Borra la cuenta antes de pensarlo dos veces."], 0, () => {
+      gameEncierro(() => {
+        showText('isolation', ["Deja de aceptar invitaciones. La música ahora la escucha sola, con la puerta cerrada."], 0, () => {
+          showFinalScreen({
+            icon: 'isolation', final: 'Aislamiento',
+            endingText: "Mica aprendió a ocupar menos espacio. Dejó de ser la chica que bailaba sin miedo — y empezó a ser, sobre todo, alguien que no quiere que la vean."
+          });
+        });
+      });
+    });
+  }
+
+  function branchResponder(){
+    showText('conflict', ["Escribe una respuesta filosa y la publica."], 0, () => {
+      gameOlaMensajes(() => {
+        showText('conflict', ["Ya nadie recuerda cómo empezó — solo que sigue. Mica revisa el teléfono por vigilancia, no por costumbre."], 0, () => {
+          showFinalScreen({
+            icon: 'conflict', final: 'Conflicto',
+            endingText: "La pelea nunca terminó; solo cambió de forma. Mica ya no recuerda cuándo fue la última vez que bailó solo por bailar."
+          });
+        });
+      });
+    });
+  }
+
+  function branchAyuda(){
+    showChoices('support', ["Piensa en quién no la va a mirar distinto después de esto."],
+      [
+        { label: 'Un amigo cercano', value: 'amigo' },
+        { label: 'Un familiar', value: 'familiar' },
+        { label: 'Un profesor', value: 'profesor' }
+      ],
+      (sub) => {
+        state.subDecision = sub;
+        showBranchDiagram('subDecision', sub, () => {
+          const names = { amigo: 'Valentina', familiar: 'su hermano', profesor: 'la profesora Rojas' };
+          const aperturas = {
+            amigo: '«Necesito contarte algo» — le manda un audio a Valentina antes de arrepentirse.',
+            familiar: 'Toca la puerta de su hermano mayor y se sienta en el borde de la cama sin decir nada.',
+            profesor: 'Se queda después de clase hasta que el aula se vacía y solo queda la profesora Rojas.'
+          };
+          showText('support', [aperturas[sub]], 0, () => {
+            gameAcercarse(() => {
+              showText('support', ["Le muestra el teléfono. La otra persona no dice «no es para tanto» — solo la mira, en silencio.", "Armar un plan juntas es más simple de lo que esperaba: guardar capturas, hablar con la escuela."], 0, () => {
+                gameDance(() => {
+                  showFinalScreen({
+                    icon: 'recovery', final: 'Recuperación',
+                    endingText: "Mica no olvida lo que pasó, pero deja de cargarlo sola. Vuelve a compartir lo que quiere, cuando quiere — y ya no cabe en un video viral."
+                  });
+                }, { duration: 7000, caption: 'Vuelve a bailar, sin miedo' });
+              });
+            }, names[sub]);
+          });
+        });
+      }
+    );
+  }
+
+  // Arranque
+  startGameFlow();
+})();
 </script>
-
 </body>
 </html>
