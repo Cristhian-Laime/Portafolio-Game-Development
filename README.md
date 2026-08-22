@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./logo.jpg" alt="Laime Company" width="160"/>
+<img src="./img/logo.jpg" alt="Laime Company" width="160"/>
 
 # Crishtian Laime — Portafolio de Game Development
 
@@ -155,7 +155,7 @@ Todos los prototipos están desarrollados con **HTML5, CSS y JavaScript puro**, 
 
 <div align="center">
 
-<img src="./logo.jpg" alt="Laime Company" width="60"/>
+<img src="./img/logo.jpg" alt="Laime Company" width="60"/>
 
 Portafolio desarrollado para la asignatura **Game Development** — Introducción al desarrollo de videojuegos.
 
