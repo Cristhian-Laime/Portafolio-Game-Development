@@ -52,7 +52,7 @@ Este repositorio reúne los prototipos y videojuegos desarrollados durante las p
 | **Tecnología** | HTML5, CSS, JavaScript |
 
 [![Ver archivos](https://img.shields.io/badge/Ver_archivos-181717?style=flat-square&logo=github&logoColor=white)](./juego-01-evo-baldor)
-[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](./juego-01-evo-baldor/build/evo-baldor-rpg.html)
+[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](https://cristhian-laime.github.io/Portafolio-Game-Development/juego-01-evo-baldor/build/evo-baldor-rpg.html)
 [![README del proyecto](https://img.shields.io/badge/README-proyecto-083fa1?style=flat-square&logo=readdotcv&logoColor=white)](./juego-01-evo-baldor/README.md)
 
 ---
@@ -67,7 +67,7 @@ Este repositorio reúne los prototipos y videojuegos desarrollados durante las p
 | **Tecnología** | HTML5, CSS, JavaScript |
 
 [![Ver archivos](https://img.shields.io/badge/Ver_archivos-181717?style=flat-square&logo=github&logoColor=white)](./juego-02-la-paz-limpia)
-[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](<./juego-02-la-paz-limpia/build/La Paz Limpia.html>)
+[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](https://cristhian-laime.github.io/Portafolio-Game-Development/juego-02-la-paz-limpia/build/La%20Paz%20Limpia.html)
 [![README del proyecto](https://img.shields.io/badge/README-proyecto-083fa1?style=flat-square&logo=readdotcv&logoColor=white)](./juego-02-la-paz-limpia/README.md)
 
 ---
@@ -82,7 +82,7 @@ Este repositorio reúne los prototipos y videojuegos desarrollados durante las p
 | **Tecnología** | HTML5, CSS, JavaScript |
 
 [![Ver archivos](https://img.shields.io/badge/Ver_archivos-181717?style=flat-square&logo=github&logoColor=white)](./juego-03-manzana-copacabana)
-[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](<./juego-03-manzana-copacabana/build/Manzana Copacabana.html>)
+[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](https://cristhian-laime.github.io/Portafolio-Game-Development/juego-03-manzana-copacabana/build/Manzana%20Copacabana.html)
 [![README del proyecto](https://img.shields.io/badge/README-proyecto-083fa1?style=flat-square&logo=readdotcv&logoColor=white)](./juego-03-manzana-copacabana/README.md)
 
 ---
@@ -97,7 +97,7 @@ Este repositorio reúne los prototipos y videojuegos desarrollados durante las p
 | **Tecnología** | HTML5, CSS, JavaScript |
 
 [![Ver archivos](https://img.shields.io/badge/Ver_archivos-181717?style=flat-square&logo=github&logoColor=white)](./juego-04-villasanta)
-[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](./juego-04-villasanta/build/VillaSanta.html)
+[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](https://cristhian-laime.github.io/Portafolio-Game-Development/juego-04-villasanta/build/VillaSanta.html)
 [![README del proyecto](https://img.shields.io/badge/README-proyecto-083fa1?style=flat-square&logo=readdotcv&logoColor=white)](./juego-04-villasanta/README.md)
 
 ---
@@ -112,7 +112,7 @@ Este repositorio reúne los prototipos y videojuegos desarrollados durante las p
 | **Tecnología** | HTML5, CSS, JavaScript |
 
 [![Ver archivos](https://img.shields.io/badge/Ver_archivos-181717?style=flat-square&logo=github&logoColor=white)](./juego-05-bulling)
-[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](./juego-05-bulling/build/bulling.html)
+[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](https://cristhian-laime.github.io/Portafolio-Game-Development/juego-05-bulling/build/bulling.html)
 [![README del proyecto](https://img.shields.io/badge/README-proyecto-083fa1?style=flat-square&logo=readdotcv&logoColor=white)](./juego-05-bulling/README.md)
 
 ---
@@ -127,7 +127,7 @@ Este repositorio reúne los prototipos y videojuegos desarrollados durante las p
 | **Tecnología** | HTML5, CSS, JavaScript |
 
 [![Ver archivos](https://img.shields.io/badge/Ver_archivos-181717?style=flat-square&logo=github&logoColor=white)](./juego-06-ambar-club)
-[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](<./juego-06-ambar-club/build/Ambar Casino & Club.html>)
+[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](https://cristhian-laime.github.io/Portafolio-Game-Development/juego-06-ambar-club/build/Ambar%20Casino%20&%20Club.html)
 [![README del proyecto](https://img.shields.io/badge/README-proyecto-083fa1?style=flat-square&logo=readdotcv&logoColor=white)](./juego-06-ambar-club/README.md)
 
 ---
@@ -155,7 +155,7 @@ Todos los prototipos están desarrollados con **HTML5, CSS y JavaScript puro**, 
 
 <div align="center">
 
-<img src="./img/logo.jpg" alt="Laime Company" width="60"/>
+<img src="./img/logo.png" alt="Laime Company" width="60"/>
 
 Portafolio desarrollado para la asignatura **Game Development** — Introducción al desarrollo de videojuegos.
 
