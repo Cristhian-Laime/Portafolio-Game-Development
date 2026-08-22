@@ -10,6 +10,8 @@
 ![Proyectos](https://img.shields.io/badge/Proyectos-6-2ea44f?style=for-the-badge)
 ![Motores externos](https://img.shields.io/badge/Motores%20externos-0-lightgrey?style=for-the-badge)
 
+**Ir a la página principal del portafolio:**
+
 [![Crishtian Laime — Portafolio de Game Development](https://img.shields.io/badge/Crishtian_Laime_—_Portafolio_de_Game_Development-000000?style=for-the-badge&logo=googlechrome&logoColor=white)](https://cristhian-laime.github.io/Portafolio-Game-Development/)
 
 [![Galería web](https://img.shields.io/badge/Galería_web-index.html-000000?style=flat-square&logo=googlechrome&logoColor=white)](./index.html)
