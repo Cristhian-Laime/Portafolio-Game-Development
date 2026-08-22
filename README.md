@@ -1,4 +1,21 @@
+<div align="center">
+
 # Crishtian Laime — Portafolio de Game Development
+
+**Seis prototipos, seis maneras de contar una historia jugable.**
+
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Proyectos](https://img.shields.io/badge/Proyectos-6-2ea44f?style=for-the-badge)
+![Motores externos](https://img.shields.io/badge/Motores%20externos-0-lightgrey?style=for-the-badge)
+
+[![Galería web](https://img.shields.io/badge/Galería_web-index.html-000000?style=flat-square&logo=googlechrome&logoColor=white)](./index.html)
+[![Repositorio](https://img.shields.io/badge/Explorar-repositorio-181717?style=flat-square&logo=github&logoColor=white)](.)
+
+</div>
+
+---
 
 ## Sobre mí
 
@@ -11,16 +28,15 @@
 
 ## Sobre este portafolio
 
-Este repositorio reúne los prototipos y videojuegos desarrollados durante las primeras clases de la asignatura **Game Development**, como parte de la práctica "Construcción creativa". Cada proyecto explora una mecánica y un mensaje distinto, combinando aprendizaje técnico con temas sociales y educativos relevantes para La Paz, Bolivia.
+Este repositorio reúne los prototipos y videojuegos desarrollados durante las primeras clases de la asignatura **Game Development**, como parte de la práctica *"Construcción creativa"*. Cada proyecto explora una mecánica y un mensaje distinto, combinando aprendizaje técnico con temas sociales y educativos relevantes para La Paz, Bolivia.
 
-Para una vista interactiva de la colección, abre [`index.html`](./index.html) en el navegador.
+> **Nota sobre el tema visual:** este archivo es Markdown puro, por lo que GitHub no permite incrustar el CSS/JS de `index.html` (lo elimina por seguridad). Aun así, esta página se adapta automáticamente al tema de tu cuenta de GitHub (claro u oscuro). Para ver el diseño completo, con el mismo selector de tema que usa la galería, abre [`index.html`](./index.html) en tu navegador.
 
 ---
 
 ## Galería de videojuegos
 
-### 01 — Evo y Baldor: Misión en el Chapare
-
+### 01 · Evo y Baldor: Misión en el Chapare
 ![Inicio](juego-01-evo-baldor/screenshots/inicio.png)
 
 | | |
@@ -28,12 +44,14 @@ Para una vista interactiva de la colección, abre [`index.html`](./index.html) e
 | **Descripción** | RPG educativo donde el jugador resuelve operaciones matemáticas para desbloquear herramientas y avanzar en su misión por el Chapare. |
 | **Género** | RPG / Educativo |
 | **Tecnología** | HTML5, CSS, JavaScript |
-| **Jugar** | [Abrir juego](./juego-01-evo-baldor/build/evo-baldor-rpg.html) |
+
+[![Ver archivos](https://img.shields.io/badge/Ver_archivos-181717?style=flat-square&logo=github&logoColor=white)](./juego-01-evo-baldor)
+[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](./juego-01-evo-baldor/build/evo-baldor-rpg.html)
+[![README del proyecto](https://img.shields.io/badge/README-proyecto-083fa1?style=flat-square&logo=readdotcv&logoColor=white)](./juego-01-evo-baldor/README.md)
 
 ---
 
-### 02 — La Paz Limpia
-
+### 02 · La Paz Limpia
 ![Inicio](juego-02-la-paz-limpia/screenshots/inicio.png)
 
 | | |
@@ -41,12 +59,14 @@ Para una vista interactiva de la colección, abre [`index.html`](./index.html) e
 | **Descripción** | Juego de ritmo donde debes clasificar residuos (papel, plástico, vidrio, orgánico) presionando la tecla correcta a tiempo. |
 | **Género** | Ritmo / Arcade / Educativo |
 | **Tecnología** | HTML5, CSS, JavaScript |
-| **Jugar** | [Abrir juego](<./juego-02-la-paz-limpia/build/La Paz Limpia.html>) |
+
+[![Ver archivos](https://img.shields.io/badge/Ver_archivos-181717?style=flat-square&logo=github&logoColor=white)](./juego-02-la-paz-limpia)
+[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](<./juego-02-la-paz-limpia/build/La Paz Limpia.html>)
+[![README del proyecto](https://img.shields.io/badge/README-proyecto-083fa1?style=flat-square&logo=readdotcv&logoColor=white)](./juego-02-la-paz-limpia/README.md)
 
 ---
 
-### 03 — Manzana Copacabana
-
+### 03 · Manzana Copacabana
 ![Inicio](juego-03-manzana-copacabana/screenshots/inicio.png)
 
 | | |
@@ -54,12 +74,14 @@ Para una vista interactiva de la colección, abre [`index.html`](./index.html) e
 | **Descripción** | Clon estilo Pac-Man donde una manzana verde debe comer alimentos saludables mientras evade a la comida chatarra. |
 | **Género** | Arcade / Educativo |
 | **Tecnología** | HTML5, CSS, JavaScript |
-| **Jugar** | [Abrir juego](<./juego-03-manzana-copacabana/build/Manzana Copacabana.html>) |
+
+[![Ver archivos](https://img.shields.io/badge/Ver_archivos-181717?style=flat-square&logo=github&logoColor=white)](./juego-03-manzana-copacabana)
+[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](<./juego-03-manzana-copacabana/build/Manzana Copacabana.html>)
+[![README del proyecto](https://img.shields.io/badge/README-proyecto-083fa1?style=flat-square&logo=readdotcv&logoColor=white)](./juego-03-manzana-copacabana/README.md)
 
 ---
 
-### 04 — VillaSanta: Aprende a cuidar el agua de La Paz
-
+### 04 · VillaSanta — Aprende a cuidar el agua de La Paz
 ![Inicio](juego-04-villasanta/screenshots/inicio.png)
 
 | | |
@@ -67,25 +89,29 @@ Para una vista interactiva de la colección, abre [`index.html`](./index.html) e
 | **Descripción** | Experiencia educativa estilo mapa de niveles sobre el cuidado del agua, desde los glaciares hasta el grifo. |
 | **Género** | Educativo / Puzzle |
 | **Tecnología** | HTML5, CSS, JavaScript |
-| **Jugar** | [Abrir juego](./juego-04-villasanta/build/VillaSanta.html) |
+
+[![Ver archivos](https://img.shields.io/badge/Ver_archivos-181717?style=flat-square&logo=github&logoColor=white)](./juego-04-villasanta)
+[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](./juego-04-villasanta/build/VillaSanta.html)
+[![README del proyecto](https://img.shields.io/badge/README-proyecto-083fa1?style=flat-square&logo=readdotcv&logoColor=white)](./juego-04-villasanta/README.md)
 
 ---
 
-### 05 — Mica: un video, muchos caminos
-
+### 05 · Mica — un video, muchos caminos
 ![Inicio](juego-05-bulling/screenshots/inicio.png)
 
 | | |
 |---|---|
-| **Descripción** | Historia interactiva con minijuegos sobre lo que ocurre cuando un video privado se viraliza sin permiso. Cada decisión abre una rama distinta y un final propio. |
+| **Descripción** | Historia interactiva con minijuegos sobre lo que ocurre cuando un video privado se viraliza sin permiso. Cada decisión abre una rama narrativa distinta y su propio final (aislamiento, conflicto o recuperación). |
 | **Género** | Narrativa interactiva |
 | **Tecnología** | HTML5, CSS, JavaScript |
-| **Jugar** | [Abrir juego](./juego-05-bulling/build/bulling.html) |
+
+[![Ver archivos](https://img.shields.io/badge/Ver_archivos-181717?style=flat-square&logo=github&logoColor=white)](./juego-05-bulling)
+[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](./juego-05-bulling/build/bulling.html)
+[![README del proyecto](https://img.shields.io/badge/README-proyecto-083fa1?style=flat-square&logo=readdotcv&logoColor=white)](./juego-05-bulling/README.md)
 
 ---
 
-### 06 — 2000 Bs: La Ciudad de las Decisiones
-
+### 06 · 2000 Bs: La Ciudad de las Decisiones
 ![Inicio](juego-06-ambar-club/screenshots/inicio.png)
 
 | | |
@@ -93,13 +119,16 @@ Para una vista interactiva de la colección, abre [`index.html`](./index.html) e
 | **Descripción** | Simulador de decisiones financieras donde administras 2000 Bs entre casino, inversión, ropa, zapatería y comida. |
 | **Género** | Simulación / Estrategia |
 | **Tecnología** | HTML5, CSS, JavaScript |
-| **Jugar** | [Abrir juego](<./juego-06-ambar-club/build/Ambar Casino & Club.html>) |
+
+[![Ver archivos](https://img.shields.io/badge/Ver_archivos-181717?style=flat-square&logo=github&logoColor=white)](./juego-06-ambar-club)
+[![Jugar](https://img.shields.io/badge/Jugar-6441A5?style=flat-square&logo=itchdotio&logoColor=white)](<./juego-06-ambar-club/build/Ambar Casino & Club.html>)
+[![README del proyecto](https://img.shields.io/badge/README-proyecto-083fa1?style=flat-square&logo=readdotcv&logoColor=white)](./juego-06-ambar-club/README.md)
 
 ---
 
 ## Tecnologías utilizadas
 
-Todos los prototipos están desarrollados con HTML5, CSS y JavaScript puro, sin frameworks ni motores externos, priorizando que cada juego sea autocontenido y ejecutable directamente en el navegador.
+Todos los prototipos están desarrollados con **HTML5, CSS y JavaScript puro**, sin frameworks ni motores externos, priorizando que cada juego sea autocontenido y ejecutable directamente en el navegador (basta con abrir el `.html` correspondiente, sin instalación).
 
 ## Apoyo de IA
 
@@ -118,4 +147,8 @@ Todos los prototipos están desarrollados con HTML5, CSS y JavaScript puro, sin 
 
 ---
 
-Portafolio desarrollado para la asignatura Game Development — Introducción al desarrollo de videojuegos.
+<div align="center">
+
+Portafolio desarrollado para la asignatura **Game Development** — Introducción al desarrollo de videojuegos.
+
+</div>
