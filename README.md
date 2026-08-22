@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./img/logo.jpg" alt="Laime Company" width="160"/>
+<img src="./img/logo.png" alt="Laime Company" width="160"/>
 
 # Crishtian Laime — Portafolio de Game Development
 
