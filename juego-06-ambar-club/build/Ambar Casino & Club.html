@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2000 Bs: La Ciudad de las Decisiones</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body{
+    height:100%;
+    background: radial-gradient(circle at 50% 15%, #1c1030, #05030a 75%);
+    font-family: 'Trebuchet MS','Segoe UI',sans-serif;
+    overflow:hidden;
+    color:#fff;
+  }
+  #wrap{ display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:8px; }
+  #gameContainer{
+    position:relative;
+    width:1000px; max-width:97vw;
+    aspect-ratio: 1000/700;
+    border-radius:22px;
+    overflow:hidden;
+    box-shadow: 0 0 0 4px #ffd166, 0 0 0 8px rgba(255,209,102,0.15), 0 0 60px rgba(255,60,180,0.35), 0 25px 70px rgba(0,0,0,0.7);
+  }
+  canvas{ display:block; width:100%; height:100%; }
+  #gameContainer::before{
+    content:'';
+    position:absolute; inset:0;
+    pointer-events:none;
+    background: radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,0.45) 100%);
+    z-index:4;
+  }
+  #gameContainer::after{
+    content:'';
+    position:absolute; inset:0;
+    pointer-events:none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent 12%);
+    z-index:4;
+  }
+
+  #hud{
+    position:absolute; top:0; left:0; right:0;
+    display:flex; flex-direction:column; gap:6px;
+    padding:10px 14px; z-index:6; pointer-events:none;
+    text-shadow:0 2px 4px rgba(0,0,0,0.6);
+  }
+  #hudTop{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px; }
+  #hud .box{
+    background:rgba(10,6,20,0.55);
+    border:1.5px solid rgba(255,255,255,0.22);
+    border-radius:12px; padding:5px 12px; font-weight:bold; font-size:13.5px;
+    backdrop-filter: blur(4px);
+    box-shadow:0 3px 10px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+  #moneyBox{ color:#ffd166; }
+  #investBox{ color:#7CFFB2; }
+  #spentBox{ color:#ff9f9f; }
+  #goalWrap{
+    background:rgba(10,6,20,0.5);
+    border:1.5px solid rgba(255,255,255,0.18);
+    border-radius:10px; padding:5px 10px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.3);
+  }
+  #goalLabel{ font-size:10.5px; color:#ffe9b0; font-weight:bold; margin-bottom:3px; display:flex; justify-content:space-between; }
+  #goalBarOuter{ width:100%; height:8px; border-radius:6px; background:rgba(255,255,255,0.12); overflow:hidden; }
+  #goalBarInner{
+    height:100%; width:0%;
+    background: linear-gradient(90deg,#ffd166,#7CFFB2);
+    box-shadow:0 0 8px rgba(124,255,178,0.6);
+    transition: width 0.4s ease;
+  }
+
+  #promptTag{
+    position:absolute; z-index:5;
+    background:#fff; color:#111; font-weight:bold;
+    padding:6px 14px; border-radius:10px; font-size:14px;
+    transform:translate(-50%,-150%);
+    display:none;
+    box-shadow:0 4px 12px rgba(0,0,0,0.5);
+  }
+  #promptTag:after{
+    content:''; position:absolute; left:50%; top:100%;
+    transform:translateX(-50%);
+    border:7px solid transparent; border-top-color:#fff;
+  }
+
+  @keyframes panelFadeIn{ from{ opacity:0; } to{ opacity:1; } }
+  @keyframes cardPopIn{ from{ opacity:0; transform:scale(0.9) translateY(10px);} to{ opacity:1; transform:scale(1) translateY(0);} }
+  .panel{
+    position:absolute; inset:0;
+    display:none; align-items:center; justify-content:center;
+    background:rgba(4,2,10,0.92);
+    backdrop-filter: blur(2px);
+    z-index:20; padding:14px; overflow-y:auto;
+    animation: panelFadeIn 0.2s ease;
+  }
+  .panel.show{ display:flex; }
+  .card{
+    width:100%; max-width:680px;
+    background: linear-gradient(160deg,#201738,#0c0818);
+    border:2px solid rgba(255,255,255,0.16);
+    border-radius:20px;
+    padding:20px 24px;
+    box-shadow:0 25px 60px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.06);
+    text-align:center;
+    max-height:92%;
+    overflow-y:auto;
+    animation: cardPopIn 0.28s cubic-bezier(0.2,0.8,0.3,1.1);
+  }
+  .npc-row{ display:flex; align-items:center; gap:14px; justify-content:center; margin-bottom:8px; }
+  .npc-face{ font-size:48px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+  .speech{
+    background:#fff; color:#111; border-radius:14px;
+    padding:11px 15px; font-size:13.5px; font-weight:bold;
+    max-width:420px; text-align:left; position:relative; min-height:20px;
+  }
+  .speech:after{ content:''; position:absolute; left:-10px; top:20px; border:8px solid transparent; border-right-color:#fff; }
+  .card h2{ font-size:21px; margin-bottom:5px; }
+  .casinoTitle{ color:#ff6ec7; text-shadow:0 0 12px rgba(255,110,199,0.7); }
+  .investTitle{ color:#7CFFB2; text-shadow:0 0 12px rgba(124,255,178,0.6); }
+  .shoeTitle{ color:#6ec6ff; text-shadow:0 0 12px rgba(110,198,255,0.6); }
+  .foodTitle{ color:#ffb37c; text-shadow:0 0 12px rgba(255,179,124,0.6); }
+  .clothesTitle{ color:#d19bff; text-shadow:0 0 12px rgba(209,155,255,0.6); }
+
+  .betRow, .investRow, .gameMenuRow, .shopRow{
+    display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+    margin:12px 0 8px;
+  }
+  .betBtn{
+    position:relative;
+    background: linear-gradient(135deg,#ff6ec7,#c23a8a);
+    border:none; color:#fff; font-weight:bold; font-size:13px;
+    padding:10px 14px; border-radius:12px; cursor:pointer;
+    box-shadow:0 6px 0 #8a2160;
+    transition: transform 0.08s, filter 0.15s;
+    overflow:hidden;
+  }
+  .betBtn::after{
+    content:''; position:absolute; top:0; left:0; right:0; height:45%;
+    background:linear-gradient(180deg,rgba(255,255,255,0.35),transparent);
+    pointer-events:none;
+  }
+  .betBtn:hover{ filter:brightness(1.12); }
+  .betBtn:active{ transform:translateY(4px); box-shadow:0 2px 0 #8a2160; filter:brightness(0.95); }
+  .investBtn{ background: linear-gradient(135deg,#42e39b,#1f9d6a); box-shadow:0 6px 0 #0f6a45; }
+  .investBtn:active{ box-shadow:0 2px 0 #0f6a45; }
+  .shoeBtn{ background: linear-gradient(135deg,#6ec6ff,#2f8fd1); box-shadow:0 6px 0 #1a5c8a; }
+  .shoeBtn:active{ box-shadow:0 2px 0 #1a5c8a; }
+  .foodBtn{ background: linear-gradient(135deg,#ffb37c,#e8823a); box-shadow:0 6px 0 #a1591f; }
+  .foodBtn:active{ box-shadow:0 2px 0 #a1591f; }
+  .clothesBtn{ background: linear-gradient(135deg,#d19bff,#8a4fd1); box-shadow:0 6px 0 #5c2f94; }
+  .clothesBtn:active{ box-shadow:0 2px 0 #5c2f94; }
+  .gameChoiceBtn{
+    background: linear-gradient(135deg,#3a2160,#221241);
+    border:2px solid rgba(255,110,199,0.5);
+    color:#fff; font-weight:bold; font-size:13px;
+    padding:14px 14px; border-radius:14px; cursor:pointer;
+    min-width:120px;
+  }
+  .gameChoiceBtn:hover{ border-color:#ff6ec7; }
+
+  .exitBtn{
+    margin-top:8px;
+    background:rgba(255,255,255,0.1);
+    border:2px solid rgba(255,255,255,0.3);
+    color:#fff; font-weight:bold; padding:9px 18px;
+    border-radius:30px; cursor:pointer; font-size:13px;
+  }
+  .exitBtn:hover{ background:rgba(255,255,255,0.2); }
+  .backBtn{
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.3);
+    color:#ddd; font-size:12px; padding:6px 13px;
+    border-radius:20px; cursor:pointer; margin-bottom:8px;
+  }
+
+  #slotsView, #rouletteView, #diceView, #cardsView, #scratchView{
+    border-radius:16px; padding:12px 10px; margin-top:6px;
+  }
+  #slotsView{ background: radial-gradient(circle at 50% 20%, rgba(255,209,102,0.14), rgba(255,209,102,0.02)); border:1px solid rgba(255,209,102,0.25); }
+  #rouletteView{ background: radial-gradient(circle at 50% 20%, rgba(212,58,58,0.16), rgba(212,58,58,0.02)); border:1px solid rgba(212,58,58,0.3); }
+  #diceView{ background: radial-gradient(circle at 50% 20%, rgba(47,143,209,0.16), rgba(47,143,209,0.02)); border:1px solid rgba(47,143,209,0.3); }
+  #cardsView{ background: radial-gradient(circle at 50% 20%, rgba(22,199,107,0.14), rgba(22,199,107,0.02)); border:1px solid rgba(22,199,107,0.3); }
+  #scratchView{ background: radial-gradient(circle at 50% 20%, rgba(255,209,102,0.14), rgba(255,209,102,0.02)); border:1px solid rgba(255,209,102,0.3); }
+  #slotDisplay{
+    font-size:34px; letter-spacing:8px; margin:10px 0; min-height:44px;
+    background:rgba(0,0,0,0.35); border-radius:12px; padding:8px 0;
+    border:2px solid rgba(255,209,102,0.35);
+  }
+  .resultPhrase{ font-size:13px; font-weight:bold; min-height:20px; margin-top:6px; }
+  .good{ color:#7CFFB2; } .bad{ color:#ff6b6b; }
+
+  #wheelWrap{ position:relative; width:160px; height:160px; margin:10px auto; }
+  #wheel{
+    width:160px; height:160px; border-radius:50%;
+    background: conic-gradient(
+      #16c76b 0deg 9.5deg,
+      #d43a3a 9.5deg 97deg, #1a1a1a 97deg 184.5deg,
+      #d43a3a 184.5deg 272deg, #1a1a1a 272deg 360deg
+    );
+    border:6px solid #ffd166;
+    transition: transform 3.2s cubic-bezier(0.15,0.7,0.15,1);
+    box-shadow:0 0 20px rgba(255,209,102,0.4);
+  }
+  #wheelPointer{
+    position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+    width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent;
+    border-top:18px solid #fff; z-index:2; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+  }
+  .colorPick{ display:flex; gap:10px; justify-content:center; margin-top:6px; flex-wrap:wrap; }
+  .colorBtn{ border:none; border-radius:10px; padding:10px 18px; font-weight:bold; cursor:pointer; color:#fff; font-size:12.5px; }
+  .redBtn{ background:#d43a3a; }
+  .blackBtn{ background:#1a1a1a; border:1px solid #555; }
+
+  #diceDisplay{ font-size:44px; margin:10px 0; }
+
+  #cardsRow{ display:flex; gap:16px; justify-content:center; align-items:center; margin:12px 0; }
+  .cardBox{
+    width:64px; height:92px; border-radius:8px; background:linear-gradient(160deg,#fff,#eee); color:#111;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-weight:bold; font-size:20px; box-shadow:0 8px 18px rgba(0,0,0,0.5), inset 0 0 0 2px rgba(0,0,0,0.06);
+    border:1px solid rgba(0,0,0,0.1);
+  }
+  .cardBox.red{ color:#d43a3a; }
+  .vsLabel{ font-size:13px; color:#bbb; font-weight:bold; text-shadow:0 0 6px rgba(255,110,199,0.5); }
+
+  #scratchGrid{ display:flex; gap:10px; justify-content:center; margin:12px 0; }
+  .scratchCell{
+    width:56px; height:56px; border-radius:10px;
+    background: linear-gradient(135deg,#666,#2c2c2c);
+    display:flex; align-items:center; justify-content:center;
+    font-size:26px; box-shadow:inset 0 0 10px rgba(0,0,0,0.6), 0 4px 10px rgba(0,0,0,0.4);
+    border:1px solid rgba(255,209,102,0.25);
+  }
+
+  #chartCard{
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(124,255,178,0.25);
+    border-radius:14px; padding:8px; margin:8px 0;
+  }
+  #investChartCanvas{ width:100%; max-width:440px; height:150px; }
+  #chartLegend{ font-size:10px; color:#bbb; display:flex; gap:12px; justify-content:center; margin-top:4px; }
+  #chartLegend span{ display:flex; align-items:center; gap:4px; }
+  .legendDot{ width:8px;height:8px;border-radius:50%; display:inline-block; }
+
+  .overlayEnd h1{ font-size:26px; margin-bottom:6px; }
+  .overlayEnd p{ font-size:14px; line-height:1.5; color:#ddd; max-width:520px; margin:0 auto 12px; }
+  #deathCanvas{ display:block; margin:0 auto 6px; }
+
+  #mobileControls{ display:none; gap:9px; margin-top:2px; }
+  #mobileControls button{
+    width:52px;height:52px;border-radius:50%;
+    background:rgba(255,255,255,0.12); border:2px solid rgba(255,255,255,0.35);
+    color:#fff; font-size:19px; font-weight:bold; backdrop-filter: blur(4px);
+  }
+  #btnTalk{
+    width:auto !important; border-radius:26px !important; padding:0 14px; font-size:12px !important;
+    background: linear-gradient(135deg,#ffd166,#ff9f1c) !important; color:#3a2200 !important;
+  }
+  @media (max-width:820px){ #mobileControls{ display:flex; } }
+
+  #startScreen p{ max-width:610px; margin:7px auto 10px; font-size:13.5px; line-height:1.5; color:#e8e8e8; }
+  #locPreview{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:12px 0; }
+  #locPreview .locIcon{
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15);
+    border-radius:12px; padding:10px 12px; font-size:22px; min-width:64px;
+  }
+  #locPreview .locIcon span{ display:block; font-size:9.5px; color:#bbb; margin-top:3px; font-weight:bold; }
+  .playBtn{
+    background: linear-gradient(135deg,#ffd166,#ff9f1c);
+    border:none; color:#3a2200; font-weight:bold; font-size:16px;
+    padding:12px 30px; border-radius:40px; cursor:pointer;
+    box-shadow:0 8px 0 #b06a00, 0 12px 20px rgba(0,0,0,0.4);
+  }
+  .playBtn:active{ transform:translateY(6px); box-shadow:0 2px 0 #b06a00; }
+  .itemGrid{ display:flex; flex-wrap:wrap; gap:9px; justify-content:center; margin:10px 0; }
+  .itemCard{
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:12px; padding:9px 11px; width:130px;
+  }
+  .itemCard .itemImg{ font-size:30px; }
+  .itemCard .itemName{ font-size:11px; font-weight:bold; margin:4px 0; }
+  .itemCard .itemPrice{ font-size:11px; color:#ffd166; margin-bottom:5px; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="gameContainer">
+    <canvas id="game" width="1000" height="700"></canvas>
+
+    <div id="hud">
+      <div id="hudTop">
+        <div class="box" id="moneyBox">💵 <span id="moneyVal">2000</span> Bs</div>
+        <div class="box">📅 Día <span id="dayVal">1</span></div>
+        <div class="box" id="investBox">📈 Invertido: <span id="investVal">0</span> Bs</div>
+        <div class="box" id="spentBox">🛍️ Gastado: <span id="spentVal">0</span> Bs</div>
+      </div>
+      <div id="goalWrap">
+        <div id="goalLabel"><span>🎯 Meta: <span id="goalTotal">0</span> / 4500 Bs</span><span id="goalPct">0%</span></div>
+        <div id="goalBarOuter"><div id="goalBarInner"></div></div>
+      </div>
+      <div id="goalWrap">
+        <div id="goalLabel"><span>🍗 Hambre</span><span id="hungerPct">100%</span></div>
+        <div id="goalBarOuter"><div id="hungerBarInner" style="height:100%;width:100%;background:linear-gradient(90deg,#ffd166,#ff9f1c);border-radius:6px;transition:width 0.4s ease;"></div></div>
+      </div>
+    </div>
+
+    <div id="promptTag">Presiona E</div>
+
+    <!-- Inicio -->
+    <div class="panel show" id="startScreen">
+      <div class="card">
+        <h2>💰 LA CIUDAD DE LAS DECISIONES</h2>
+        <p>Tienes <b>2000 Bs</b>. Recorre la ciudad y decide: ¿arriesgar en el <b>🎰 Casino</b> (5 juegos distintos), hacer crecer tu dinero en <b>🏦 Inversión</b>, darte un gusto en <b>👟 Zapatería</b> o <b>👕 Ropa</b>, o comer en el <b>🍔 Comedor</b>? Cuida tu barra de hambre 🍗 — tu conejo te avisará cuando tenga hambre, el zapato roto o la ropa vieja. Zapatería y Ropa tienen promociones sorpresa algunos días. Ganar aquí no es fácil: el casino y hasta invertir tienen riesgo real. Si te quedas sin nada... tu conejo no la contará.</p>
+        <div id="locPreview">
+          <div class="locIcon">🎰<span>Casino</span></div>
+          <div class="locIcon">🏦<span>Inversión</span></div>
+          <div class="locIcon">👕<span>Ropa</span></div>
+          <div class="locIcon">👟<span>Zapatería</span></div>
+          <div class="locIcon">🍔<span>Comedor</span></div>
+        </div>
+        <p style="font-size:12px;color:#bcd;">🎮 Flechas/WASD para moverte · Presiona <b>E</b> junto a un edificio para entrar.</p>
+        <button class="playBtn" id="startBtn">EMPEZAR ▶</button>
+      </div>
+    </div>
+
+    <!-- Casino -->
+    <div class="panel" id="casinoPanel">
+      <div class="card">
+        <h2 class="casinoTitle">🎰 CASINO LA SUERTE</h2>
+        <div class="npc-row">
+          <div class="npc-face">🤵‍♂️</div>
+          <div class="speech" id="casinoSpeech"></div>
+        </div>
+        <div id="casinoGameMenu">
+          <div class="gameMenuRow">
+            <button class="gameChoiceBtn" id="chooseSlots">🎰<br>Tragamonedas</button>
+            <button class="gameChoiceBtn" id="chooseRoulette">🎡<br>Ruleta</button>
+            <button class="gameChoiceBtn" id="chooseDice">🎲<br>Dados</button>
+            <button class="gameChoiceBtn" id="chooseCards">🃏<br>Carta Alta</button>
+            <button class="gameChoiceBtn" id="chooseScratch">🎫<br>Raspadito</button>
+          </div>
+        </div>
+
+        <div id="slotsView" style="display:none;">
+          <button class="backBtn" data-back="casino">← Volver a juegos</button>
+          <div id="slotDisplay">🎰 🎰 🎰</div>
+          <div class="resultPhrase" id="slotsResult"></div>
+          <div class="betRow" id="betRow">
+            <button class="betBtn" data-bet="100">Apostar 100 Bs</button>
+            <button class="betBtn" data-bet="300">Apostar 300 Bs</button>
+            <button class="betBtn" data-bet="500">Apostar 500 Bs</button>
+            <button class="betBtn" data-bet="all">Todo dentro 🔥</button>
+          </div>
+        </div>
+
+        <div id="rouletteView" style="display:none;">
+          <button class="backBtn" data-back="casino">← Volver a juegos</button>
+          <div id="wheelWrap"><div id="wheelPointer"></div><div id="wheel"></div></div>
+          <div class="resultPhrase" id="rouletteResult"></div>
+          <div class="colorPick">
+            <button class="colorBtn redBtn" data-color="rojo">🔴 Rojo</button>
+            <button class="colorBtn blackBtn" data-color="negro">⚫ Negro</button>
+          </div>
+          <div class="betRow" id="rouletteBetRow">
+            <button class="betBtn" data-rbet="100">100 Bs</button>
+            <button class="betBtn" data-rbet="300">300 Bs</button>
+            <button class="betBtn" data-rbet="500">500 Bs</button>
+            <button class="betBtn" data-rbet="all">Todo 🔥</button>
+          </div>
+        </div>
+
+        <div id="diceView" style="display:none;">
+          <button class="backBtn" data-back="casino">← Volver a juegos</button>
+          <div id="diceDisplay">🎲 🎲</div>
+          <div class="resultPhrase" id="diceResult"></div>
+          <div class="colorPick">
+            <button class="colorBtn" style="background:#2f8fd1;" data-guess="mayor">⬆ Mayor a 7</button>
+            <button class="colorBtn" style="background:#c23a8a;" data-guess="menor">⬇ Menor a 7</button>
+          </div>
+          <div class="betRow" id="diceBetRow">
+            <button class="betBtn" data-dbet="100">100 Bs</button>
+            <button class="betBtn" data-dbet="300">300 Bs</button>
+            <button class="betBtn" data-dbet="500">500 Bs</button>
+            <button class="betBtn" data-dbet="all">Todo 🔥</button>
+          </div>
+        </div>
+
+        <div id="cardsView" style="display:none;">
+          <button class="backBtn" data-back="casino">← Volver a juegos</button>
+          <div id="cardsRow">
+            <div class="cardBox" id="playerCard">?</div>
+            <div class="vsLabel">VS</div>
+            <div class="cardBox" id="dealerCard">?</div>
+          </div>
+          <div class="resultPhrase" id="cardsResult"></div>
+          <div style="font-size:12px;color:#bbb;margin-bottom:4px;">Tu carta debe ser más alta que la del crupier (empate = gana la casa)</div>
+          <div class="betRow" id="cardsBetRow">
+            <button class="betBtn" data-cbet="100">100 Bs</button>
+            <button class="betBtn" data-cbet="300">300 Bs</button>
+            <button class="betBtn" data-cbet="500">500 Bs</button>
+            <button class="betBtn" data-cbet="all">Todo 🔥</button>
+          </div>
+        </div>
+
+        <div id="scratchView" style="display:none;">
+          <button class="backBtn" data-back="casino">← Volver a juegos</button>
+          <div id="scratchGrid">
+            <div class="scratchCell" id="sc1">❓</div>
+            <div class="scratchCell" id="sc2">❓</div>
+            <div class="scratchCell" id="sc3">❓</div>
+          </div>
+          <div class="resultPhrase" id="scratchResult"></div>
+          <div style="font-size:12px;color:#bbb;margin-bottom:4px;">3 iguales = premio grande · 2 iguales = premio chico</div>
+          <div class="betRow" id="scratchBetRow">
+            <button class="betBtn" data-scbet="100">100 Bs</button>
+            <button class="betBtn" data-scbet="300">300 Bs</button>
+            <button class="betBtn" data-scbet="500">500 Bs</button>
+            <button class="betBtn" data-scbet="all">Todo 🔥</button>
+          </div>
+        </div>
+
+        <button class="exitBtn" id="casinoExit">Salir del casino</button>
+      </div>
+    </div>
+
+    <!-- Inversión -->
+    <div class="panel" id="investPanel">
+      <div class="card">
+        <h2 class="investTitle">🏦 CENTRO DE INVERSIÓN</h2>
+        <div class="npc-row">
+          <div class="npc-face">👩‍💼</div>
+          <div class="speech" id="investSpeech"></div>
+        </div>
+        <div id="chartCard">
+          <canvas id="investChartCanvas" width="440" height="150"></canvas>
+          <div id="chartLegend">
+            <span><i class="legendDot" style="background:#6ec6ff;"></i>Depósito</span>
+            <span><i class="legendDot" style="background:#16c76b;"></i>Sube</span>
+            <span><i class="legendDot" style="background:#e63946;"></i>Baja</span>
+          </div>
+        </div>
+        <div style="font-size:13px;margin-bottom:4px;">📊 Balance invertido: <b id="investAmountShown">0</b> Bs</div>
+        <div class="resultPhrase" id="investResultPhrase"></div>
+        <div class="investRow" id="investBetRow">
+          <button class="betBtn investBtn" data-invest="100">Invertir 100 Bs</button>
+          <button class="betBtn investBtn" data-invest="300">Invertir 300 Bs</button>
+          <button class="betBtn investBtn" data-invest="500">Invertir 500 Bs</button>
+          <button class="betBtn investBtn" data-invest="all">Invertir todo 💼</button>
+        </div>
+        <div class="investRow">
+          <button class="betBtn investBtn" id="waitBtn" style="background:linear-gradient(135deg,#6ec6ff,#2f8fd1);box-shadow:0 6px 0 #1a5c8a;">⏳ Esperar (avanzar día)</button>
+          <button class="betBtn investBtn" id="withdrawBtn" style="background:linear-gradient(135deg,#ffd166,#ff9f1c);box-shadow:0 6px 0 #b06a00;color:#3a2200;">💰 Retirar todo</button>
+        </div>
+        <button class="exitBtn" id="investExit">Salir del centro de inversión</button>
+      </div>
+    </div>
+
+    <!-- Zapatería -->
+    <div class="panel" id="shoePanel">
+      <div class="card">
+        <h2 class="shoeTitle">👟 ZAPATERÍA KICKS BS</h2>
+        <div class="npc-row">
+          <div class="npc-face">🧑‍🦱</div>
+          <div class="speech" id="shoeSpeech"></div>
+        </div>
+        <div id="shoePromoBanner" style="display:none;background:linear-gradient(90deg,#6ec6ff,#2f8fd1);color:#04263f;font-weight:bold;font-size:12.5px;padding:7px 12px;border-radius:10px;margin-bottom:8px;"></div>
+        <div class="itemGrid">
+          <div class="itemCard"><div class="itemImg">👟</div><div class="itemName">Tenis básicos</div><div class="itemPrice" id="shoePrice1">180 Bs</div><button class="betBtn shoeBtn" data-baseshoe="180" data-tier="1">Comprar</button></div>
+          <div class="itemCard"><div class="itemImg">👞</div><div class="itemName">Tenis de moda</div><div class="itemPrice" id="shoePrice2">420 Bs</div><button class="betBtn shoeBtn" data-baseshoe="420" data-tier="2">Comprar</button></div>
+          <div class="itemCard"><div class="itemImg">🥿</div><div class="itemName">Edición limitada</div><div class="itemPrice" id="shoePrice3">900 Bs</div><button class="betBtn shoeBtn" data-baseshoe="900" data-tier="3">Comprar</button></div>
+        </div>
+        <div class="resultPhrase" id="shoeResult"></div>
+        <button class="exitBtn" id="shoeExit">Salir de la zapatería</button>
+      </div>
+    </div>
+
+    <!-- Ropa -->
+    <div class="panel" id="clothesPanel">
+      <div class="card">
+        <h2 class="clothesTitle">👕 TIENDA DE ROPA ESTILO BS</h2>
+        <div class="npc-row">
+          <div class="npc-face">👗</div>
+          <div class="speech" id="clothesSpeech"></div>
+        </div>
+        <div id="clothesPromoBanner" style="display:none;background:linear-gradient(90deg,#d19bff,#8a4fd1);color:#2a0a45;font-weight:bold;font-size:12.5px;padding:7px 12px;border-radius:10px;margin-bottom:8px;"></div>
+        <div class="itemGrid">
+          <div class="itemCard"><div class="itemImg">👕</div><div class="itemName">Camiseta</div><div class="itemPrice" id="clothesPrice1">150 Bs</div><button class="betBtn clothesBtn" data-baseclothes="150" data-tier="1">Comprar</button></div>
+          <div class="itemCard"><div class="itemImg">🧥</div><div class="itemName">Chaqueta</div><div class="itemPrice" id="clothesPrice2">450 Bs</div><button class="betBtn clothesBtn" data-baseclothes="450" data-tier="2">Comprar</button></div>
+          <div class="itemCard"><div class="itemImg">🎩</div><div class="itemName">Look completo + sombrero</div><div class="itemPrice" id="clothesPrice3">850 Bs</div><button class="betBtn clothesBtn" data-baseclothes="850" data-tier="3">Comprar</button></div>
+        </div>
+        <div class="resultPhrase" id="clothesResult"></div>
+        <button class="exitBtn" id="clothesExit">Salir de la tienda</button>
+      </div>
+    </div>
+
+    <!-- Comedor -->
+    <div class="panel" id="foodPanel">
+      <div class="card">
+        <h2 class="foodTitle">🍔 COMEDOR SABOR BS</h2>
+        <div class="npc-row">
+          <div class="npc-face">👨‍🍳</div>
+          <div class="speech" id="foodSpeech"></div>
+        </div>
+        <div class="itemGrid">
+          <div class="itemCard"><div class="itemImg">🥪</div><div class="itemName">Menú sencillo</div><div class="itemPrice">40 Bs</div><button class="betBtn foodBtn" data-food="40">Comprar</button></div>
+          <div class="itemCard"><div class="itemImg">🍔</div><div class="itemName">Combo grande</div><div class="itemPrice">110 Bs</div><button class="betBtn foodBtn" data-food="110">Comprar</button></div>
+          <div class="itemCard"><div class="itemImg">🍱</div><div class="itemName">Cena gourmet</div><div class="itemPrice">260 Bs</div><button class="betBtn foodBtn" data-food="260">Comprar</button></div>
+        </div>
+        <div class="resultPhrase" id="foodResult"></div>
+        <button class="exitBtn" id="foodExit">Salir del comedor</button>
+      </div>
+    </div>
+
+    <!-- Derrota / muerte -->
+    <div class="panel" id="loseScreen">
+      <div class="card overlayEnd">
+        <canvas id="deathCanvas" width="200" height="140"></canvas>
+        <h1 style="color:#ff6b6b;">TU CONEJO MURIÓ DE HAMBRE</h1>
+        <p id="loseMsg"></p>
+        <button class="playBtn" id="retryLose">EMPEZAR DE NUEVO 🔁</button>
+      </div>
+    </div>
+
+    <!-- Victoria -->
+    <div class="panel" id="winScreen">
+      <div class="card overlayEnd">
+        <h1 style="color:#7CFFB2;">🏆 FUTURO FINANCIERO ASEGURADO</h1>
+        <p id="winMsg"></p>
+        <button class="playBtn" id="retryWin">JUGAR DE NUEVO 🔁</button>
+      </div>
+    </div>
+
+    <div id="mobileControls">
+      <button id="btnLeft">◀</button>
+      <button id="btnUp">▲</button>
+      <button id="btnDown">▼</button>
+      <button id="btnRight">▶</button>
+      <button id="btnTalk">Hablar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  // ---------- Frases ----------
+  const casinoInvitePhrases = [
+    "Psst... hoy la suerte está de tu lado, ¿por qué no lo intentas?",
+    "Solo una apuesta más y podrías triplicar tu dinero...",
+    "¿2000 Bs quietos sin hacer nada? ¡Aquí crecen rápido!",
+    "Tu vecino ganó 5000 Bs anoche, ¿por qué tú no?",
+    "Los que no arriesgan, nunca ganan en grande...",
+    "Vamos, una apuestita no le hace daño a nadie.",
+    "Hoy tenemos 5 juegos para ti. ¿Cuál probarás primero?"
+  ];
+  const casinoLosePhrases = [
+    "😞 Perdiste tu apuesta. El casino siempre tiene ventaja matemática.",
+    "😞 Así empiezan muchas deudas: apuesta tras apuesta.",
+    "😞 Ese dinero pudo ser tu fondo de emergencia.",
+    "😞 La 'suerte' no es una estrategia financiera.",
+    "😞 Cada apuesta perdida te aleja de tus metas reales.",
+    "😞 El casino no pierde: tú sí. Ganar aquí es mucho más difícil de lo que parece."
+  ];
+  const casinoWinPhrases = [
+    "🎉 ¡Ganaste esta vez! Pero las probabilidades siguen en tu contra.",
+    "🎉 Un golpe de suerte no borra el riesgo de seguir jugando.",
+    "🎉 Ganaste, pero a la larga la casa siempre recupera lo suyo.",
+    "🎉 Cuidado: ganar una vez tienta a seguir apostando más."
+  ];
+  const investInvitePhrases = [
+    "Bienvenido. Aquí tu dinero crece despacio, y con riesgo real: nada es garantizado.",
+    "El interés compuesto ayuda, pero requiere mucha paciencia y constancia.",
+    "Invertir tampoco es dinero fácil: hay días buenos y días malos.",
+    "Diversificar y esperar reduce el riesgo, pero no lo elimina.",
+    "No prometo hacerte rico rápido. Emprender y crecer toma tiempo real."
+  ];
+  const investGrowPhrases = [
+    "📈 Tu inversión creció un poco. Así de lento se construye la riqueza real.",
+    "📈 Buen día en el mercado, pero no te confíes: mañana puede bajar.",
+    "📈 El tiempo en el mercado vale más que el momento perfecto.",
+    "📈 Reinvertir tus ganancias ayuda, pero el crecimiento sigue siendo lento."
+  ];
+  const investDipPhrases = [
+    "📉 El mercado bajó esta semana. Los que invierten deben tolerar estas caídas.",
+    "📉 Toda inversión tiene altibajos: lo importante es no entrar en pánico.",
+    "📉 Emprender y crecer un negocio también tiene meses difíciles como este."
+  ];
+  const shoeInvitePhrases = [
+    "¡Mira estos tenis recién llegados! Te van a quedar increíbles.",
+    "Todos en el barrio ya tienen un par... ¿tú no?",
+    "Una compra pequeña no arruina tu presupuesto, ¿verdad?"
+  ];
+  const shoeBadPhrases = [
+    "👟 Compra hecha por impulso. ¿La necesitabas realmente?",
+    "👟 Un gasto hormiga más: pequeño, pero se repite seguido.",
+    "👟 Ese dinero también pudo ir a tu inversión."
+  ];
+  const clothesInvitePhrases = [
+    "Esta temporada todo el mundo usa esto, ¡no te quedes atrás!",
+    "Renovar el clóset de vez en cuando se siente bien...",
+    "¿Un look nuevo? Solo por esta vez no hace daño."
+  ];
+  const clothesBadPhrases = [
+    "👕 Otra compra que no genera ningún retorno económico.",
+    "👕 La ropa nueva se siente bien, pero tu bolsillo lo siente peor.",
+    "👕 ¿Realmente lo necesitabas o fue solo un impulso?"
+  ];
+  const foodInvitePhrases = [
+    "¿Con hambre? Tenemos combos deliciosos hoy.",
+    "Comer bien también es parte de la vida, ¡date el gusto!",
+    "Un antojito no hace daño a nadie... ¿o sí, muchas veces?"
+  ];
+  const foodBadPhrases = [
+    "🍔 Los gastos pequeños diarios suman más de lo que crees.",
+    "🍔 Comer fuera seguido puede costar más que cocinar en casa.",
+    "🍔 Un gusto está bien, pero cuidado con la costumbre... y con las calorías."
+  ];
+
+  // ---------- Estado ----------
+  let money = 2000;
+  let investBalance = 0;
+  let totalSpent = 0;
+  let day = 1;
+  let gameState = 'start';
+  const WIN_GOAL = 4500;
+  let investHistory = [{day:1, value:0, type:'deposit'}];
+
+  const player = {
+    x: W/2, y: H-90, w:34, h:40, speed: 3.8,
+    facing:'down', animPhase:0, moving:false,
+    weight:0, shoeTier:0, outfitTier:0,
+    hunger:100, shoeCondition:0, outfitCondition:0
+  };
+  let msgCooldown = 60;      // frames hasta poder mostrar el próximo mensaje
+  let activeMsg = null;      // {text, timer}
+
+  function advanceDay(){
+    day++;
+    player.hunger = Math.max(0, player.hunger - 7);
+    if(player.shoeTier>0) player.shoeCondition = Math.max(0, player.shoeCondition - 9);
+    if(player.outfitTier>0) player.outfitCondition = Math.max(0, player.outfitCondition - 7);
+    updateHungerBar();
+  }
+  function updateHungerBar(){
+    const bar = document.getElementById('hungerBarInner');
+    const pctEl = document.getElementById('hungerPct');
+    if(!bar) return;
+    bar.style.width = player.hunger+'%';
+    if(pctEl) pctEl.textContent = Math.round(player.hunger)+'%';
+    if(player.hunger>55) bar.style.background='linear-gradient(90deg,#ffd166,#ff9f1c)';
+    else if(player.hunger>25) bar.style.background='linear-gradient(90deg,#ff9f6b,#e8823a)';
+    else bar.style.background='linear-gradient(90deg,#ff6b6b,#c23a3a)';
+  }
+
+  const buildings = {
+    casino:  {x:40,  y:100, w:250, h:220, type:'casino'},
+    clothes: {x:375, y:100, w:250, h:220, type:'clothes'},
+    invest:  {x:710, y:100, w:250, h:220, type:'invest'},
+    shoe:    {x:170, y:400, w:250, h:190, type:'shoe'},
+    food:    {x:580, y:400, w:250, h:190, type:'food'}
+  };
+  function doorOf(b){
+    const doorW=90, doorH=46;
+    return {x:b.x+b.w/2-doorW/2, y:b.y+b.h-doorH, w:doorW, h:doorH};
+  }
+  const bounds = {minX:30, maxX:W-30, minY:140, maxY:H-40};
+
+  let keys = {};
+  let nearBuilding = null;
+  let particles = [];
+
+  window.addEventListener('keydown', e=>{
+    const k = e.key.toLowerCase();
+    keys[k] = true;
+    if(k==='e') tryEnter();
+    if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k)) e.preventDefault();
+  });
+  window.addEventListener('keyup', e=>{ keys[e.key.toLowerCase()] = false; });
+
+  function bindHold(id, key){
+    const el = document.getElementById(id);
+    const on = ev=>{ ev.preventDefault(); keys[key]=true; };
+    const off = ev=>{ ev.preventDefault(); keys[key]=false; };
+    el.addEventListener('touchstart', on, {passive:false});
+    el.addEventListener('touchend', off, {passive:false});
+    el.addEventListener('mousedown', on);
+    el.addEventListener('mouseup', off);
+    el.addEventListener('mouseleave', off);
+  }
+  bindHold('btnLeft','arrowleft');
+  bindHold('btnRight','arrowright');
+  bindHold('btnUp','arrowup');
+  bindHold('btnDown','arrowdown');
+  document.getElementById('btnTalk').addEventListener('click', tryEnter);
+
+  function tryEnter(){
+    if(gameState!=='world' || !nearBuilding) return;
+    if(nearBuilding==='casino') openCasino();
+    else if(nearBuilding==='invest') openInvest();
+    else if(nearBuilding==='shoe') openShoe();
+    else if(nearBuilding==='food') openFood();
+    else if(nearBuilding==='clothes') openClothes();
+  }
+
+  function updateHUD(){
+    document.getElementById('moneyVal').textContent = Math.max(0,Math.round(money));
+    document.getElementById('investVal').textContent = Math.round(investBalance);
+    document.getElementById('dayVal').textContent = day;
+    document.getElementById('spentVal').textContent = Math.round(totalSpent);
+    const total = Math.max(0, money) + Math.max(0, investBalance);
+    const pct = Math.min(100, Math.round((total/WIN_GOAL)*100));
+    document.getElementById('goalTotal').textContent = Math.round(total);
+    document.getElementById('goalPct').textContent = pct+'%';
+    document.getElementById('goalBarInner').style.width = pct+'%';
+    updateHungerBar();
+  }
+  function rnd(a,b){ return a+Math.random()*(b-a); }
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function show(id){ document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show')); document.getElementById(id).classList.add('show'); }
+  function hideAllPanels(){ document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show')); }
+
+  function checkEnd(){
+    if(money<=0 && investBalance<=0){
+      gameState='lose';
+      document.getElementById('loseMsg').textContent =
+        "Gastaste y apostaste todo tu dinero hasta llegar a cero. Sin ahorros ni inversión, tu conejo no tuvo con qué comer. Empezaste con 2000 Bs — recuerda: el casino casi nunca es la salida, y hasta gastos pequeños repetidos (comida, ropa, tenis) pueden dejarte en la ruina si no llevas control.";
+      show('loseScreen');
+      drawDeadRabbit();
+      return true;
+    }
+    if(money+investBalance >= WIN_GOAL){
+      gameState='win';
+      document.getElementById('winMsg').textContent =
+        "Con paciencia y buenas decisiones, tu dinero creció de 2000 a "+Math.round(money+investBalance)+" Bs. No fue fácil ni rápido, pero evitaste el casino y los gastos hormiga, y construiste en vez de arriesgar. Así se logra la libertad financiera real.";
+      show('winScreen');
+      return true;
+    }
+    return false;
+  }
+
+  // ---------- CASINO: menú ----------
+  function openCasino(){
+    gameState='casino';
+    document.getElementById('casinoSpeech').textContent = pick(casinoInvitePhrases);
+    document.getElementById('casinoGameMenu').style.display='block';
+    ['slotsView','rouletteView','diceView','cardsView','scratchView'].forEach(id=>document.getElementById(id).style.display='none');
+    show('casinoPanel');
+  }
+  document.getElementById('casinoExit').addEventListener('click', ()=>{ gameState='world'; hideAllPanels(); });
+  document.querySelectorAll('[data-back="casino"]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      document.getElementById('casinoGameMenu').style.display='block';
+      ['slotsView','rouletteView','diceView','cardsView','scratchView'].forEach(id=>document.getElementById(id).style.display='none');
+    });
+  });
+  function goToGame(viewId){
+    document.getElementById('casinoGameMenu').style.display='none';
+    document.getElementById(viewId).style.display='block';
+  }
+
+  // -- Tragamonedas --
+  document.getElementById('chooseSlots').addEventListener('click', ()=>{
+    goToGame('slotsView');
+    document.getElementById('betRow').style.display='flex';
+    document.getElementById('slotsResult').textContent='';
+    document.getElementById('slotDisplay').textContent='🎰 🎰 🎰';
+  });
+  document.querySelectorAll('#betRow .betBtn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const raw=btn.getAttribute('data-bet');
+      const bet= raw==='all'?Math.floor(money):parseInt(raw,10);
+      if(bet<=0||bet>money) return;
+      playSlot(bet);
+    });
+  });
+  function playSlot(bet){
+    document.getElementById('betRow').style.display='none';
+    document.getElementById('slotsResult').textContent='';
+    const symbols=['🍒','🍋','💎','7️⃣','🔔','⭐'];
+    const slotEl=document.getElementById('slotDisplay');
+    let ticks=0;
+    const spin=setInterval(()=>{
+      slotEl.textContent=pick(symbols)+' '+pick(symbols)+' '+pick(symbols);
+      ticks++;
+      if(ticks>14){ clearInterval(spin); resolveSlot(bet); }
+    },80);
+  }
+  function resolveSlot(bet){
+    const won = Math.random() < 0.24;
+    const slotEl=document.getElementById('slotDisplay');
+    const resEl=document.getElementById('slotsResult');
+    money -= bet;
+    if(won){
+      const payout = Math.round(bet*1.7);
+      money += payout;
+      slotEl.textContent='💎 💎 💎';
+      resEl.className='resultPhrase good';
+      resEl.textContent="+"+payout+" Bs — "+pick(casinoWinPhrases);
+      spawnBurst('#7CFFB2');
+    } else {
+      slotEl.textContent='🍋 🔔 7️⃣';
+      resEl.className='resultPhrase bad';
+      resEl.textContent="-"+bet+" Bs — "+pick(casinoLosePhrases);
+      spawnBurst('#ff6b6b');
+    }
+    advanceDay(); updateHUD();
+    document.getElementById('casinoSpeech').textContent = pick(casinoInvitePhrases);
+    setTimeout(()=>{ document.getElementById('betRow').style.display='flex'; checkEnd(); },500);
+  }
+
+  // -- Ruleta --
+  let rouletteColor=null;
+  document.getElementById('chooseRoulette').addEventListener('click', ()=>{
+    goToGame('rouletteView');
+    document.getElementById('rouletteResult').textContent='';
+    document.getElementById('rouletteBetRow').style.display='flex';
+    rouletteColor=null;
+  });
+  document.querySelectorAll('.colorBtn[data-color]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      rouletteColor=btn.getAttribute('data-color');
+      document.getElementById('rouletteResult').textContent='Elegiste: '+(rouletteColor==='rojo'?'🔴 Rojo':'⚫ Negro')+'. Ahora elige el monto.';
+      document.getElementById('rouletteResult').className='resultPhrase';
+    });
+  });
+  document.querySelectorAll('#rouletteBetRow .betBtn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(!rouletteColor){
+        document.getElementById('rouletteResult').className='resultPhrase bad';
+        document.getElementById('rouletteResult').textContent='Primero elige un color: rojo o negro.';
+        return;
+      }
+      const raw=btn.getAttribute('data-rbet');
+      const bet= raw==='all'?Math.floor(money):parseInt(raw,10);
+      if(bet<=0||bet>money) return;
+      spinRoulette(bet);
+    });
+  });
+  function spinRoulette(bet){
+    document.getElementById('rouletteBetRow').style.display='none';
+    const roll=Math.random();
+    let outcomeColor, landingAngle;
+    if(roll<0.474){ outcomeColor='rojo'; landingAngle=rnd(9.5,97); }
+    else if(roll<0.948){ outcomeColor='negro'; landingAngle=Math.random()<0.5?rnd(97,184.5):rnd(272,360); }
+    else { outcomeColor='verde'; landingAngle=rnd(0,9.5); }
+
+    const wheel=document.getElementById('wheel');
+    const spins=5*360;
+    const targetRotation=spins+(360-landingAngle);
+    wheel.style.transition='none';
+    wheel.style.transform='rotate(0deg)';
+    void wheel.offsetWidth;
+    wheel.style.transition='transform 3.2s cubic-bezier(0.15,0.7,0.15,1)';
+    wheel.style.transform='rotate('+targetRotation+'deg)';
+
+    setTimeout(()=>{
+      const resEl=document.getElementById('rouletteResult');
+      money -= bet;
+      const won = outcomeColor===rouletteColor;
+      const colorLabel = outcomeColor==='rojo'?'🔴 Rojo':outcomeColor==='negro'?'⚫ Negro':'🟢 Verde (banca)';
+      if(won){
+        const payout=Math.round(bet*1.85);
+        money += payout;
+        resEl.className='resultPhrase good';
+        resEl.textContent="Salió "+colorLabel+". +"+payout+" Bs — "+pick(casinoWinPhrases);
+        spawnBurst('#7CFFB2');
+      } else {
+        resEl.className='resultPhrase bad';
+        resEl.textContent="Salió "+colorLabel+". -"+bet+" Bs — "+pick(casinoLosePhrases);
+        spawnBurst('#ff6b6b');
+      }
+      advanceDay(); updateHUD();
+      document.getElementById('casinoSpeech').textContent = pick(casinoInvitePhrases);
+      rouletteColor=null;
+      setTimeout(()=>{ document.getElementById('rouletteBetRow').style.display='flex'; checkEnd(); },600);
+    },3300);
+  }
+
+  // -- Dados --
+  let diceGuess=null;
+  const diceFaces=['⚀','⚁','⚂','⚃','⚄','⚅'];
+  document.getElementById('chooseDice').addEventListener('click', ()=>{
+    goToGame('diceView');
+    document.getElementById('diceResult').textContent='';
+    document.getElementById('diceBetRow').style.display='flex';
+    diceGuess=null;
+  });
+  document.querySelectorAll('.colorBtn[data-guess]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      diceGuess=btn.getAttribute('data-guess');
+      document.getElementById('diceResult').textContent='Elegiste: '+(diceGuess==='mayor'?'⬆ Mayor a 7':'⬇ Menor a 7')+'. Ahora elige el monto.';
+      document.getElementById('diceResult').className='resultPhrase';
+    });
+  });
+  document.querySelectorAll('#diceBetRow .betBtn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(!diceGuess){
+        document.getElementById('diceResult').className='resultPhrase bad';
+        document.getElementById('diceResult').textContent='Primero elige mayor o menor a 7.';
+        return;
+      }
+      const raw=btn.getAttribute('data-dbet');
+      const bet= raw==='all'?Math.floor(money):parseInt(raw,10);
+      if(bet<=0||bet>money) return;
+      rollDice(bet);
+    });
+  });
+  function rollDice(bet){
+    document.getElementById('diceBetRow').style.display='none';
+    const diceEl=document.getElementById('diceDisplay');
+    let ticks=0;
+    const spin=setInterval(()=>{
+      diceEl.textContent=pick(diceFaces)+' '+pick(diceFaces);
+      ticks++;
+      if(ticks>12){ clearInterval(spin); resolveDice(bet); }
+    },90);
+  }
+  function resolveDice(bet){
+    const d1=1+Math.floor(Math.random()*6);
+    const d2=1+Math.floor(Math.random()*6);
+    const sum=d1+d2;
+    document.getElementById('diceDisplay').textContent = diceFaces[d1-1]+' '+diceFaces[d2-1]+'  ('+sum+')';
+    const resEl=document.getElementById('diceResult');
+    money -= bet;
+    let won=false;
+    if(sum!==7){ won=(diceGuess==='mayor'&&sum>7)||(diceGuess==='menor'&&sum<7); }
+    if(won){
+      const payout=Math.round(bet*1.8);
+      money += payout;
+      resEl.className='resultPhrase good';
+      resEl.textContent="Suma "+sum+". +"+payout+" Bs — "+pick(casinoWinPhrases);
+      spawnBurst('#7CFFB2');
+    } else {
+      resEl.className='resultPhrase bad';
+      const extra = sum===7?" (¡7 exacto, la casa siempre gana!)":"";
+      resEl.textContent="Suma "+sum+extra+". -"+bet+" Bs — "+pick(casinoLosePhrases);
+      spawnBurst('#ff6b6b');
+    }
+    advanceDay(); updateHUD();
+    document.getElementById('casinoSpeech').textContent = pick(casinoInvitePhrases);
+    diceGuess=null;
+    setTimeout(()=>{ document.getElementById('diceBetRow').style.display='flex'; checkEnd(); },600);
+  }
+
+  // -- Carta Alta --
+  const suits=['♠','♥','♦','♣'];
+  const rankNames={1:'A',11:'J',12:'Q',13:'K'};
+  function rankLabel(r){ return rankNames[r] || (''+r); }
+  document.getElementById('chooseCards').addEventListener('click', ()=>{
+    goToGame('cardsView');
+    document.getElementById('cardsResult').textContent='';
+    document.getElementById('cardsBetRow').style.display='flex';
+    document.getElementById('playerCard').textContent='?';
+    document.getElementById('dealerCard').textContent='?';
+    document.getElementById('playerCard').className='cardBox';
+    document.getElementById('dealerCard').className='cardBox';
+  });
+  document.querySelectorAll('#cardsBetRow .betBtn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const raw=btn.getAttribute('data-cbet');
+      const bet= raw==='all'?Math.floor(money):parseInt(raw,10);
+      if(bet<=0||bet>money) return;
+      playCards(bet);
+    });
+  });
+  function playCards(bet){
+    document.getElementById('cardsBetRow').style.display='none';
+    const pCard=document.getElementById('playerCard');
+    const dCard=document.getElementById('dealerCard');
+    let ticks=0;
+    const spin=setInterval(()=>{
+      const r1=1+Math.floor(Math.random()*13), r2=1+Math.floor(Math.random()*13);
+      const s1=pick(suits), s2=pick(suits);
+      pCard.textContent = rankLabel(r1)+s1;
+      pCard.className = 'cardBox' + ((s1==='♥'||s1==='♦')?' red':'');
+      dCard.textContent = rankLabel(r2)+s2;
+      dCard.className = 'cardBox' + ((s2==='♥'||s2==='♦')?' red':'');
+      ticks++;
+      if(ticks>10){ clearInterval(spin); resolveCards(bet); }
+    },90);
+  }
+  function resolveCards(bet){
+    const pr=1+Math.floor(Math.random()*13), dr=1+Math.floor(Math.random()*13);
+    const ps=pick(suits), ds=pick(suits);
+    const pCard=document.getElementById('playerCard');
+    const dCard=document.getElementById('dealerCard');
+    pCard.textContent=rankLabel(pr)+ps; pCard.className='cardBox'+((ps==='♥'||ps==='♦')?' red':'');
+    dCard.textContent=rankLabel(dr)+ds; dCard.className='cardBox'+((ds==='♥'||ds==='♦')?' red':'');
+    const resEl=document.getElementById('cardsResult');
+    money -= bet;
+    const won = pr>dr;
+    if(won){
+      const payout=Math.round(bet*1.9);
+      money += payout;
+      resEl.className='resultPhrase good';
+      resEl.textContent="Tu carta gana. +"+payout+" Bs — "+pick(casinoWinPhrases);
+      spawnBurst('#7CFFB2');
+    } else {
+      resEl.className='resultPhrase bad';
+      const extra = pr===dr ? " (¡empate, la casa gana!)" : "";
+      resEl.textContent="El crupier gana"+extra+". -"+bet+" Bs — "+pick(casinoLosePhrases);
+      spawnBurst('#ff6b6b');
+    }
+    advanceDay(); updateHUD();
+    document.getElementById('casinoSpeech').textContent = pick(casinoInvitePhrases);
+    setTimeout(()=>{ document.getElementById('cardsBetRow').style.display='flex'; checkEnd(); },600);
+  }
+
+  // -- Raspadito --
+  const scratchSymbols=['🍀','⭐','💰','🎯','🔔'];
+  document.getElementById('chooseScratch').addEventListener('click', ()=>{
+    goToGame('scratchView');
+    document.getElementById('scratchResult').textContent='';
+    document.getElementById('scratchBetRow').style.display='flex';
+    ['sc1','sc2','sc3'].forEach(id=>document.getElementById(id).textContent='❓');
+  });
+  document.querySelectorAll('#scratchBetRow .betBtn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const raw=btn.getAttribute('data-scbet');
+      const bet= raw==='all'?Math.floor(money):parseInt(raw,10);
+      if(bet<=0||bet>money) return;
+      playScratch(bet);
+    });
+  });
+  function playScratch(bet){
+    document.getElementById('scratchBetRow').style.display='none';
+    let ticks=0;
+    const cells=['sc1','sc2','sc3'].map(id=>document.getElementById(id));
+    const spin=setInterval(()=>{
+      cells.forEach(c=>c.textContent=pick(scratchSymbols));
+      ticks++;
+      if(ticks>10){ clearInterval(spin); resolveScratch(bet,cells); }
+    },80);
+  }
+  function resolveScratch(bet,cells){
+    const roll=Math.random();
+    let s1,s2,s3;
+    if(roll<0.09){ s1=s2=s3=pick(scratchSymbols); }
+    else if(roll<0.32){ s1=s2=pick(scratchSymbols); do{ s3=pick(scratchSymbols); }while(s3===s1); }
+    else {
+      s1=pick(scratchSymbols);
+      do{ s2=pick(scratchSymbols); }while(s2===s1);
+      do{ s3=pick(scratchSymbols); }while(s3===s1||s3===s2);
+    }
+    cells[0].textContent=s1; cells[1].textContent=s2; cells[2].textContent=s3;
+    const resEl=document.getElementById('scratchResult');
+    money -= bet;
+    if(s1===s2 && s2===s3){
+      const payout=Math.round(bet*3);
+      money += payout;
+      resEl.className='resultPhrase good';
+      resEl.textContent="¡Triple! +"+payout+" Bs — "+pick(casinoWinPhrases);
+      spawnBurst('#7CFFB2');
+    } else if(s1===s2 || s2===s3 || s1===s3){
+      const payout=Math.round(bet*1.2);
+      money += payout;
+      resEl.className='resultPhrase good';
+      resEl.textContent="Par. +"+payout+" Bs — pequeño premio, casi no cubre el gasto real.";
+      spawnBurst('#ffd166');
+    } else {
+      resEl.className='resultPhrase bad';
+      resEl.textContent="Sin premio. -"+bet+" Bs — "+pick(casinoLosePhrases);
+      spawnBurst('#ff6b6b');
+    }
+    advanceDay(); updateHUD();
+    document.getElementById('casinoSpeech').textContent = pick(casinoInvitePhrases);
+    setTimeout(()=>{ document.getElementById('scratchBetRow').style.display='flex'; checkEnd(); },700);
+  }
+
+  // ---------- INVERSIÓN ----------
+  function openInvest(){
+    gameState='invest';
+    document.getElementById('investSpeech').textContent = pick(investInvitePhrases);
+    document.getElementById('investResultPhrase').textContent='';
+    document.getElementById('investAmountShown').textContent = Math.round(investBalance);
+    show('investPanel');
+    drawInvestChart();
+  }
+  document.getElementById('investExit').addEventListener('click', ()=>{ gameState='world'; hideAllPanels(); });
+  document.querySelectorAll('#investBetRow .investBtn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const raw=btn.getAttribute('data-invest');
+      const amt= raw==='all'?Math.floor(money):parseInt(raw,10);
+      if(amt<=0){
+        document.getElementById('investResultPhrase').className='resultPhrase bad';
+        document.getElementById('investResultPhrase').textContent='No tienes dinero disponible para invertir.';
+        return;
+      }
+      if(amt>money) return;
+      money -= amt;
+      investBalance += amt;
+      investHistory.push({day, value: investBalance, type:'deposit'});
+      document.getElementById('investAmountShown').textContent = Math.round(investBalance);
+      document.getElementById('investResultPhrase').className='resultPhrase good';
+      document.getElementById('investResultPhrase').textContent = "Invertiste "+amt+" Bs. "+pick(investInvitePhrases);
+      updateHUD(); spawnBurst('#7CFFB2'); drawInvestChart();
+      if(checkEnd()) return;
+    });
+  });
+  document.getElementById('waitBtn').addEventListener('click', ()=>{
+    if(investBalance<=0){
+      document.getElementById('investResultPhrase').className='resultPhrase bad';
+      document.getElementById('investResultPhrase').textContent="Aún no has invertido nada. Elige un monto primero.";
+      return;
+    }
+    advanceDay();
+    const dip = Math.random() < 0.28;
+    const growth = dip ? rnd(-0.06,-0.01) : rnd(0.005,0.025);
+    investBalance = Math.max(0, investBalance*(1+growth));
+    investHistory.push({day, value: investBalance, type: dip?'down':'up'});
+    document.getElementById('investAmountShown').textContent = Math.round(investBalance);
+    const phrase = dip ? pick(investDipPhrases) : pick(investGrowPhrases);
+    document.getElementById('investResultPhrase').className='resultPhrase '+(dip?'bad':'good');
+    document.getElementById('investResultPhrase').textContent = phrase;
+    updateHUD(); spawnBurst(dip?'#ff9f6b':'#7CFFB2'); drawInvestChart();
+    checkEnd();
+  });
+  document.getElementById('withdrawBtn').addEventListener('click', ()=>{
+    if(investBalance<=0) return;
+    money = Math.floor(money + investBalance);
+    document.getElementById('investResultPhrase').className='resultPhrase good';
+    document.getElementById('investResultPhrase').textContent="Retiraste "+Math.round(investBalance)+" Bs de tu inversión.";
+    investBalance=0;
+    investHistory.push({day, value:0, type:'deposit'});
+    document.getElementById('investAmountShown').textContent=0;
+    updateHUD(); drawInvestChart();
+    checkEnd();
+  });
+
+  // ---------- Gráfico de LÍNEAS ----------
+  function drawInvestChart(){
+    const c=document.getElementById('investChartCanvas');
+    const cctx=c.getContext('2d');
+    const w=c.width, h=c.height;
+    cctx.clearRect(0,0,w,h);
+    const hist=investHistory.slice(-18);
+    const maxVal=Math.max(100, ...hist.map(p=>p.value));
+    const padL=36,padB=18,padT=10,padR=12;
+    const plotW=w-padL-padR, plotH=h-padT-padB;
+
+    // ejes
+    cctx.strokeStyle='rgba(255,255,255,0.2)';
+    cctx.lineWidth=1;
+    cctx.beginPath();
+    cctx.moveTo(padL,padT); cctx.lineTo(padL,h-padB); cctx.lineTo(w-padR,h-padB);
+    cctx.stroke();
+    // líneas guía horizontales
+    cctx.strokeStyle='rgba(255,255,255,0.06)';
+    for(let i=1;i<=3;i++){
+      const gy = padT + plotH*i/4;
+      cctx.beginPath(); cctx.moveTo(padL,gy); cctx.lineTo(w-padR,gy); cctx.stroke();
+    }
+    cctx.fillStyle='rgba(255,255,255,0.5)';
+    cctx.font='9px sans-serif';
+    cctx.fillText(Math.round(maxVal)+'',2,padT+8);
+    cctx.fillText('0',2,h-padB);
+
+    if(hist.length<2){
+      cctx.fillStyle='rgba(255,255,255,0.4)';
+      cctx.font='12px sans-serif';
+      cctx.fillText('Invierte para ver tu gráfico crecer',padL+8,h/2);
+      return;
+    }
+
+    const stepX = plotW/(hist.length-1);
+    const pts = hist.map((p,i)=>({
+      x: padL + i*stepX,
+      y: padT + plotH - (p.value/maxVal)*plotH,
+      type: p.type
+    }));
+
+    // área bajo la curva
+    const grad=cctx.createLinearGradient(0,padT,0,h-padB);
+    grad.addColorStop(0,'rgba(124,255,178,0.45)');
+    grad.addColorStop(1,'rgba(124,255,178,0.02)');
+    cctx.fillStyle=grad;
+    cctx.beginPath();
+    cctx.moveTo(pts[0].x,h-padB);
+    pts.forEach(p=>cctx.lineTo(p.x,p.y));
+    cctx.lineTo(pts[pts.length-1].x,h-padB);
+    cctx.closePath();
+    cctx.fill();
+
+    // línea segmentada por color según tipo de punto destino
+    const typeColor = {deposit:'#6ec6ff', up:'#16c76b', down:'#e63946'};
+    for(let i=1;i<pts.length;i++){
+      cctx.strokeStyle = typeColor[pts[i].type] || '#7CFFB2';
+      cctx.lineWidth = 2.6;
+      cctx.lineCap='round';
+      cctx.beginPath();
+      cctx.moveTo(pts[i-1].x, pts[i-1].y);
+      cctx.lineTo(pts[i].x, pts[i].y);
+      cctx.stroke();
+    }
+
+    // puntos
+    pts.forEach(p=>{
+      cctx.fillStyle = typeColor[p.type] || '#7CFFB2';
+      cctx.beginPath(); cctx.arc(p.x,p.y,3.2,0,Math.PI*2); cctx.fill();
+      cctx.strokeStyle='rgba(255,255,255,0.5)';
+      cctx.lineWidth=1;
+      cctx.stroke();
+    });
+
+    // valor actual
+    const last = pts[pts.length-1];
+    cctx.fillStyle='#fff';
+    cctx.font='bold 11px sans-serif';
+    cctx.textAlign='center';
+    cctx.fillText(Math.round(hist[hist.length-1].value)+' Bs', last.x, Math.max(14,last.y-10));
+    cctx.textAlign='left';
+  }
+
+  // ---------- ZAPATERÍA ----------
+  function shoePromo(){
+    const active = (day % 4 === 0);
+    return {active, discount:0.25};
+  }
+  function openShoe(){
+    gameState='shoe';
+    document.getElementById('shoeSpeech').textContent = pick(shoeInvitePhrases);
+    document.getElementById('shoeResult').textContent='';
+    const promo = shoePromo();
+    const banner = document.getElementById('shoePromoBanner');
+    document.querySelectorAll('#shoePanel [data-baseshoe]').forEach(btn=>{
+      const base = parseInt(btn.getAttribute('data-baseshoe'),10);
+      const final = promo.active ? Math.round(base*(1-promo.discount)) : base;
+      btn.setAttribute('data-finalshoe', final);
+      const priceEl = document.getElementById('shoePrice'+btn.getAttribute('data-tier'));
+      priceEl.innerHTML = promo.active
+        ? '<span style="text-decoration:line-through;opacity:0.6;">'+base+'</span> <b style="color:#7CFFB2;">'+final+' Bs</b>'
+        : base+' Bs';
+    });
+    if(promo.active){
+      banner.style.display='block';
+      banner.textContent = '🏷️ ¡Promoción de hoy! 25% de descuento en toda la tienda';
+    } else {
+      banner.style.display='none';
+    }
+    show('shoePanel');
+  }
+  document.getElementById('shoeExit').addEventListener('click', ()=>{ gameState='world'; hideAllPanels(); });
+  document.querySelectorAll('[data-baseshoe]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const cost=parseInt(btn.getAttribute('data-finalshoe') || btn.getAttribute('data-baseshoe'),10);
+      const tier=parseInt(btn.getAttribute('data-tier'),10);
+      if(cost>money){
+        document.getElementById('shoeResult').className='resultPhrase bad';
+        document.getElementById('shoeResult').textContent='No tienes suficiente dinero para esto.';
+        return;
+      }
+      money -= cost; totalSpent += cost;
+      player.shoeTier = tier;
+      player.shoeCondition = 100;
+      document.getElementById('shoeResult').className='resultPhrase bad';
+      document.getElementById('shoeResult').textContent="-"+cost+" Bs — "+pick(shoeBadPhrases)+" 👟 ¡Ya te los pusiste!";
+      spawnBurst('#6ec6ff');
+      updateHUD();
+      if(checkEnd()) return;
+    });
+  });
+
+  // ---------- ROPA ----------
+  function clothesPromo(){
+    const active = (day % 5 === 0);
+    return {active, discount:0.3};
+  }
+  function openClothes(){
+    gameState='clothes';
+    document.getElementById('clothesSpeech').textContent = pick(clothesInvitePhrases);
+    document.getElementById('clothesResult').textContent='';
+    const promo = clothesPromo();
+    const banner = document.getElementById('clothesPromoBanner');
+    document.querySelectorAll('#clothesPanel [data-baseclothes]').forEach(btn=>{
+      const base = parseInt(btn.getAttribute('data-baseclothes'),10);
+      const final = promo.active ? Math.round(base*(1-promo.discount)) : base;
+      btn.setAttribute('data-finalclothes', final);
+      const priceEl = document.getElementById('clothesPrice'+btn.getAttribute('data-tier'));
+      priceEl.innerHTML = promo.active
+        ? '<span style="text-decoration:line-through;opacity:0.6;">'+base+'</span> <b style="color:#7CFFB2;">'+final+' Bs</b>'
+        : base+' Bs';
+    });
+    if(promo.active){
+      banner.style.display='block';
+      banner.textContent = '🏷️ ¡Promoción de hoy! 30% de descuento en toda la tienda';
+    } else {
+      banner.style.display='none';
+    }
+    show('clothesPanel');
+  }
+  document.getElementById('clothesExit').addEventListener('click', ()=>{ gameState='world'; hideAllPanels(); });
+  document.querySelectorAll('[data-baseclothes]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const cost=parseInt(btn.getAttribute('data-finalclothes') || btn.getAttribute('data-baseclothes'),10);
+      const tier=parseInt(btn.getAttribute('data-tier'),10);
+      if(cost>money){
+        document.getElementById('clothesResult').className='resultPhrase bad';
+        document.getElementById('clothesResult').textContent='No tienes suficiente dinero para esto.';
+        return;
+      }
+      money -= cost; totalSpent += cost;
+      player.outfitTier = tier;
+      player.outfitCondition = 100;
+      document.getElementById('clothesResult').className='resultPhrase bad';
+      document.getElementById('clothesResult').textContent="-"+cost+" Bs — "+pick(clothesBadPhrases)+" 👕 ¡Nuevo look puesto!";
+      spawnBurst('#d19bff');
+      updateHUD();
+      if(checkEnd()) return;
+    });
+  });
+
+  // ---------- COMEDOR ----------
+  function openFood(){
+    gameState='food';
+    document.getElementById('foodSpeech').textContent = pick(foodInvitePhrases);
+    document.getElementById('foodResult').textContent='';
+    show('foodPanel');
+  }
+  document.getElementById('foodExit').addEventListener('click', ()=>{ gameState='world'; hideAllPanels(); });
+  document.querySelectorAll('[data-food]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const cost=parseInt(btn.getAttribute('data-food'),10);
+      if(cost>money){
+        document.getElementById('foodResult').className='resultPhrase bad';
+        document.getElementById('foodResult').textContent='No tienes suficiente dinero para esto.';
+        return;
+      }
+      money -= cost; totalSpent += cost;
+      player.weight = Math.min(4, player.weight+1);
+      player.hunger = Math.min(100, player.hunger + Math.round(20 + cost*0.2));
+      updateHungerBar();
+      document.getElementById('foodResult').className='resultPhrase bad';
+      document.getElementById('foodResult').textContent="-"+cost+" Bs — "+pick(foodBadPhrases)+" 🍔 ¡Tu conejo comió y engordó un poco!";
+      spawnBurst('#ffb37c');
+      updateHUD();
+      if(checkEnd()) return;
+    });
+  });
+
+  // ---------- Reinicio ----------
+  function resetGame(){
+    money=2000; investBalance=0; totalSpent=0; day=1;
+    investHistory=[{day:1,value:0,type:'deposit'}];
+    player.x=W/2; player.y=H-90;
+    player.weight=0; player.shoeTier=0; player.outfitTier=0;
+    player.hunger=100; player.shoeCondition=0; player.outfitCondition=0;
+    msgCooldown=60; activeMsg=null;
+    hideAllPanels(); updateHUD();
+  }
+  document.getElementById('startBtn').addEventListener('click', ()=>{ resetGame(); gameState='world'; hideAllPanels(); });
+  document.getElementById('retryLose').addEventListener('click', ()=>{ resetGame(); gameState='world'; hideAllPanels(); });
+  document.getElementById('retryWin').addEventListener('click', ()=>{ resetGame(); gameState='world'; hideAllPanels(); });
+
+  // ---------- Partículas ----------
+  function spawnBurst(color){
+    for(let i=0;i<16;i++){
+      particles.push({x:W/2,y:H/2,vx:(Math.random()-0.5)*7,vy:(Math.random()-1)*7,life:30+Math.random()*15,color});
+    }
+  }
+
+  // ---------- Update mundo ----------
+  function update(){
+    if(gameState!=='world') return;
+    let dx=0,dy=0;
+    if(keys['arrowleft']||keys['a']) dx-=1;
+    if(keys['arrowright']||keys['d']) dx+=1;
+    if(keys['arrowup']||keys['w']) dy-=1;
+    if(keys['arrowdown']||keys['s']) dy+=1;
+
+    player.moving=(dx!==0||dy!==0);
+    if(dx!==0&&dy!==0){ dx*=0.7071; dy*=0.7071; }
+    if(dx<0) player.facing='left';
+    else if(dx>0) player.facing='right';
+    else if(dy<0) player.facing='up';
+    else if(dy>0) player.facing='down';
+
+    const speed = player.speed - player.weight*0.25;
+    player.x += dx*speed;
+    player.y += dy*speed;
+    player.x = Math.max(bounds.minX, Math.min(bounds.maxX, player.x));
+    player.y = Math.max(bounds.minY, Math.min(bounds.maxY, player.y));
+    if(player.moving) player.animPhase += 0.22;
+
+    const pRect={x:player.x-player.w/2,y:player.y-player.h/2,w:player.w,h:player.h};
+    nearBuilding=null;
+    let nearDoor=null;
+    for(const key in buildings){
+      const d=doorOf(buildings[key]);
+      if(overlapNear(pRect,d,46)){ nearBuilding=key; nearDoor=d; break; }
+    }
+    const tag=document.getElementById('promptTag');
+    if(nearBuilding){
+      tag.style.display='block';
+      tag.style.left=(nearDoor.x+nearDoor.w/2)+'px';
+      tag.style.top=(nearDoor.y)+'px';
+      const labels={casino:'🎰 Entrar al casino',invest:'🏦 Entrar a invertir',shoe:'👟 Entrar a la zapatería',food:'🍔 Entrar al comedor',clothes:'👕 Entrar a la tienda'};
+      tag.textContent = labels[nearBuilding]+' (E)';
+    } else { tag.style.display='none'; }
+
+    particles.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.15; p.life--; });
+    particles = particles.filter(p=>p.life>0);
+
+    updateMessages();
+  }
+  function updateMessages(){
+    if(activeMsg){
+      activeMsg.timer--;
+      if(activeMsg.timer<=0) activeMsg=null;
+      return;
+    }
+    if(msgCooldown>0){ msgCooldown--; return; }
+    const options=[];
+    if(player.hunger<=35) options.push('😩 ¡Tengo hambre!');
+    if(player.shoeTier===0 || player.shoeCondition<=25) options.push('👟 Mi zapato está roto...');
+    if(player.outfitTier===0 || player.outfitCondition<=25) options.push('👕 Tengo ropa vieja...');
+    if(options.length>0){
+      activeMsg = {text: pick(options), timer: 200};
+      msgCooldown = 420;
+    } else {
+      msgCooldown = 200;
+    }
+  }
+  function overlapNear(a,b,margin){
+    return a.x<b.x+b.w+margin && a.x+a.w>b.x-margin && a.y<b.y+b.h+margin && a.y+a.h>b.y-margin;
+  }
+
+  // ---------- Dibujo del entorno ----------
+  function drawBackground(){
+    const grad=ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,'#161225');
+    grad.addColorStop(0.35,'#241b3d');
+    grad.addColorStop(0.7,'#312750');
+    grad.addColorStop(1,'#3d3560');
+    ctx.fillStyle=grad;
+    ctx.fillRect(0,0,W,H);
+
+    ctx.save();
+    ctx.shadowColor='rgba(255,244,214,0.6)';
+    ctx.shadowBlur=25;
+    ctx.fillStyle='#fff4d6';
+    ctx.beginPath(); ctx.arc(W-90,70,32,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    for(let i=0;i<60;i++){
+      const sx=(i*37)%W, sy=(i*23)%110;
+      const tw = 0.4+0.5*Math.abs(Math.sin(Date.now()/500+i));
+      ctx.fillStyle=`rgba(255,255,255,${tw*0.6})`;
+      ctx.fillRect(sx,sy,2,2);
+    }
+
+    ctx.fillStyle='rgba(80,190,120,0.10)';
+    ctx.beginPath();
+    ctx.ellipse(W/2,H/2+40,260,150,0,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle='rgba(110,198,255,0.35)';
+    ctx.beginPath(); ctx.ellipse(W/2,H/2+40,50,24,0,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.45)';
+    ctx.lineWidth=3;
+    ctx.beginPath(); ctx.ellipse(W/2,H/2+40,50,24,0,0,Math.PI*2); ctx.stroke();
+    ctx.font='22px sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText('💧',W/2,H/2+18);
+    ctx.textAlign='left';
+
+    ctx.fillStyle='rgba(255,255,255,0.06)';
+    ctx.fillRect(W/2-42,130,84,H-170);
+    ctx.fillRect(30,H/2+10,W-60,60);
+    ctx.strokeStyle='rgba(255,255,255,0.18)';
+    ctx.setLineDash([14,10]);
+    ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.moveTo(W/2,130); ctx.lineTo(W/2,H-40);
+    ctx.moveTo(30,H/2+40); ctx.lineTo(W-30,H/2+40);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    drawStreetLamp(90, H/2+40);
+    drawStreetLamp(W-90, H/2+40);
+    drawStreetLamp(W/2-140, H-60);
+    drawStreetLamp(W/2+140, H-60);
+
+    drawTree(15, 250);
+    drawTree(W-25, 250);
+    drawTree(15, H-120);
+    drawTree(W-25, H-120);
+  }
+
+  function drawStreetLamp(x,y){
+    ctx.strokeStyle='#2b2440';
+    ctx.lineWidth=4;
+    ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x,y-46); ctx.stroke();
+    const glow = 0.6+0.4*Math.sin(Date.now()/400+x);
+    ctx.save();
+    ctx.shadowColor=`rgba(255,230,150,${glow})`;
+    ctx.shadowBlur=18;
+    ctx.fillStyle='#ffe696';
+    ctx.beginPath(); ctx.arc(x,y-50,6,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+  function drawTree(x,y){
+    ctx.fillStyle='#5b3a20';
+    ctx.fillRect(x-3,y,6,20);
+    ctx.fillStyle='#2f9e5b';
+    ctx.beginPath(); ctx.arc(x,y-6,14,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#3ab873';
+    ctx.beginPath(); ctx.arc(x-5,y-2,9,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x+6,y-2,9,0,Math.PI*2); ctx.fill();
+  }
+
+  function drawBuilding(b){
+    const doorW=90, doorH=46;
+    const dx=b.x+b.w/2-doorW/2, dy=b.y+b.h-doorH;
+    const themeColors={
+      casino:{g1:'#3a1030',g2:'#1c0818',neon:'#ff6ec7',label:'🎰 CASINO',win:'rgba(255,215,0,0.5)'},
+      invest:{g1:'#12362c',g2:'#0a2019',neon:'#7CFFB2',label:'🏦 INVERSIÓN',win:'rgba(124,255,178,0.35)'},
+      shoe:{g1:'#0e2a45',g2:'#081826',neon:'#6ec6ff',label:'👟 ZAPATERÍA',win:'rgba(110,198,255,0.35)'},
+      food:{g1:'#3a230d',g2:'#231407',neon:'#ffb37c',label:'🍔 COMEDOR',win:'rgba(255,179,124,0.35)'},
+      clothes:{g1:'#301045',g2:'#1c0a2b',neon:'#d19bff',label:'👕 ROPA',win:'rgba(209,155,255,0.35)'}
+    };
+    const th=themeColors[b.type];
+
+    ctx.fillStyle='rgba(0,0,0,0.25)';
+    roundRect(b.x+6,b.y+8,b.w,b.h,14); ctx.fill();
+
+    const g=ctx.createLinearGradient(b.x,b.y,b.x,b.y+b.h);
+    g.addColorStop(0,th.g1); g.addColorStop(1,th.g2);
+    ctx.fillStyle=g;
+    roundRect(b.x,b.y,b.w,b.h,14); ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.14)';
+    ctx.lineWidth=2;
+    roundRect(b.x,b.y,b.w,b.h,14); ctx.stroke();
+
+    ctx.fillStyle='rgba(255,255,255,0.06)';
+    ctx.fillRect(b.x+10,b.y+6,b.w-20,6);
+
+    const glow=0.55+0.45*Math.sin(Date.now()/240+b.x);
+    ctx.save();
+    ctx.shadowColor=th.neon;
+    ctx.shadowBlur=20*glow+6;
+    ctx.fillStyle=th.neon;
+    ctx.font='bold 22px sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText(th.label,b.x+b.w/2,b.y-14);
+    ctx.restore();
+    ctx.textAlign='left';
+
+    const winFlicker = 0.75+0.25*Math.sin(Date.now()/500+b.x*1.3);
+    ctx.save();
+    ctx.globalAlpha = winFlicker;
+    ctx.fillStyle=th.win;
+    ctx.shadowColor = th.neon;
+    ctx.shadowBlur = 8;
+    for(let i=0;i<3;i++){
+      roundRect(b.x+22+i*(b.w-44)/2.4, b.y+22, 30, 36, 4);
+      ctx.fill();
+    }
+    ctx.restore();
+
+    ctx.save();
+    ctx.shadowColor=th.neon;
+    ctx.shadowBlur=16;
+    ctx.fillStyle='rgba(0,0,0,0.55)';
+    roundRect(dx-10,dy-16,doorW+20,doorH+16,18); ctx.fill();
+    ctx.strokeStyle=th.neon;
+    ctx.lineWidth=3;
+    roundRect(dx-10,dy-16,doorW+20,doorH+16,18); ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle='#160b1e';
+    roundRect(dx,dy,doorW,doorH,10); ctx.fill();
+
+    ctx.fillStyle=th.neon;
+    ctx.font='bold 11px sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText('ENTRAR',dx+doorW/2,dy+doorH+12);
+    ctx.textAlign='left';
+
+    // etiqueta de promoción del día
+    if((b.type==='shoe' && shoePromo().active) || (b.type==='clothes' && clothesPromo().active)){
+      const bob = Math.sin(Date.now()/260)*3;
+      ctx.save();
+      ctx.translate(b.x+b.w-8, b.y+6+bob);
+      ctx.rotate(-0.12);
+      ctx.fillStyle='#ff3d6b';
+      roundRect(-38,0,76,20,10); ctx.fill();
+      ctx.strokeStyle='#fff'; ctx.lineWidth=1.5;
+      roundRect(-38,0,76,20,10); ctx.stroke();
+      ctx.fillStyle='#fff';
+      ctx.font='bold 11px sans-serif';
+      ctx.textAlign='center';
+      ctx.fillText('🏷️ PROMO',0,14);
+      ctx.textAlign='left';
+      ctx.restore();
+    }
+  }
+
+  function drawNPC(b,emoji){
+    const dx=b.x+b.w/2, dy=b.y+b.h-4;
+    ctx.font='28px sans-serif';
+    ctx.textAlign='center';
+    const bob=Math.sin(Date.now()/300+b.x)*3;
+    ctx.fillText(emoji, dx-46, dy+bob);
+    ctx.textAlign='left';
+  }
+
+  // ---------- Ropa / zapatos con forma distinta por nivel ----------
+  function drawShoe(offsetX, tier, legSwingSign){
+    const swing = legSwingSign;
+    ctx.save();
+    ctx.translate(offsetX, 21);
+    if(tier===0){
+      // pata descalza (sin zapato)
+      ctx.fillStyle='#f4ede2';
+      roundRect(-8+swing*0.4, 0, 16, 9, 4); ctx.fill();
+      ctx.fillStyle='rgba(0,0,0,0.15)';
+      ctx.beginPath(); ctx.arc(-3,4,1.2,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(1,4,1.2,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(5,4,1.2,0,Math.PI*2); ctx.fill();
+    } else if(tier===1){
+      // tenis básicos blancos
+      ctx.fillStyle='#ffffff';
+      roundRect(-8+swing*0.4,-2,18,11,5); ctx.fill();
+      ctx.fillStyle='#dcdcdc';
+      ctx.fillRect(-8+swing*0.4,7,18,3);
+      ctx.strokeStyle='#999'; ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.moveTo(-4+swing*0.4,0); ctx.lineTo(0+swing*0.4,3);
+      ctx.moveTo(-2+swing*0.4,-1); ctx.lineTo(2+swing*0.4,2);
+      ctx.stroke();
+    } else if(tier===2){
+      // tenis de moda, botín alto y colorido
+      ctx.fillStyle='#3a6ea5';
+      roundRect(-9+swing*0.4,-6,19,15,6); ctx.fill();
+      ctx.fillStyle='#ff6ec7';
+      ctx.fillRect(-9+swing*0.4,5,19,4);
+      ctx.strokeStyle='#fff'; ctx.lineWidth=1.4;
+      ctx.beginPath();
+      ctx.moveTo(-5+swing*0.4,-3); ctx.lineTo(1+swing*0.4,1);
+      ctx.moveTo(-3+swing*0.4,-5); ctx.lineTo(3+swing*0.4,-1);
+      ctx.stroke();
+    } else {
+      // edición limitada dorada
+      ctx.save();
+      ctx.shadowColor='#ffd166';
+      ctx.shadowBlur=8;
+      ctx.fillStyle='#ffd166';
+      roundRect(-9+swing*0.4,-4,19,14,6); ctx.fill();
+      ctx.restore();
+      ctx.fillStyle='#fff8dc';
+      ctx.fillRect(-9+swing*0.4,6,19,4);
+      ctx.fillStyle='#fff';
+      ctx.font='8px sans-serif';
+      ctx.fillText('✨',-2+swing*0.4,-4);
+    }
+    ctx.restore();
+  }
+
+  function drawOutfit(tier){
+    const outfitBase=['#3a6ea5','#e05c5c','#3ab873','#8a4fd1'];
+    if(tier===0){
+      // chaleco simple original
+      ctx.fillStyle=outfitBase[0];
+      roundRect(-13,-4,26,16,6); ctx.fill();
+    } else if(tier===1){
+      // camiseta cuello redondo, mangas cortas
+      ctx.fillStyle=outfitBase[1];
+      roundRect(-14,-6,28,20,8); ctx.fill();
+      ctx.fillStyle='#fff2';
+      ctx.beginPath(); ctx.arc(0,-6,4,0,Math.PI,true); ctx.fill();
+      ctx.fillStyle=outfitBase[1];
+      roundRect(-19,-4,7,9,3); ctx.fill();
+      roundRect(12,-4,7,9,3); ctx.fill();
+    } else if(tier===2){
+      // chaqueta con solapas y cierre
+      ctx.fillStyle=outfitBase[2];
+      roundRect(-15,-8,30,24,8); ctx.fill();
+      ctx.fillStyle='rgba(0,0,0,0.18)';
+      ctx.beginPath(); ctx.moveTo(-4,-8); ctx.lineTo(0,0); ctx.lineTo(-9,4); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(4,-8); ctx.lineTo(0,0); ctx.lineTo(9,4); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,0.5)';
+      ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(0,-6); ctx.lineTo(0,14); ctx.stroke();
+      ctx.fillStyle=outfitBase[2];
+      roundRect(-21,-5,8,11,3); ctx.fill();
+      roundRect(13,-5,8,11,3); ctx.fill();
+    } else {
+      // look completo con chaqueta morada + detalle dorado
+      ctx.fillStyle=outfitBase[3];
+      roundRect(-15,-8,30,24,8); ctx.fill();
+      ctx.fillStyle='#ffd166';
+      ctx.fillRect(-2,-8,4,24);
+      ctx.strokeStyle='rgba(255,255,255,0.5)';
+      ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(-6,-8); ctx.lineTo(-2,0); ctx.moveTo(6,-8); ctx.lineTo(2,0); ctx.stroke();
+      ctx.fillStyle=outfitBase[3];
+      roundRect(-21,-5,8,11,3); ctx.fill();
+      roundRect(13,-5,8,11,3); ctx.fill();
+    }
+    ctx.fillStyle='#fff';
+    ctx.font='bold 10px sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText('$',0,8);
+    ctx.textAlign='left';
+  }
+
+  // ---------- Personaje: conejo mascota original ----------
+  function drawPlayer(){
+    const {x,y}=player;
+    ctx.save();
+    ctx.translate(x,y);
+
+    const breathe = player.moving ? 0 : Math.sin(Date.now()/450)*0.018;
+    const wScale = 1 + player.weight*0.11 + breathe*0.3;
+    const hScale = 1 + player.weight*0.04 + breathe;
+
+    ctx.save();
+    ctx.translate(0, player.h/2+6);
+    ctx.scale(wScale, 0.32);
+    ctx.fillStyle='rgba(0,0,0,0.32)';
+    ctx.beginPath(); ctx.arc(0,0,16,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    const legSwing = player.moving ? Math.sin(player.animPhase)*7 : 0;
+    const earFlop = player.moving ? Math.sin(player.animPhase*0.8)*5 : Math.sin(Date.now()/700)*2;
+
+    // zapatos
+    drawShoe(-15*wScale, player.shoeTier, legSwing);
+    drawShoe(-1*wScale, player.shoeTier, -legSwing);
+
+    // piernas
+    ctx.strokeStyle='#d8cdbb';
+    ctx.lineWidth=6*wScale*0.5+3;
+    ctx.beginPath();
+    ctx.moveTo(-6*wScale,10*hScale); ctx.lineTo(-6*wScale+legSwing*0.5,20*hScale);
+    ctx.moveTo(6*wScale,10*hScale); ctx.lineTo(6*wScale-legSwing*0.5,20*hScale);
+    ctx.stroke();
+
+    // cuerpo
+    ctx.save();
+    ctx.scale(wScale,hScale);
+    const bodyGrad=ctx.createLinearGradient(0,-14,0,16);
+    bodyGrad.addColorStop(0,'#fffaf1');
+    bodyGrad.addColorStop(1,'#efe3cf');
+    ctx.fillStyle=bodyGrad;
+    roundRect(-15,-14,30,32,14); ctx.fill();
+    ctx.fillStyle='#fffdf8';
+    ctx.beginPath(); ctx.ellipse(0,4,8,11,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    // ropa equipada
+    ctx.save();
+    ctx.scale(wScale,1);
+    drawOutfit(player.outfitTier);
+    ctx.restore();
+
+    // brazos
+    ctx.strokeStyle='#efe3cf';
+    ctx.lineWidth=6;
+    ctx.lineCap='round';
+    ctx.beginPath();
+    ctx.moveTo(-14*wScale,0); ctx.lineTo(-19*wScale,10);
+    ctx.moveTo(14*wScale,0); ctx.lineTo(19*wScale,10);
+    ctx.stroke();
+    ctx.lineCap='butt';
+
+    // orejas
+    ctx.save();
+    ctx.translate(-6,-16);
+    ctx.rotate((-8+earFlop*0.4)*Math.PI/180);
+    ctx.fillStyle='#fffaf1';
+    roundRect(-6,-40,12,40,7); ctx.fill();
+    ctx.fillStyle='#ffc1d9';
+    roundRect(-3,-35,6,30,4); ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(6,-16);
+    ctx.rotate((8-earFlop*0.4)*Math.PI/180);
+    ctx.fillStyle='#fffaf1';
+    roundRect(-6,-40,12,40,7); ctx.fill();
+    ctx.fillStyle='#ffc1d9';
+    roundRect(-3,-35,6,30,4); ctx.fill();
+    ctx.restore();
+
+    // cabeza
+    ctx.save();
+    ctx.scale(1+player.weight*0.05, 1+player.weight*0.03);
+    ctx.fillStyle=bodyGrad;
+    ctx.beginPath(); ctx.arc(0,-16,13,0,Math.PI*2); ctx.fill();
+
+    if(player.outfitTier===3){
+      ctx.fillStyle='#2b1740';
+      ctx.beginPath(); ctx.ellipse(0,-27,12,3.5,0,0,Math.PI*2); ctx.fill();
+      roundRect(-8,-38,16,12,3); ctx.fill();
+      ctx.fillStyle='#d19bff';
+      ctx.fillRect(-8,-30,16,3);
+    }
+
+    ctx.fillStyle='rgba(255,190,200,0.55)';
+    const cheekR = 3.2+player.weight*0.6;
+    ctx.beginPath(); ctx.arc(-8,-12,cheekR,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(8,-12,cheekR,0,Math.PI*2); ctx.fill();
+
+    ctx.fillStyle='#2b2b2b';
+    let eyeOffX=0;
+    if(player.facing==='left') eyeOffX=-3;
+    else if(player.facing==='right') eyeOffX=3;
+    if(player.facing!=='up'){
+      ctx.beginPath(); ctx.arc(-4+eyeOffX,-17,2.2,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(4+eyeOffX,-17,2.2,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#fff';
+      ctx.beginPath(); ctx.arc(-3.3+eyeOffX,-17.7,0.7,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(4.7+eyeOffX,-17.7,0.7,0,Math.PI*2); ctx.fill();
+    }
+
+    ctx.fillStyle='#e88ba0';
+    ctx.beginPath(); ctx.ellipse(0,-12,1.8,1.3,0,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.25)';
+    ctx.lineWidth=0.8;
+    ctx.beginPath();
+    ctx.moveTo(-9,-11); ctx.lineTo(-2,-10.5);
+    ctx.moveTo(-9,-9); ctx.lineTo(-2,-9.5);
+    ctx.moveTo(9,-11); ctx.lineTo(2,-10.5);
+    ctx.moveTo(9,-9); ctx.lineTo(2,-9.5);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.restore();
+  }
+
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  function drawParticles(){
+    particles.forEach(p=>{
+      ctx.globalAlpha=Math.max(0,p.life/40);
+      ctx.fillStyle=p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,3,0,Math.PI*2); ctx.fill();
+    });
+    ctx.globalAlpha=1;
+  }
+
+  // ---------- Conejo muerto (pantalla de derrota) ----------
+  function drawDeadRabbit(){
+    const c = document.getElementById('deathCanvas');
+    const dctx = c.getContext('2d');
+    const w=c.width, h=c.height;
+    dctx.clearRect(0,0,w,h);
+    dctx.save();
+    dctx.translate(w/2, h/2+10);
+    dctx.rotate(Math.PI/2*0.95); // tumbado de lado
+
+    // sombra
+    dctx.fillStyle='rgba(0,0,0,0.3)';
+    dctx.beginPath(); dctx.ellipse(0,34,40,10,0,0,Math.PI*2); dctx.fill();
+
+    // orejas caídas
+    dctx.fillStyle='#e8ded0';
+    roundRectG(dctx,-34,-8,12,32,6); dctx.fill();
+    roundRectG(dctx,-22,-8,12,32,6); dctx.fill();
+
+    // cuerpo pálido
+    const bodyGrad = dctx.createLinearGradient(0,-16,0,20);
+    bodyGrad.addColorStop(0,'#e8ded0');
+    bodyGrad.addColorStop(1,'#cfc3ae');
+    dctx.fillStyle = bodyGrad;
+    roundRectG(dctx,-15,-16,40,32,14); dctx.fill();
+
+    // cabeza
+    dctx.beginPath(); dctx.arc(28,0,15,0,Math.PI*2); dctx.fill();
+
+    // ojos en X
+    dctx.strokeStyle='#333';
+    dctx.lineWidth=2;
+    dctx.beginPath();
+    dctx.moveTo(22,-5); dctx.lineTo(26,-1);
+    dctx.moveTo(26,-5); dctx.lineTo(22,-1);
+    dctx.moveTo(32,-5); dctx.lineTo(36,-1);
+    dctx.moveTo(36,-5); dctx.lineTo(32,-1);
+    dctx.stroke();
+
+    // lengua afuera
+    dctx.fillStyle='#e88ba0';
+    dctx.beginPath();
+    dctx.ellipse(29,6,3,6,0.3,0,Math.PI*2);
+    dctx.fill();
+
+    dctx.restore();
+
+    // estrellitas mareadas alrededor de la cabeza
+    dctx.fillStyle='rgba(255,255,255,0.8)';
+    dctx.font='14px sans-serif';
+    dctx.fillText('✨', w/2+18, h/2-38);
+    dctx.fillText('💫', w/2+42, h/2-24);
+    dctx.fillText('✨', w/2+30, h/2-10);
+  }
+  function roundRectG(g,x,y,w,h,r){
+    g.beginPath();
+    g.moveTo(x+r,y);
+    g.arcTo(x+w,y,x+w,y+h,r);
+    g.arcTo(x+w,y+h,x,y+h,r);
+    g.arcTo(x,y+h,x,y,r);
+    g.arcTo(x,y,x+w,y,r);
+    g.closePath();
+  }
+
+  function render(){
+    drawBackground();
+    Object.values(buildings).forEach(b=>drawBuilding(b));
+    drawNPC(buildings.casino,'🤵‍♂️');
+    drawNPC(buildings.invest,'👩‍💼');
+    drawNPC(buildings.shoe,'🧑‍🦱');
+    drawNPC(buildings.food,'👨‍🍳');
+    drawNPC(buildings.clothes,'👗');
+    if(gameState==='world') drawPlayer();
+    drawParticles();
+    if(gameState==='world' && activeMsg) drawPlayerMessage();
+  }
+  function drawPlayerMessage(){
+    const text = activeMsg.text;
+    ctx.font='bold 13px sans-serif';
+    const tw = ctx.measureText(text).width;
+    const bx = player.x, by = player.y - player.h - 22;
+    const padX=10, padY=7;
+    const boxW = tw+padX*2, boxH = 20+padY;
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, activeMsg.timer/30);
+    ctx.fillStyle='#fff';
+    roundRect(bx-boxW/2, by-boxH, boxW, boxH, 10);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(bx-6, by);
+    ctx.lineTo(bx+6, by);
+    ctx.lineTo(bx, by+8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle='#222';
+    ctx.textAlign='center';
+    ctx.fillText(text, bx, by-boxH/2+5);
+    ctx.textAlign='left';
+    ctx.restore();
+  }
+
+  function loop(){
+    update();
+    render();
+    requestAnimationFrame(loop);
+  }
+
+  updateHUD();
+  loop();
+})();
+</script>
+</body>
+</html>

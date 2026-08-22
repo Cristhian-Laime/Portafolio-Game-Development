@@ -1,0 +1,1802 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VillaSanta — Aprende a cuidar el agua de La Paz</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --bg-deep:#0b1e2d;
+    --bg-glacier:#123449;
+    --ice:#eef8f8;
+    --ice-dim:#cfe6e6;
+    --teal:#2fb8ae;
+    --teal-dark:#1c8c85;
+    --gold:#f2a93b;
+    --clay:#e2574c;
+    --ink:#0e2230;
+    --ink-soft:#4b6572;
+    --radius:18px;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    height:100%;
+}
+
+body{
+    font-family:'Manrope',sans-serif;
+    background:
+        radial-gradient(120% 90% at 50% -10%,#1c4560 0%,var(--bg-glacier) 45%,var(--bg-deep) 100%);
+    color:var(--ice);
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+h1,h2,h3,.display{
+    font-family:'Baloo 2',sans-serif;
+}
+
+button{
+    font-family:inherit;
+    cursor:pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible{
+    outline:3px solid var(--gold);
+    outline-offset:2px;
+}
+
+@media (prefers-reduced-motion: reduce){
+    *{
+        animation-duration:.001s !important;
+        transition-duration:.001s !important;
+    }
+}
+
+/* =========================================================
+   PANTALLA DE INICIO
+========================================================= */
+
+#screen-start{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:40px 22px;
+}
+
+.peak{
+    font-size:64px;
+    filter:drop-shadow(0 0 18px rgba(47,184,174,.5));
+    animation:bob 3.5s ease-in-out infinite;
+}
+
+@keyframes bob{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-8px);}
+}
+
+.brand{
+    font-size:clamp(34px,9vw,52px);
+    font-weight:800;
+    letter-spacing:1px;
+    color:var(--ice);
+    margin:14px 0 2px;
+    text-shadow:0 0 24px rgba(47,184,174,.45);
+}
+
+.brand span{
+    color:var(--teal);
+}
+
+.tagline{
+    font-size:clamp(15px,3.4vw,19px);
+    color:var(--ice-dim);
+    max-width:480px;
+    line-height:1.55;
+    margin:10px 0 26px;
+}
+
+.startCard{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:var(--radius);
+    padding:20px 24px;
+    max-width:460px;
+    margin-bottom:28px;
+    text-align:left;
+    line-height:1.7;
+    font-size:14.5px;
+    color:var(--ice-dim);
+}
+
+.startCard b{
+    color:var(--gold);
+}
+
+.primaryBtn{
+    background:var(--teal);
+    color:#08211f;
+    border:none;
+    border-radius:14px;
+    padding:16px 46px;
+    font-size:19px;
+    font-weight:800;
+    font-family:'Baloo 2',sans-serif;
+    letter-spacing:.5px;
+    box-shadow:0 8px 0 var(--teal-dark), 0 14px 26px rgba(0,0,0,.35);
+    transition:transform .12s ease;
+}
+
+.primaryBtn:hover{
+    transform:translateY(-2px);
+}
+
+.primaryBtn:active{
+    transform:translateY(4px);
+    box-shadow:0 3px 0 var(--teal-dark);
+}
+
+.linkBtn{
+    background:none;
+    border:none;
+    color:var(--ice-dim);
+    text-decoration:underline;
+    font-size:13.5px;
+    margin-top:16px;
+}
+
+/* =========================================================
+   HUD SUPERIOR
+========================================================= */
+
+#hud{
+    position:sticky;
+    top:0;
+    z-index:40;
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px 10px;
+    padding:12px 18px;
+    background:rgba(11,30,45,.86);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.hudBrand{
+    font-family:'Baloo 2',sans-serif;
+    font-weight:800;
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+}
+
+.hudStats{
+    display:flex;
+    gap:14px;
+}
+
+.stat{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    font-weight:800;
+    font-size:15px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.12);
+    padding:6px 11px;
+    border-radius:999px;
+}
+
+.stat.gold{color:var(--gold);}
+.stat.clay{color:var(--clay);}
+.stat.teal{color:var(--teal);}
+
+/* =========================================================
+   RUTA / MAPA DE LECCIONES
+========================================================= */
+
+#screen-path{
+    display:none;
+    justify-content:center;
+    padding:30px 12px 80px;
+}
+
+#pathWrap{
+    position:relative;
+    width:300px;
+    max-width:92vw;
+}
+
+#pathSvg{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    overflow:visible;
+}
+
+#pathSvg path{
+    fill:none;
+    stroke:rgba(47,184,174,.4);
+    stroke-width:6;
+    stroke-linecap:round;
+    stroke-dasharray:2 16;
+    animation:flow 1.4s linear infinite;
+}
+
+@keyframes flow{
+    to{stroke-dashoffset:-18;}
+}
+
+.node{
+    position:absolute;
+    transform:translate(-50%,-50%);
+    width:82px;
+    height:82px;
+    border-radius:50%;
+    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    font-size:30px;
+    background:#213e4e;
+    color:var(--ice-dim);
+    box-shadow:0 8px 0 #16303c, 0 12px 22px rgba(0,0,0,.35);
+    transition:transform .15s ease;
+}
+
+.node .lbl{
+    position:absolute;
+    bottom:-24px;
+    width:150px;
+    text-align:center;
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--ice-dim);
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.node.locked{
+    background:#1a2f3a;
+    color:#4e6874;
+    box-shadow:0 8px 0 #10222b, 0 12px 22px rgba(0,0,0,.3);
+}
+
+.node.locked::after{
+    content:"🔒";
+    font-size:18px;
+    position:absolute;
+}
+
+.node.current{
+    background:var(--teal);
+    color:#08211f;
+    box-shadow:0 8px 0 var(--teal-dark), 0 0 0 6px rgba(47,184,174,.22), 0 12px 26px rgba(0,0,0,.4);
+    animation:pulseNode 1.8s ease-in-out infinite;
+}
+
+@keyframes pulseNode{
+    0%,100%{box-shadow:0 8px 0 var(--teal-dark), 0 0 0 6px rgba(47,184,174,.22), 0 12px 26px rgba(0,0,0,.4);}
+    50%{box-shadow:0 8px 0 var(--teal-dark), 0 0 0 12px rgba(47,184,174,.1), 0 12px 26px rgba(0,0,0,.4);}
+}
+
+.node.done{
+    background:var(--gold);
+    color:#3a2100;
+    box-shadow:0 8px 0 #b9791c, 0 12px 22px rgba(0,0,0,.35);
+}
+
+.node.done .star{
+    position:absolute;
+    top:-10px;
+    right:-6px;
+    font-size:20px;
+}
+
+.node:not(.locked):hover{
+    transform:translate(-50%,-50%) translateY(-3px);
+}
+
+.node.final{
+    width:96px;
+    height:96px;
+    font-size:36px;
+}
+
+.peakDecor{
+    text-align:center;
+    font-size:46px;
+    margin-bottom:6px;
+    opacity:.9;
+}
+
+.cityDecor{
+    text-align:center;
+    font-size:34px;
+    margin-top:34px;
+    opacity:.9;
+}
+
+/* =========================================================
+   OVERLAYS (LECCIÓN, RESULTADOS, ETC.)
+========================================================= */
+
+.overlay{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:rgba(6,16,24,.72);
+    backdrop-filter:blur(3px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+}
+
+.sheet{
+    background:var(--ice);
+    color:var(--ink);
+    width:100%;
+    max-width:480px;
+    border-radius:22px;
+    padding:26px 24px 24px;
+    position:relative;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+    max-height:92vh;
+    overflow-y:auto;
+}
+
+.sheetClose{
+    position:absolute;
+    top:14px;
+    right:16px;
+    background:none;
+    border:none;
+    font-size:20px;
+    color:var(--ink-soft);
+}
+
+.quizHead{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:16px;
+}
+
+.progressBar{
+    flex:1;
+    height:10px;
+    background:#dfeeee;
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.progressBar > div{
+    height:100%;
+    background:var(--teal);
+    border-radius:99px;
+    transition:width .25s ease;
+}
+
+.heartsRow{
+    display:flex;
+    gap:3px;
+    font-size:16px;
+}
+
+.qPrompt{
+    font-family:'Baloo 2',sans-serif;
+    font-size:21px;
+    font-weight:700;
+    line-height:1.35;
+    margin:6px 0 18px;
+}
+
+.opt{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:#fff;
+    border:2px solid #d9e7e7;
+    border-radius:14px;
+    padding:14px 16px;
+    font-size:15px;
+    font-weight:700;
+    color:var(--ink);
+    margin-bottom:10px;
+    transition:border-color .12s ease, background .12s ease;
+}
+
+.opt:not(:disabled):hover{
+    border-color:var(--teal);
+    background:#f1fbfa;
+}
+
+.opt.correct{
+    border-color:var(--teal-dark);
+    background:#d5f3ee;
+    color:#0d4a44;
+}
+
+.opt.wrong{
+    border-color:var(--clay);
+    background:#fbe1df;
+    color:#7c231c;
+}
+
+.opt:disabled{
+    cursor:default;
+}
+
+.feedbackBox{
+    margin-top:6px;
+    padding:14px 16px;
+    border-radius:14px;
+    font-size:13.5px;
+    line-height:1.55;
+    display:none;
+}
+
+.feedbackBox.show{
+    display:block;
+}
+
+.feedbackBox.good{
+    background:#d5f3ee;
+    color:#0d4a44;
+}
+
+.feedbackBox.bad{
+    background:#fbe1df;
+    color:#7c231c;
+}
+
+.feedbackBox b{
+    display:block;
+    font-family:'Baloo 2',sans-serif;
+    font-size:14.5px;
+    margin-bottom:3px;
+}
+
+.sheetFooter{
+    margin-top:18px;
+    display:flex;
+    justify-content:flex-end;
+}
+
+.continueBtn{
+    background:var(--teal);
+    color:#08211f;
+    border:none;
+    border-radius:12px;
+    padding:12px 28px;
+    font-weight:800;
+    font-family:'Baloo 2',sans-serif;
+    font-size:15.5px;
+    box-shadow:0 5px 0 var(--teal-dark);
+}
+
+.continueBtn:disabled{
+    background:#cfdede;
+    color:#8aa1a1;
+    box-shadow:0 5px 0 #b9cbcb;
+    cursor:not-allowed;
+}
+
+/* Resultado de unidad */
+
+.resultIcon{
+    text-align:center;
+    font-size:56px;
+    margin-bottom:6px;
+}
+
+.resultTitle{
+    text-align:center;
+    font-family:'Baloo 2',sans-serif;
+    font-size:26px;
+    font-weight:800;
+    color:var(--teal-dark);
+    margin-bottom:4px;
+}
+
+.resultSub{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:14px;
+    margin-bottom:20px;
+}
+
+.resultStats{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    margin-bottom:20px;
+}
+
+.resultStat{
+    background:#f1fbfa;
+    border:1px solid #d5f3ee;
+    border-radius:14px;
+    padding:12px 16px;
+    text-align:center;
+    min-width:88px;
+}
+
+.resultStat .n{
+    font-family:'Baloo 2',sans-serif;
+    font-size:22px;
+    font-weight:800;
+    color:var(--teal-dark);
+}
+
+.resultStat .l{
+    font-size:11px;
+    color:var(--ink-soft);
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+}
+
+.factCard{
+    background:#fff8e8;
+    border:1px solid #f2dfa9;
+    border-radius:14px;
+    padding:14px 16px;
+    font-size:13.5px;
+    line-height:1.55;
+    color:#5c4308;
+    margin-bottom:20px;
+}
+
+.factCard b{
+    display:block;
+    color:#8a6304;
+    font-family:'Baloo 2',sans-serif;
+    margin-bottom:3px;
+}
+
+/* Sin corazones */
+
+.heartsBigRow{
+    text-align:center;
+    font-size:38px;
+    margin-bottom:14px;
+}
+
+/* Pacto final */
+
+.pledgeForm textarea{
+    width:100%;
+    border:2px solid #d9e7e7;
+    border-radius:14px;
+    padding:14px;
+    font-family:inherit;
+    font-size:14.5px;
+    resize:vertical;
+    min-height:90px;
+    color:var(--ink);
+}
+
+.pledgeChips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:12px 0 16px;
+}
+
+.chip{
+    background:#f1fbfa;
+    border:1.5px solid #cdeae6;
+    color:var(--teal-dark);
+    border-radius:999px;
+    padding:8px 13px;
+    font-size:12.5px;
+    font-weight:700;
+}
+
+.chip:hover{
+    background:#d5f3ee;
+}
+
+.pledgeCard{
+    background:linear-gradient(150deg,#123449,#0b1e2d);
+    color:var(--ice);
+    border-radius:18px;
+    padding:22px;
+    text-align:center;
+    border:1px solid rgba(255,255,255,.15);
+}
+
+.pledgeCard .peakSmall{
+    font-size:34px;
+}
+
+.pledgeCard h3{
+    margin:6px 0 2px;
+    font-size:20px;
+}
+
+.pledgeCard p{
+    color:var(--ice-dim);
+    font-size:13.5px;
+    line-height:1.5;
+}
+
+/* Info del proyecto */
+
+.infoBtn{
+    position:fixed;
+    bottom:16px;
+    right:16px;
+    z-index:30;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.2);
+    color:var(--ice-dim);
+    border-radius:999px;
+    padding:9px 15px;
+    font-size:12.5px;
+    font-weight:700;
+    display:none;
+}
+
+.personaGrid{
+    display:grid;
+    gap:10px;
+    margin-top:14px;
+}
+
+.personaRow{
+    background:#f1fbfa;
+    border-radius:12px;
+    padding:10px 13px;
+    font-size:13px;
+    line-height:1.5;
+}
+
+.personaRow b{
+    color:var(--teal-dark);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     PANTALLA DE INICIO
+========================================================= -->
+
+<div id="screen-start">
+
+    <div class="peak">🏔️</div>
+
+    <h1 class="brand">VillaSanta<span>.</span></h1>
+
+    <div class="tagline">
+        Aprende, en pocos minutos al día, a cuidar el agua que baja de los
+        glaciares hasta tu grifo en La Paz.
+    </div>
+
+    <div class="startCard">
+        Diseñado para jóvenes de <b>18 a 25 años</b> de La Paz: lecciones
+        cortas, retos con puntos y datos reales sobre el agua de la ciudad,
+        no afiches genéricos.
+    </div>
+
+    <button class="primaryBtn" onclick="beginApp()">▶ Empezar</button>
+
+    <button class="linkBtn" onclick="openInfo()">🎓 Sobre este prototipo (Player Persona)</button>
+
+</div>
+
+
+<!-- =========================================================
+     HUD
+========================================================= -->
+
+<div id="hud">
+
+    <div class="hudBrand">🏔️ VillaSanta</div>
+
+    <div class="hudStats">
+
+        <div class="stat clay">❤️ <span id="hudHearts">5</span></div>
+
+        <div class="stat teal">💧 <span id="hudXP">0</span></div>
+
+        <div class="stat gold">🔥 <span id="hudStreak">0</span></div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     RUTA DE LECCIONES
+========================================================= -->
+
+<div id="screen-path">
+
+    <div id="pathWrap">
+
+        <div class="peakDecor">🏔️❄️</div>
+
+        <svg id="pathSvg"><path id="pathLine" d=""></path></svg>
+
+        <div id="nodesLayer" style="position:relative;"></div>
+
+        <div class="cityDecor">🏙️💧</div>
+
+    </div>
+
+</div>
+
+
+<button class="infoBtn" onclick="openInfo()">🎓 Sobre el proyecto</button>
+
+
+<!-- =========================================================
+     OVERLAY: LECCIÓN / QUIZ
+========================================================= -->
+
+<div class="overlay" id="overlay-quiz">
+
+    <div class="sheet">
+
+        <button class="sheetClose" onclick="closeAllOverlays()">✕</button>
+
+        <div class="quizHead">
+
+            <div class="progressBar"><div id="quizProgressFill" style="width:0%"></div></div>
+
+            <div class="heartsRow" id="quizHearts">❤️❤️❤️❤️❤️</div>
+
+        </div>
+
+        <div class="qPrompt" id="qPrompt">—</div>
+
+        <div id="qOptions"></div>
+
+        <div class="feedbackBox" id="qFeedback"></div>
+
+        <div class="sheetFooter">
+            <button class="continueBtn" id="qContinueBtn" onclick="nextQuestion()" disabled>Continuar</button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     OVERLAY: RESULTADO DE UNIDAD
+========================================================= -->
+
+<div class="overlay" id="overlay-result">
+
+    <div class="sheet">
+
+        <div class="resultIcon" id="resultIcon">🎉</div>
+
+        <div class="resultTitle" id="resultTitle">¡Unidad completada!</div>
+
+        <div class="resultSub" id="resultSub">Buen trabajo cuidando el agua de La Paz.</div>
+
+        <div class="resultStats">
+
+            <div class="resultStat">
+                <div class="n" id="resultCorrect">0/0</div>
+                <div class="l">Correctas</div>
+            </div>
+
+            <div class="resultStat">
+                <div class="n" id="resultXP">+0</div>
+                <div class="l">Puntos</div>
+            </div>
+
+        </div>
+
+        <div class="factCard">
+            <b>💡 Dato de cierre</b>
+            <span id="resultFact">—</span>
+        </div>
+
+        <div class="sheetFooter">
+            <button class="continueBtn" onclick="closeResultToPath()">Seguir en el mapa</button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     OVERLAY: SIN CORAZONES
+========================================================= -->
+
+<div class="overlay" id="overlay-nohearts">
+
+    <div class="sheet">
+
+        <div class="heartsBigRow">💔</div>
+
+        <div class="resultTitle">Te quedaste sin corazones</div>
+
+        <div class="resultSub">
+            No pasa nada: revisa el dato de abajo y vuelve a intentar la unidad.
+        </div>
+
+        <div class="factCard">
+            <b>💡 Recuerda</b>
+            <span id="noHeartsFact">Cada gota cuenta. Vuelve a intentarlo con calma.</span>
+        </div>
+
+        <div class="sheetFooter">
+            <button class="continueBtn" onclick="retryUnit()">Reintentar unidad</button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     OVERLAY: RETO FINAL / PACTO
+========================================================= -->
+
+<div class="overlay" id="overlay-final">
+
+    <div class="sheet">
+
+        <button class="sheetClose" onclick="closeAllOverlays()">✕</button>
+
+        <div class="resultIcon">🚰</div>
+
+        <div class="resultTitle">Cierra el grifo: tu compromiso</div>
+
+        <div class="resultSub">
+            Elige o escribe el hábito que vas a mantener esta semana.
+        </div>
+
+        <div class="pledgeForm">
+
+            <div class="pledgeChips">
+                <button class="chip" onclick="setPledge('Duchas de menos de 5 minutos')">Duchas &lt; 5 min</button>
+                <button class="chip" onclick="setPledge('Cerrar la llave al lavarme los dientes')">Cerrar llave al lavarme los dientes</button>
+                <button class="chip" onclick="setPledge('Reportar fugas que vea en casa o la calle')">Reportar fugas</button>
+                <button class="chip" onclick="setPledge('Reutilizar agua de lavado para las plantas')">Reutilizar agua de lavado</button>
+            </div>
+
+            <textarea id="pledgeText" placeholder="O escribe tu propio compromiso..."></textarea>
+
+        </div>
+
+        <div class="sheetFooter">
+            <button class="continueBtn" onclick="submitPledge()">Sellar mi compromiso</button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     OVERLAY: TARJETA DE COMPROMISO
+========================================================= -->
+
+<div class="overlay" id="overlay-pledgecard">
+
+    <div class="sheet">
+
+        <button class="sheetClose" onclick="closeAllOverlays()">✕</button>
+
+        <div class="pledgeCard">
+            <div class="peakSmall">🏔️💧🏙️</div>
+            <h3>Mi compromiso con el agua de La Paz</h3>
+            <p id="pledgeCardText">—</p>
+        </div>
+
+        <div class="resultStats" style="margin-top:18px;">
+            <div class="resultStat">
+                <div class="n" id="finalXP">0</div>
+                <div class="l">Puntos totales</div>
+            </div>
+            <div class="resultStat">
+                <div class="n" id="finalStreak">0</div>
+                <div class="l">Racha</div>
+            </div>
+        </div>
+
+        <div class="sheetFooter">
+            <button class="continueBtn" onclick="closeAllOverlays()">Listo</button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     OVERLAY: SOBRE EL PROYECTO (PLAYER PERSONA)
+========================================================= -->
+
+<div class="overlay" id="overlay-info">
+
+    <div class="sheet">
+
+        <button class="sheetClose" onclick="closeAllOverlays()">✕</button>
+
+        <div class="resultIcon">🎓</div>
+
+        <div class="resultTitle">Sobre este prototipo</div>
+
+        <div class="resultSub">
+            Guía de práctica — Introducción al desarrollo de videojuegos
+        </div>
+
+        <div class="personaGrid">
+
+            <div class="personaRow">
+                <b>Player Persona:</b> Vale, 22 años, estudiante y trabajadora en
+                La Paz. Vive con su familia, se moviliza en minibús y teleférico.
+            </div>
+
+            <div class="personaRow">
+                <b>Hábitos digitales:</b> usa el celular casi todo el día, sobre
+                todo TikTok e Instagram, y paga sus servicios desde la app del
+                banco sin fijarse mucho en el detalle del consumo de agua.
+            </div>
+
+            <div class="personaRow">
+                <b>Relación con el agua:</b> sabe que a veces se corta el agua en
+                su barrio en época seca, pero no tiene información clara sobre
+                cuánto ahorra (o desperdicia) con cada hábito cotidiano.
+            </div>
+
+            <div class="personaRow">
+                <b>Qué la motiva:</b> retos cortos, rachas, puntos y comparar su
+                progreso con amigos — no los afiches ni spots genéricos de las
+                campañas actuales.
+            </div>
+
+            <div class="personaRow">
+                <b>Por qué VillaSanta:</b> lecciones de 2-3 minutos, gamificadas, con
+                datos concretos sobre el agua de La Paz (glaciares, EPSAS,
+                cortes de servicio) en vez de mensajes abstractos.
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   CONTENIDO — UNIDADES Y PREGUNTAS
+===================================================== */
+
+const UNITS=[
+
+    {
+        id:1,
+        title:"Nuestra fuente: los glaciares",
+        icon:"🏔️",
+        questions:[
+
+            {
+                prompt:"¿De dónde proviene buena parte del agua que consume La Paz?",
+                options:[
+                    "Ríos de la Amazonía",
+                    "Deshielo de glaciares y lagunas de la cordillera",
+                    "Agua de mar desalinizada",
+                    "Pozos profundos en el Altiplano"
+                ],
+                correct:1,
+                fact:"La Paz depende en buena parte del agua que baja de glaciares y lagunas altoandinas, como Tuni y Condoriri."
+            },
+
+            {
+                prompt:"¿Qué está pasando con los glaciares cercanos a La Paz?",
+                options:[
+                    "Están creciendo cada año",
+                    "Se mantienen exactamente igual",
+                    "Se están retirando por el cambio climático",
+                    "Ya desaparecieron por completo"
+                ],
+                correct:2,
+                fact:"El retroceso de los glaciares andinos reduce, con el tiempo, la cantidad de agua disponible para la ciudad."
+            },
+
+            {
+                prompt:"¿Qué institución administra el agua potable y el saneamiento en La Paz?",
+                options:[
+                    "EPSAS",
+                    "YPFB",
+                    "ENDE",
+                    "AASANA"
+                ],
+                correct:0,
+                fact:"EPSAS es la empresa pública encargada del servicio de agua potable y saneamiento en La Paz y El Alto."
+            },
+
+            {
+                prompt:"En época seca, ¿qué medida suele aplicarse en algunos barrios cuando el agua escasea?",
+                options:[
+                    "Se aumenta la presión al máximo",
+                    "Cortes o restricciones programadas de agua",
+                    "Se reparte agua embotellada gratis a todos",
+                    "No se aplica ninguna medida"
+                ],
+                correct:1,
+                fact:"En temporadas críticas se aplican cortes o turnos de agua en algunos sectores para administrar el recurso disponible."
+            }
+
+        ]
+    },
+
+    {
+        id:2,
+        title:"Hábitos en casa",
+        icon:"🚿",
+        questions:[
+
+            {
+                prompt:"¿Qué hábito ahorra más agua en la ducha?",
+                options:[
+                    "Duchas cortas y cerrar la llave al enjabonarte",
+                    "Duchas de más de 20 minutos",
+                    "Dejar correr el agua mientras piensas qué hacer",
+                    "Ducharte tres veces al día"
+                ],
+                correct:0,
+                fact:"Reducir el tiempo de ducha y cerrar la llave al enjabonarte puede ahorrar una cantidad importante de agua cada semana."
+            },
+
+            {
+                prompt:"Mientras te lavas los dientes, lo ideal es...",
+                options:[
+                    "Dejar el grifo abierto todo el tiempo",
+                    "Cerrar la llave y abrirla solo para enjuagar",
+                    "Usar dos grifos a la vez",
+                    "Ducharte al mismo tiempo"
+                ],
+                correct:1,
+                fact:"Cerrar la llave mientras te cepillas los dientes es uno de los hábitos más simples y efectivos para ahorrar agua."
+            },
+
+            {
+                prompt:"Un grifo que gotea todo el día...",
+                options:[
+                    "No afecta en nada",
+                    "Puede desperdiciar bastante agua sin que lo notes",
+                    "En realidad ahorra agua",
+                    "Solo es un problema estético"
+                ],
+                correct:1,
+                fact:"Una fuga pequeña y constante, sostenida durante días, termina desperdiciando mucha más agua de la que parece."
+            },
+
+            {
+                prompt:"¿Qué puedes hacer con el agua que usaste para lavar verduras?",
+                options:[
+                    "Botarla siempre por el desagüe",
+                    "Reutilizarla para regar las plantas",
+                    "Congelarla sin motivo",
+                    "Nada, ya no sirve para nada"
+                ],
+                correct:1,
+                fact:"El agua de lavar verduras o frutas se puede reutilizar fácilmente para regar plantas."
+            }
+
+        ]
+    },
+
+    {
+        id:3,
+        title:"Fuera de casa",
+        icon:"🏙️",
+        questions:[
+
+            {
+                prompt:"Si vas a lavar tu auto o moto, ¿qué opción ahorra más agua?",
+                options:[
+                    "Manguera abierta todo el tiempo",
+                    "Balde y trapo",
+                    "Lavarlo con manguera dos veces por semana",
+                    "Da exactamente igual"
+                ],
+                correct:1,
+                fact:"Lavar con balde y trapo, en vez de manguera abierta, reduce muchísimo el consumo de agua por lavado."
+            },
+
+            {
+                prompt:"En la universidad o el trabajo, si ves un caño roto o una fuga visible...",
+                options:[
+                    "La ignoras, no es tu problema",
+                    "La reportas al personal de mantenimiento",
+                    "La grabas para redes y ya",
+                    "Le echas más agua encima"
+                ],
+                correct:1,
+                fact:"Reportar fugas en espacios compartidos evita que se desperdicie agua durante días o semanas sin que nadie lo note."
+            },
+
+            {
+                prompt:"Si vas a regar plantas o un jardín, ¿cuál es el mejor momento?",
+                options:[
+                    "Al mediodía, con el sol más fuerte",
+                    "Temprano en la mañana o al atardecer",
+                    "Nunca hay que regar",
+                    "A cualquier hora, no cambia nada"
+                ],
+                correct:1,
+                fact:"Regar cuando el sol es menos intenso reduce la evaporación, así que se necesita menos agua para el mismo resultado."
+            },
+
+            {
+                prompt:"Si tu barrio tiene baja presión de agua algunos días, una buena práctica es...",
+                options:[
+                    "Almacenar agua de forma responsable cuando hay servicio, sin desperdiciarla",
+                    "Dejar todas las llaves abiertas por si acaso",
+                    "Romper tuberías para reclamar",
+                    "Comprar agua embotellada para absolutamente todo uso"
+                ],
+                correct:0,
+                fact:"Almacenar agua con cuidado, en recipientes limpios y solo lo necesario, ayuda a pasar los cortes sin desperdiciar el recurso."
+            }
+
+        ]
+    },
+
+    {
+        id:4,
+        title:"Mitos vs. realidad",
+        icon:"🔍",
+        questions:[
+
+            {
+                prompt:"Mito: \"Bañarse en tina siempre gasta menos agua que ducharse.\"",
+                options:[
+                    "Verdadero",
+                    "Falso: una ducha corta suele gastar menos que llenar una tina"
+                ],
+                correct:1,
+                fact:"Una ducha breve, con la llave cerrada al enjabonarte, casi siempre usa menos agua que llenar una tina."
+            },
+
+            {
+                prompt:"Mito: \"El agua de lluvia en La Paz es infinita, no hace falta cuidar el agua potable.\"",
+                options:[
+                    "Verdadero",
+                    "Falso: la disponibilidad varía según la temporada"
+                ],
+                correct:1,
+                fact:"La disponibilidad de agua cambia mucho entre época de lluvias y época seca, así que cuidar el agua potable sigue siendo necesario todo el año."
+            },
+
+            {
+                prompt:"Mito: \"Lavar la ropa con la lavadora llena, en vez de varias cargas pequeñas, ahorra agua.\"",
+                options:[
+                    "Verdadero: usar la capacidad completa reduce el número de lavados",
+                    "Falso"
+                ],
+                correct:0,
+                fact:"Concentrar la ropa en menos cargas, usando la capacidad completa de la lavadora, reduce el agua total usada."
+            },
+
+            {
+                prompt:"Mito: \"Cuidar el agua es solo responsabilidad del gobierno, no de las personas.\"",
+                options:[
+                    "Verdadero",
+                    "Falso: los hábitos individuales sí hacen una diferencia real"
+                ],
+                correct:1,
+                fact:"Las políticas públicas importan, pero los hábitos diarios de miles de personas jóvenes también suman una diferencia real."
+            }
+
+        ]
+    }
+
+];
+
+
+/* =====================================================
+   ESTADO
+===================================================== */
+
+let state={
+
+    hearts:5,
+
+    xp:0,
+
+    streak:0,
+
+    unlockedUpTo:1,
+
+    completed:new Set(),
+
+    currentUnitIndex:null,
+
+    qIndex:0,
+
+    correctInUnit:0,
+
+    pledge:""
+
+};
+
+
+/* =====================================================
+   NAVEGACIÓN GENERAL
+===================================================== */
+
+function beginApp(){
+
+    document.getElementById("screen-start").style.display="none";
+
+    document.getElementById("hud").style.display="flex";
+
+    document.getElementById("screen-path").style.display="flex";
+
+    document.querySelector(".infoBtn").style.display="block";
+
+    renderPath();
+
+    updateHUD();
+
+}
+
+
+function closeAllOverlays(){
+
+    document.querySelectorAll(".overlay").forEach(
+        el => el.style.display="none"
+    );
+
+}
+
+
+function openInfo(){
+
+    document.getElementById("overlay-info").style.display="flex";
+
+}
+
+
+function updateHUD(){
+
+    document.getElementById("hudHearts").textContent=state.hearts;
+
+    document.getElementById("hudXP").textContent=state.xp;
+
+    document.getElementById("hudStreak").textContent=state.streak;
+
+}
+
+
+/* =====================================================
+   RENDER DEL MAPA / RUTA
+===================================================== */
+
+const NODE_X=[150,66,234,66,150];
+
+const NODE_Y_GAP=168;
+
+const NODE_Y_START=20;
+
+
+function renderPath(){
+
+    const layer=document.getElementById("nodesLayer");
+
+    layer.innerHTML="";
+
+
+    const totalNodes=UNITS.length+1;
+
+    const points=[];
+
+
+    UNITS.forEach((unit,i)=>{
+
+        const x=NODE_X[i%NODE_X.length];
+
+        const y=NODE_Y_START+i*NODE_Y_GAP;
+
+        points.push({x:x,y:y});
+
+
+        const btn=document.createElement("button");
+
+        let cls="node";
+
+        if(unit.id>state.unlockedUpTo){
+
+            cls+=" locked";
+
+        }
+        else if(state.completed.has(unit.id)){
+
+            cls+=" done";
+
+        }
+        else{
+
+            cls+=" current";
+
+        }
+
+        btn.className=cls;
+
+        btn.style.left=x+"px";
+
+        btn.style.top=y+"px";
+
+        btn.disabled=(unit.id>state.unlockedUpTo);
+
+        btn.onclick=()=>openUnit(unit.id);
+
+
+        btn.innerHTML=
+
+            (state.completed.has(unit.id) ? '<span class="star">⭐</span>' : "")+
+
+            (unit.id>state.unlockedUpTo ? "" : unit.icon)+
+
+            '<span class="lbl">'+unit.title+'</span>';
+
+
+        layer.appendChild(btn);
+
+    });
+
+
+    /*
+       Nodo final: "tu compromiso".
+    */
+
+    const finalUnlocked=
+        UNITS.every(u => state.completed.has(u.id));
+
+    const fx=NODE_X[UNITS.length%NODE_X.length];
+
+    const fy=NODE_Y_START+UNITS.length*NODE_Y_GAP;
+
+    points.push({x:fx,y:fy});
+
+
+    const fbtn=document.createElement("button");
+
+    let fcls="node final";
+
+    if(!finalUnlocked){
+
+        fcls+=" locked";
+
+    }
+    else if(state.pledge){
+
+        fcls+=" done";
+
+    }
+    else{
+
+        fcls+=" current";
+
+    }
+
+    fbtn.className=fcls;
+
+    fbtn.style.left=fx+"px";
+
+    fbtn.style.top=fy+"px";
+
+    fbtn.disabled=!finalUnlocked;
+
+    fbtn.onclick=openFinal;
+
+    fbtn.innerHTML=
+
+        (state.pledge ? '<span class="star">⭐</span>' : "")+
+
+        (finalUnlocked ? "🚰" : "")+
+
+        '<span class="lbl">Tu compromiso</span>';
+
+    layer.appendChild(fbtn);
+
+
+    document.getElementById("pathWrap").style.height=
+        (NODE_Y_START+UNITS.length*NODE_Y_GAP+60)+"px";
+
+
+    drawSvgPath(points);
+
+}
+
+
+function drawSvgPath(points){
+
+    const svg=document.getElementById("pathSvg");
+
+    const wrap=document.getElementById("pathWrap");
+
+    svg.setAttribute(
+        "viewBox",
+        "0 0 300 "+(NODE_Y_START+UNITS.length*NODE_Y_GAP+60)
+    );
+
+
+    let d="M "+points[0].x+" "+points[0].y;
+
+
+    for(let i=0;i<points.length-1;i++){
+
+        const p0=points[i];
+
+        const p1=points[i+1];
+
+        const midY=(p0.y+p1.y)/2;
+
+
+        d+=" C "+p0.x+" "+midY+", "+p1.x+" "+midY+", "+p1.x+" "+p1.y;
+
+    }
+
+
+    document.getElementById("pathLine").setAttribute("d",d);
+
+}
+
+
+/* =====================================================
+   LECCIÓN / QUIZ
+===================================================== */
+
+function openUnit(unitId){
+
+    const idx=UNITS.findIndex(u=>u.id===unitId);
+
+    state.currentUnitIndex=idx;
+
+    state.qIndex=0;
+
+    state.correctInUnit=0;
+
+    state.hearts=5;
+
+    renderQuestion();
+
+    document.getElementById("overlay-quiz").style.display="flex";
+
+}
+
+
+function retryUnit(){
+
+    state.qIndex=0;
+
+    state.correctInUnit=0;
+
+    state.hearts=5;
+
+    closeAllOverlays();
+
+    renderQuestion();
+
+    document.getElementById("overlay-quiz").style.display="flex";
+
+}
+
+
+function currentUnit(){
+
+    return UNITS[state.currentUnitIndex];
+
+}
+
+
+function renderQuestion(){
+
+    const unit=currentUnit();
+
+    const q=unit.questions[state.qIndex];
+
+
+    document.getElementById("qPrompt").textContent=q.prompt;
+
+
+    const pct=Math.round((state.qIndex/unit.questions.length)*100);
+
+    document.getElementById("quizProgressFill").style.width=pct+"%";
+
+
+    document.getElementById("quizHearts").textContent=
+        "❤️".repeat(Math.max(state.hearts,0))+
+        "🖤".repeat(Math.max(5-state.hearts,0));
+
+
+    const optsWrap=document.getElementById("qOptions");
+
+    optsWrap.innerHTML="";
+
+
+    q.options.forEach((optText,i)=>{
+
+        const b=document.createElement("button");
+
+        b.className="opt";
+
+        b.textContent=optText;
+
+        b.onclick=()=>selectAnswer(i,b);
+
+        optsWrap.appendChild(b);
+
+    });
+
+
+    document.getElementById("qFeedback").className="feedbackBox";
+
+    document.getElementById("qFeedback").innerHTML="";
+
+    document.getElementById("qContinueBtn").disabled=true;
+
+}
+
+
+function selectAnswer(i,btnEl){
+
+    const unit=currentUnit();
+
+    const q=unit.questions[state.qIndex];
+
+    const opts=document.querySelectorAll("#qOptions .opt");
+
+    opts.forEach(o=>o.disabled=true);
+
+
+    const feedback=document.getElementById("qFeedback");
+
+    const isCorrect=(i===q.correct);
+
+
+    if(isCorrect){
+
+        btnEl.classList.add("correct");
+
+        state.correctInUnit++;
+
+        state.xp+=10;
+
+        feedback.className="feedbackBox show good";
+
+        feedback.innerHTML="<b>✅ ¡Correcto!</b>"+q.fact;
+
+    }
+    else{
+
+        btnEl.classList.add("wrong");
+
+        opts[q.correct].classList.add("correct");
+
+        state.hearts--;
+
+        feedback.className="feedbackBox show bad";
+
+        feedback.innerHTML="<b>❌ No era esa</b>"+q.fact;
+
+    }
+
+
+    document.getElementById("quizHearts").textContent=
+        "❤️".repeat(Math.max(state.hearts,0))+
+        "🖤".repeat(Math.max(5-state.hearts,0));
+
+
+    updateHUD();
+
+
+    document.getElementById("qContinueBtn").disabled=false;
+
+
+    if(state.hearts<=0){
+
+        document.getElementById("qContinueBtn").disabled=true;
+
+        setTimeout(()=>{
+
+            closeAllOverlays();
+
+            document.getElementById("noHeartsFact").textContent=q.fact;
+
+            document.getElementById("overlay-nohearts").style.display="flex";
+
+        },900);
+
+    }
+
+}
+
+
+function nextQuestion(){
+
+    const unit=currentUnit();
+
+
+    if(state.qIndex<unit.questions.length-1){
+
+        state.qIndex++;
+
+        renderQuestion();
+
+    }
+    else{
+
+        finishUnit();
+
+    }
+
+}
+
+
+function finishUnit(){
+
+    const unit=currentUnit();
+
+    const total=unit.questions.length;
+
+    const perfect=(state.correctInUnit===total);
+
+
+    let bonus=0;
+
+    if(perfect){
+
+        bonus=20;
+
+        state.xp+=bonus;
+
+    }
+
+
+    state.completed.add(unit.id);
+
+    state.streak+=1;
+
+
+    if(unit.id===state.unlockedUpTo && state.unlockedUpTo<=UNITS.length){
+
+        state.unlockedUpTo=unit.id+1;
+
+    }
+
+
+    updateHUD();
+
+
+    document.getElementById("resultIcon").textContent=
+        perfect ? "🏆" : "🎉";
+
+    document.getElementById("resultTitle").textContent=
+        perfect ? "¡Unidad perfecta!" : "¡Unidad completada!";
+
+    document.getElementById("resultSub").textContent=
+        "\""+unit.title+"\" — buen trabajo cuidando el agua de La Paz.";
+
+    document.getElementById("resultCorrect").textContent=
+        state.correctInUnit+"/"+total;
+
+    document.getElementById("resultXP").textContent=
+        "+"+(state.correctInUnit*10+bonus);
+
+    document.getElementById("resultFact").textContent=
+        unit.questions[unit.questions.length-1].fact;
+
+
+    closeAllOverlays();
+
+    document.getElementById("overlay-result").style.display="flex";
+
+}
+
+
+function closeResultToPath(){
+
+    closeAllOverlays();
+
+    renderPath();
+
+}
+
+
+/* =====================================================
+   RETO FINAL / PACTO
+===================================================== */
+
+function openFinal(){
+
+    closeAllOverlays();
+
+    document.getElementById("overlay-final").style.display="flex";
+
+}
+
+
+function setPledge(text){
+
+    document.getElementById("pledgeText").value=text;
+
+}
+
+
+function submitPledge(){
+
+    const text=document.getElementById("pledgeText").value.trim();
+
+    if(!text){
+
+        document.getElementById("pledgeText").focus();
+
+        return;
+
+    }
+
+
+    state.pledge=text;
+
+    state.xp+=30;
+
+    state.streak+=1;
+
+    updateHUD();
+
+
+    document.getElementById("pledgeCardText").textContent=
+        "\""+text+"\" — un compromiso de Vale, y de vos, con el agua de La Paz.";
+
+    document.getElementById("finalXP").textContent=state.xp;
+
+    document.getElementById("finalStreak").textContent=state.streak;
+
+
+    closeAllOverlays();
+
+    document.getElementById("overlay-pledgecard").style.display="flex";
+
+    renderPath();
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2823 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>La Paz Limpia</title>
+
+<style>
+
+/* =====================================================
+   GENERAL
+===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    height: 100vh;
+
+    overflow: hidden;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: white;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #174b28,
+            #06150b 75%
+        );
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+/* =====================================================
+   CONTENEDOR
+===================================================== */
+
+#game {
+
+    width: 1000px;
+
+    max-width: 96vw;
+
+    height: 92vh;
+
+    max-height: 900px;
+
+    background: #0a1a0e;
+
+    border:
+        2px solid #285637;
+
+    border-radius: 22px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 25px 70px
+        rgba(0,0,0,.7);
+
+}
+
+
+/* =====================================================
+   UTILIDAD
+===================================================== */
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =====================================================
+   MENÚ
+===================================================== */
+
+#menu {
+
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 30px;
+
+}
+
+
+.logo {
+
+    font-size:
+        clamp(45px, 8vw, 75px);
+
+    font-weight: 900;
+
+    letter-spacing: -4px;
+
+    text-shadow:
+        0 8px 30px
+        rgba(0,0,0,.6);
+
+}
+
+
+.logo span {
+
+    color: #65e879;
+
+}
+
+
+.subtitle {
+
+    color: #a8c7af;
+
+    font-size: 21px;
+
+    margin-top: 5px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.instructions {
+
+    width: 100%;
+
+    max-width: 750px;
+
+    padding: 23px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #163820,
+            #0d2414
+        );
+
+    border:
+        1px solid #315c3d;
+
+    border-radius: 18px;
+
+    line-height: 1.5;
+
+}
+
+
+.instructions h2 {
+
+    margin-top: 0;
+
+}
+
+
+.instructions p {
+
+    color: #d2e4d6;
+
+}
+
+
+.keys {
+
+    display: flex;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 20px;
+
+}
+
+
+.key {
+
+    min-width: 115px;
+
+    padding: 10px;
+
+    background: #07140b;
+
+    border:
+        2px solid #345a3d;
+
+    border-radius: 10px;
+
+}
+
+
+.key b {
+
+    font-size: 20px;
+
+}
+
+
+.start {
+
+    margin-top: 25px;
+
+    padding:
+        15px 40px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    background: #65e879;
+
+    color: #07130a;
+
+    font-size: 19px;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 5px 0 #328c43;
+
+    transition: .15s;
+
+}
+
+
+.start:hover {
+
+    transform:
+        translateY(-3px);
+
+}
+
+
+.start:active {
+
+    transform:
+        translateY(2px);
+
+    box-shadow:
+        0 2px 0 #328c43;
+
+}
+
+
+/* =====================================================
+   PANTALLA DE JUEGO
+===================================================== */
+
+#gameScreen {
+
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+/* =====================================================
+   HUD
+===================================================== */
+
+#hud {
+
+    height: 75px;
+
+    flex-shrink: 0;
+
+    background: #07130b;
+
+    border-bottom:
+        2px solid #24422d;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    align-items: center;
+
+}
+
+
+.stat {
+
+    text-align: center;
+
+    color: #91ad98;
+
+    font-size: 12px;
+
+}
+
+
+.stat strong {
+
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 22px;
+
+    color: #65e879;
+
+}
+
+
+#comboDisplay {
+
+    text-align: center;
+
+    color: #ffd34f;
+
+    font-weight: 900;
+
+    font-size: 18px;
+
+}
+
+
+/* =====================================================
+   ESCENARIO
+===================================================== */
+
+#stage {
+
+    position: relative;
+
+    flex: 1;
+
+    overflow: hidden;
+
+    background:
+
+        linear-gradient(
+            to bottom,
+            #1d5530,
+            #0e2d19 50%,
+            #06120a
+        );
+
+}
+
+
+/* =====================================================
+   CARRILES
+===================================================== */
+
+.lane {
+
+    position: absolute;
+
+    top: 0;
+
+    bottom: 0;
+
+    width: 25%;
+
+    border-left:
+        1px solid
+        rgba(255,255,255,.12);
+
+    border-right:
+        1px solid
+        rgba(255,255,255,.05);
+
+}
+
+
+.lane:nth-child(1) {
+    left: 0;
+}
+
+.lane:nth-child(2) {
+    left: 25%;
+}
+
+.lane:nth-child(3) {
+    left: 50%;
+}
+
+.lane:nth-child(4) {
+    left: 75%;
+}
+
+
+.lane::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255,255,255,.04),
+            transparent 60%
+        );
+
+    pointer-events: none;
+
+}
+
+
+/* =====================================================
+   LÍNEA DE GOLPE
+===================================================== */
+
+#hitLine {
+
+    position: absolute;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 145px;
+
+    height: 5px;
+
+    background: #65e879;
+
+    box-shadow:
+        0 0 10px #65e879,
+        0 0 30px
+        rgba(101,232,121,.7);
+
+    z-index: 20;
+
+}
+
+
+/* =====================================================
+   ZONAS DE RECICLAJE
+===================================================== */
+
+.recycleZone {
+
+    position: absolute;
+
+    bottom: 18px;
+
+    width: 23%;
+
+    height: 105px;
+
+    border-radius: 16px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border:
+        3px solid
+        rgba(255,255,255,.85);
+
+    color: white;
+
+    text-shadow:
+        0 2px 5px black;
+
+    box-shadow:
+        0 7px 20px
+        rgba(0,0,0,.6);
+
+    z-index: 30;
+
+    transition: .1s;
+
+}
+
+
+.recycleZone strong {
+
+    font-size: 17px;
+
+}
+
+
+.recycleZone span {
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    margin-top: 3px;
+
+}
+
+
+.recycleZone small {
+
+    font-size: 24px;
+
+    margin-top: 3px;
+
+}
+
+
+.paperZone {
+
+    left: 1%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #277bd7,
+            #15539c
+        );
+
+}
+
+
+.plasticZone {
+
+    left: 26%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #dd4e4e,
+            #9e2b2b
+        );
+
+}
+
+
+.glassZone {
+
+    left: 51%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #e1aa2d,
+            #a87512
+        );
+
+}
+
+
+.organicZone {
+
+    left: 76%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #994dde,
+            #672b9f
+        );
+
+}
+
+
+.recycleZone.pressed {
+
+    transform:
+        scale(.94);
+
+    filter:
+        brightness(1.5);
+
+    box-shadow:
+        0 0 35px
+        rgba(255,255,255,.8);
+
+}
+
+
+/* =====================================================
+   NOTAS INDIVIDUALES
+===================================================== */
+
+.note {
+
+    position: absolute;
+
+    width: 82px;
+
+    height: 82px;
+
+    border-radius: 17px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    color: white;
+
+    border:
+        4px solid white;
+
+    font-size: 34px;
+
+    font-weight: 900;
+
+    box-shadow:
+        0 0 18px
+        rgba(255,255,255,.4),
+
+        0 8px 20px
+        rgba(0,0,0,.7);
+
+    z-index: 15;
+
+    user-select: none;
+
+}
+
+
+.note small {
+
+    font-size: 8px;
+
+    margin-top: 2px;
+
+}
+
+
+.note.paper {
+
+    background:
+        linear-gradient(
+            145deg,
+            #277bd7,
+            #15539c
+        );
+
+}
+
+
+.note.plastic {
+
+    background:
+        linear-gradient(
+            145deg,
+            #dd4e4e,
+            #9e2b2b
+        );
+
+}
+
+
+.note.glass {
+
+    background:
+        linear-gradient(
+            145deg,
+            #e1aa2d,
+            #a87512
+        );
+
+}
+
+
+.note.organic {
+
+    background:
+        linear-gradient(
+            145deg,
+            #994dde,
+            #672b9f
+        );
+
+}
+
+
+/* =====================================================
+   COMBINACIONES
+===================================================== */
+
+.comboNote {
+
+    position: absolute;
+
+    height: 82px;
+
+    border-radius: 17px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    color: white;
+
+    border:
+        4px solid white;
+
+    font-size: 20px;
+
+    font-weight: 900;
+
+    background:
+        linear-gradient(
+            135deg,
+            #3a3a3a,
+            #151515
+        );
+
+    box-shadow:
+        0 0 25px
+        rgba(255,255,255,.55),
+
+        0 8px 20px
+        rgba(0,0,0,.7);
+
+    z-index: 16;
+
+    user-select: none;
+
+}
+
+
+.comboKey {
+
+    padding:
+        7px 10px;
+
+    border-radius: 8px;
+
+    background: #111;
+
+    border:
+        2px solid white;
+
+    font-size: 18px;
+
+}
+
+
+/* =====================================================
+   FEEDBACK
+===================================================== */
+
+#feedback {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: 35%;
+
+    transform:
+        translate(-50%, -50%);
+
+    font-size: 40px;
+
+    font-weight: 900;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    z-index: 60;
+
+    text-shadow:
+        0 5px 20px black;
+
+}
+
+
+.feedbackAnimation {
+
+    animation:
+        feedback .65s ease-out;
+
+}
+
+
+@keyframes feedback {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+            translate(-50%, 0)
+            scale(.5);
+
+    }
+
+    25% {
+
+        opacity: 1;
+
+        transform:
+            translate(-50%, -50%)
+            scale(1.15);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+            translate(-50%, -100%)
+            scale(1);
+
+    }
+
+}
+
+
+/* =====================================================
+   FLASH
+===================================================== */
+
+#flash {
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 50;
+
+    opacity: 0;
+
+}
+
+
+.flashGood {
+
+    animation:
+        flashGood .25s;
+
+}
+
+
+.flashBad {
+
+    animation:
+        flashBad .25s;
+
+}
+
+
+@keyframes flashGood {
+
+    50% {
+
+        opacity: 1;
+
+        background:
+            rgba(70,255,100,.13);
+
+    }
+
+}
+
+
+@keyframes flashBad {
+
+    50% {
+
+        opacity: 1;
+
+        background:
+            rgba(255,40,40,.18);
+
+    }
+
+}
+
+
+/* =====================================================
+   FINAL
+===================================================== */
+
+#end {
+
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 30px;
+
+}
+
+
+#end h1 {
+
+    color: #65e879;
+
+    font-size:
+        clamp(35px, 6vw, 60px);
+
+}
+
+
+#finalScore {
+
+    font-size: 28px;
+
+    margin: 15px;
+
+}
+
+
+#finalMessage {
+
+    max-width: 600px;
+
+    padding: 20px;
+
+    border-radius: 15px;
+
+    background: #173421;
+
+    color: #c9dfcf;
+
+    line-height: 1.5;
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:700px) {
+
+    .recycleZone {
+
+        height: 90px;
+
+    }
+
+
+    .recycleZone strong {
+
+        font-size: 11px;
+
+    }
+
+
+    .recycleZone span {
+
+        font-size: 11px;
+
+    }
+
+
+    .recycleZone small {
+
+        font-size: 19px;
+
+    }
+
+
+    .note {
+
+        width: 62px;
+
+        height: 62px;
+
+        font-size: 26px;
+
+    }
+
+
+    .comboNote {
+
+        height: 62px;
+
+        font-size: 15px;
+
+    }
+
+
+    .comboKey {
+
+        padding: 4px 7px;
+
+        font-size: 13px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div id="game">
+
+
+<!-- =====================================================
+     MENÚ
+===================================================== -->
+
+<div id="menu">
+
+    <div class="logo">
+
+        ♻️ LA PAZ
+        <span>LIMPIA</span>
+
+    </div>
+
+
+    <div class="subtitle">
+
+        Un ritmo diferente para reciclar
+
+    </div>
+
+
+    <div class="instructions">
+
+        <h2>
+
+            🎮 ¿Cómo jugar?
+
+        </h2>
+
+
+        <p>
+
+            Los residuos caerán por los
+            carriles.
+
+            Presiona la tecla correspondiente
+            cuando lleguen a la línea verde.
+
+        </p>
+
+
+        <p>
+
+            ⚡ <b>¡Cuidado!</b>
+            También aparecerán combinaciones.
+
+            Si aparece <b>A + S</b>,
+            debes presionar <b>A y S</b>.
+
+        </p>
+
+
+        <div class="keys">
+
+            <div class="key">
+                <b>A</b><br>
+                📄 PAPEL
+            </div>
+
+            <div class="key">
+                <b>S</b><br>
+                🧴 PLÁSTICO
+            </div>
+
+            <div class="key">
+                <b>D</b><br>
+                🍾 VIDRIO
+            </div>
+
+            <div class="key">
+                <b>F</b><br>
+                🍎 ORGÁNICO
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <button
+        class="start"
+        onclick="startGame()">
+
+        ▶ INICIAR
+
+    </button>
+
+</div>
+
+
+
+<!-- =====================================================
+     JUEGO
+===================================================== -->
+
+<div
+    id="gameScreen"
+    class="hidden">
+
+
+    <div id="hud">
+
+
+        <div class="stat">
+
+            PUNTOS
+
+            <strong id="score">
+                0
+            </strong>
+
+        </div>
+
+
+        <div id="comboDisplay">
+
+            COMBO x1
+
+        </div>
+
+
+        <div class="stat">
+
+            VIDAS
+
+            <strong id="lives">
+                ❤️❤️❤️
+            </strong>
+
+        </div>
+
+
+        <div class="stat">
+
+            NIVEL
+
+            <strong id="level">
+                1
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+    <div id="stage">
+
+
+        <div class="lane"></div>
+
+        <div class="lane"></div>
+
+        <div class="lane"></div>
+
+        <div class="lane"></div>
+
+
+        <div id="hitLine"></div>
+
+
+        <div id="feedback"></div>
+
+        <div id="flash"></div>
+
+
+        <!-- DESTINOS -->
+
+
+        <div
+            id="button1"
+            class="recycleZone paperZone">
+
+            <strong>
+                PAPEL
+            </strong>
+
+            <span>
+                (A)
+            </span>
+
+            <small>
+                📄
+            </small>
+
+        </div>
+
+
+        <div
+            id="button2"
+            class="recycleZone plasticZone">
+
+            <strong>
+                PLÁSTICO
+            </strong>
+
+            <span>
+                (S)
+            </span>
+
+            <small>
+                🧴
+            </small>
+
+        </div>
+
+
+        <div
+            id="button3"
+            class="recycleZone glassZone">
+
+            <strong>
+                VIDRIO
+            </strong>
+
+            <span>
+                (D)
+            </span>
+
+            <small>
+                🍾
+            </small>
+
+        </div>
+
+
+        <div
+            id="button4"
+            class="recycleZone organicZone">
+
+            <strong>
+                ORGÁNICO
+            </strong>
+
+            <span>
+                (F)
+            </span>
+
+            <small>
+                🍎
+            </small>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     FINAL
+===================================================== -->
+
+<div
+    id="end"
+    class="hidden">
+
+
+    <h1 id="endTitle">
+
+        🏆 ¡PARTIDA TERMINADA!
+
+    </h1>
+
+
+    <div id="finalScore">
+
+        Puntuación final: 0
+
+    </div>
+
+
+    <div id="finalMessage">
+
+    </div>
+
+
+    <button
+        class="start"
+        onclick="startGame()">
+
+        🔄 VOLVER A JUGAR
+
+    </button>
+
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+/* =====================================================
+   TIPOS DE BASURA
+===================================================== */
+
+const trash = {
+
+    paper: {
+
+        emoji: "📄",
+
+        name: "PAPEL",
+
+        key: "a",
+
+        lane: 0
+
+    },
+
+    plastic: {
+
+        emoji: "🧴",
+
+        name: "PLÁSTICO",
+
+        key: "s",
+
+        lane: 1
+
+    },
+
+    glass: {
+
+        emoji: "🍾",
+
+        name: "VIDRIO",
+
+        key: "d",
+
+        lane: 2
+
+    },
+
+    organic: {
+
+        emoji: "🍎",
+
+        name: "ORGÁNICO",
+
+        key: "f",
+
+        lane: 3
+
+    }
+
+};
+
+
+/* =====================================================
+   COMBINACIONES
+===================================================== */
+
+const combinations = [
+
+    {
+        keys: ["a","s"],
+        lanes: [0,1]
+    },
+
+    {
+        keys: ["a","d"],
+        lanes: [0,2]
+    },
+
+    {
+        keys: ["a","f"],
+        lanes: [0,3]
+    },
+
+    {
+        keys: ["s","d"],
+        lanes: [1,2]
+    },
+
+    {
+        keys: ["s","f"],
+        lanes: [1,3]
+    },
+
+    {
+        keys: ["d","f"],
+        lanes: [2,3]
+    }
+
+];
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let notes = [];
+
+let score = 0;
+
+let lives = 3;
+
+let combo = 0;
+
+let level = 1;
+
+let running = false;
+
+let lastTime = 0;
+
+let spawnTimer = 0;
+
+let elapsed = 0;
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
+function startGame() {
+
+    score = 0;
+
+    lives = 3;
+
+    combo = 0;
+
+    level = 1;
+
+    elapsed = 0;
+
+    spawnTimer = 0;
+
+    notes = [];
+
+    running = true;
+
+
+    document
+        .getElementById("menu")
+        .classList.add("hidden");
+
+
+    document
+        .getElementById("end")
+        .classList.add("hidden");
+
+
+    document
+        .getElementById("gameScreen")
+        .classList.remove("hidden");
+
+
+    document
+        .querySelectorAll(".note, .comboNote")
+        .forEach(
+            e => e.remove()
+        );
+
+
+    updateHUD();
+
+
+    lastTime =
+        performance.now();
+
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
+}
+
+
+/* =====================================================
+   CREAR NOTA INDIVIDUAL
+===================================================== */
+
+function createSingleNote() {
+
+    const types =
+        Object.keys(trash);
+
+
+    const type =
+        types[
+            Math.floor(
+                Math.random() *
+                types.length
+            )
+        ];
+
+
+    const data =
+        trash[type];
+
+
+    const note =
+        document.createElement("div");
+
+
+    note.className =
+        "note " + type;
+
+
+    note.innerHTML =
+
+        data.emoji +
+
+        "<small>" +
+        data.name +
+        "</small>";
+
+
+    /*
+       POSICIÓN DEL CARRIL
+    */
+
+    note.style.left =
+
+        (
+            data.lane * 25 +
+            12.5 -
+            4.1
+        ) + "%";
+
+
+    note.style.top =
+        "-100px";
+
+
+    document
+        .getElementById("stage")
+        .appendChild(note);
+
+
+    notes.push({
+
+        element: note,
+
+        type: type,
+
+        lanes: [data.lane],
+
+        keys: [data.key],
+
+        y: -100,
+
+        combination: false
+
+    });
+
+}
+
+
+/* =====================================================
+   CREAR COMBINACIÓN
+===================================================== */
+
+function createCombination() {
+
+    const combination =
+
+        combinations[
+            Math.floor(
+                Math.random() *
+                combinations.length
+            )
+        ];
+
+
+    const note =
+        document.createElement("div");
+
+
+    note.className =
+        "comboNote";
+
+
+    /*
+       Ejemplo:
+
+       A + S
+    */
+
+    note.innerHTML =
+
+        combination.keys
+            .map(
+                key =>
+
+                `<span class="comboKey">
+                    ${key.toUpperCase()}
+                </span>`
+            )
+            .join(" + ");
+
+
+    /*
+       La nota ocupa desde
+       el primer carril hasta
+       el segundo.
+
+       Si es A+S:
+       carriles 1 y 2.
+
+       Si es A+F:
+       ocupa prácticamente
+       todo el ancho.
+    */
+
+    const firstLane =
+        combination.lanes[0];
+
+
+    const lastLane =
+        combination.lanes[1];
+
+
+    const left =
+        firstLane * 25 + 1;
+
+
+    const width =
+        (lastLane - firstLane + 1)
+        * 25 - 2;
+
+
+    note.style.left =
+        left + "%";
+
+
+    note.style.width =
+        width + "%";
+
+
+    note.style.top =
+        "-100px";
+
+
+    document
+        .getElementById("stage")
+        .appendChild(note);
+
+
+    notes.push({
+
+        element: note,
+
+        type: "combination",
+
+        lanes: combination.lanes,
+
+        keys: combination.keys,
+
+        y: -100,
+
+        combination: true
+
+    });
+
+}
+
+
+/* =====================================================
+   CREAR NOTA
+===================================================== */
+
+function createNote() {
+
+    /*
+       Las combinaciones comienzan
+       después de 5 segundos.
+
+       Al principio predominan
+       las notas individuales.
+
+       Conforme aumenta el nivel,
+       aparecen más combinaciones.
+    */
+
+    let combinationChance = 0;
+
+
+    if (elapsed >= 5) {
+
+        combinationChance =
+            Math.min(
+                .55,
+                .12 +
+                (level - 2) * .10
+            );
+
+    }
+
+
+    if (
+        Math.random() <
+        combinationChance
+    ) {
+
+        createCombination();
+
+    }
+
+    else {
+
+        createSingleNote();
+
+    }
+
+}
+
+
+/* =====================================================
+   LOOP
+===================================================== */
+
+function gameLoop(time) {
+
+    if (!running)
+        return;
+
+
+    const delta =
+
+        Math.min(
+            (time - lastTime) / 1000,
+            .035
+        );
+
+
+    lastTime = time;
+
+    elapsed += delta;
+
+
+    /*
+    ================================================
+    NIVEL
+
+    Cada 5 segundos aumenta.
+    ================================================
+    */
+
+    level =
+
+        Math.min(
+            8,
+            1 +
+            Math.floor(
+                elapsed / 5
+            )
+        );
+
+
+    /*
+    ================================================
+    APARICIÓN
+
+    Mucho más rápida.
+
+    NIVEL 1:
+    1.20 segundos
+
+    NIVEL 8:
+    .40 segundos
+    ================================================
+    */
+
+    spawnTimer += delta;
+
+
+    const spawnRate =
+
+        Math.max(
+            .40,
+            1.20 -
+            (level - 1) * .115
+        );
+
+
+    if (
+        spawnTimer >= spawnRate
+    ) {
+
+        createNote();
+
+        spawnTimer = 0;
+
+    }
+
+
+    /*
+    ================================================
+    VELOCIDAD
+
+    NIVEL 1:
+    130 px/s
+
+    NIVEL 8:
+    340 px/s
+    ================================================
+    */
+
+    const speed =
+
+        130 +
+        (level - 1) * 30;
+
+
+    const stage =
+        document.getElementById("stage");
+
+
+    const hitY =
+
+        stage.clientHeight -
+        145;
+
+
+    /*
+    MOVER NOTAS
+    */
+
+    for (
+        let i = notes.length - 1;
+
+        i >= 0;
+
+        i--
+    ) {
+
+        const note =
+            notes[i];
+
+
+        note.y +=
+            speed * delta;
+
+
+        note.element.style.top =
+            note.y + "px";
+
+
+        /*
+        PASÓ LA LÍNEA
+        */
+
+        if (
+            note.y >
+            hitY + 55
+        ) {
+
+            missNote(i);
+
+        }
+
+    }
+
+
+    /*
+    TERMINAR A LOS 90 SEGUNDOS
+    */
+
+    if (
+        elapsed >= 90
+    ) {
+
+        finishGame(true);
+
+        return;
+
+    }
+
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
+}
+
+
+/* =====================================================
+   PRESIONAR TECLA
+===================================================== */
+
+function pressKey(key) {
+
+    if (!running)
+        return;
+
+
+    const keyMap = {
+
+        a: 0,
+
+        s: 1,
+
+        d: 2,
+
+        f: 3
+
+    };
+
+
+    const lane =
+        keyMap[key];
+
+
+    /*
+       ANIMAR CONTENEDOR
+    */
+
+    const button =
+        document.getElementById(
+            "button" +
+            (lane + 1)
+        );
+
+
+    button.classList.add(
+        "pressed"
+    );
+
+
+    setTimeout(
+        () => {
+
+            button.classList.remove(
+                "pressed"
+            );
+
+        },
+        100
+    );
+
+
+    /*
+       BUSCAR LA NOTA MÁS CERCANA
+    */
+
+    const stage =
+        document.getElementById("stage");
+
+
+    const hitY =
+        stage.clientHeight -
+        145;
+
+
+    let target =
+        null;
+
+
+    let targetIndex =
+        -1;
+
+
+    let closest =
+        Infinity;
+
+
+    for (
+        let i = 0;
+
+        i < notes.length;
+
+        i++
+    ) {
+
+        const note =
+            notes[i];
+
+
+        /*
+        ============================================
+        NOTA INDIVIDUAL
+
+        Solo responde a su tecla.
+        ============================================
+        */
+
+        if (
+            !note.combination
+        ) {
+
+            if (
+                note.keys[0] !== key
+            ) {
+
+                continue;
+
+            }
+
+        }
+
+
+        /*
+        ============================================
+        COMBINACIÓN
+
+        Aquí NO se golpea todavía.
+
+        Una combinación necesita
+        que el jugador presione
+        ambas teclas.
+
+        Solo se selecciona cuando
+        ya están cerca de la línea.
+        ============================================
+        */
+
+        if (
+            note.combination
+        ) {
+
+            /*
+            Si esta tecla forma parte
+            de la combinación, la
+            consideramos candidata.
+            */
+
+            if (
+                !note.keys.includes(key)
+            ) {
+
+                continue;
+
+            }
+
+        }
+
+
+        const distance =
+
+            Math.abs(
+                note.y -
+                hitY
+            );
+
+
+        if (
+            distance <
+            closest
+        ) {
+
+            closest =
+                distance;
+
+            target =
+                note;
+
+            targetIndex =
+                i;
+
+        }
+
+    }
+
+
+    if (!target) {
+
+        showFeedback(
+            "❌ ¡VACÍO!",
+            false
+        );
+
+        return;
+
+    }
+
+
+    const distance =
+
+        Math.abs(
+            target.y -
+            hitY
+        );
+
+
+    /*
+    ================================================
+    NOTA INDIVIDUAL
+    ================================================
+    */
+
+    if (
+        !target.combination
+    ) {
+
+        if (
+            distance <= 70
+        ) {
+
+            hitNote(
+                targetIndex,
+                distance <= 30
+            );
+
+        }
+
+        else {
+
+            showFeedback(
+                "⏱️ ESPERA",
+                false
+            );
+
+        }
+
+
+        return;
+
+    }
+
+
+    /*
+    ================================================
+    COMBINACIÓN
+    ================================================
+
+    Guardamos las teclas presionadas
+    temporalmente.
+    */
+
+    if (
+        distance <= 70
+    ) {
+
+        handleCombination(
+            target,
+            targetIndex
+        );
+
+    }
+
+    else {
+
+        showFeedback(
+            "⏱️ ESPERA",
+            false
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   TECLAS PRESIONADAS PARA COMBINACIONES
+===================================================== */
+
+let pressedKeys = new Set();
+
+
+/* =====================================================
+   MANEJAR COMBINACIÓN
+===================================================== */
+
+function handleCombination(
+    note,
+    index
+) {
+
+    /*
+    Agregar tecla presionada
+    */
+
+    pressedKeys.add(
+        currentKey
+    );
+
+
+    /*
+    Verificar si están todas
+    */
+
+    const complete =
+        note.keys.every(
+            key =>
+                pressedKeys.has(key)
+        );
+
+
+    if (complete) {
+
+        /*
+        COMBINACIÓN COMPLETA
+        */
+
+        combo++;
+
+        const multiplier =
+
+            Math.min(
+                4,
+                1 +
+                Math.floor(
+                    combo / 5
+                )
+            );
+
+
+        const points =
+            250 *
+            multiplier;
+
+
+        score += points;
+
+
+        showFeedback(
+            "🔥 COMBO +" +
+            points,
+            true
+        );
+
+
+        note.element.style.transform =
+            "scale(1.3)";
+
+
+        note.element.style.opacity =
+            "0";
+
+
+        setTimeout(
+            () => {
+
+                if (
+                    note.element.parentNode
+                ) {
+
+                    note.element.remove();
+
+                }
+
+            },
+            120
+        );
+
+
+        notes.splice(
+            index,
+            1
+        );
+
+
+        flashScreen(true);
+
+
+        pressedKeys.clear();
+
+
+        updateHUD();
+
+    }
+
+}
+
+
+/* =====================================================
+   VARIABLE PARA LA TECLA ACTUAL
+===================================================== */
+
+let currentKey = "";
+
+
+/* =====================================================
+   EVENTO DEL TECLADO
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (!running)
+            return;
+
+
+        const key =
+            event.key.toLowerCase();
+
+
+        /*
+        Evitar repetir tecla
+        mientras está presionada.
+        */
+
+        if (
+            event.repeat
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+        ============================================
+        TECLAS INDIVIDUALES
+        ============================================
+        */
+
+        if (
+            key === "a" ||
+            key === "s" ||
+            key === "d" ||
+            key === "f"
+        ) {
+
+            currentKey =
+                key;
+
+
+            pressKey(key);
+
+        }
+
+
+        /*
+        ============================================
+        TECLAS NUMÉRICAS
+        ============================================
+        */
+
+        if (key === "1") {
+
+            currentKey = "a";
+
+            pressKey("a");
+
+        }
+
+
+        if (key === "2") {
+
+            currentKey = "s";
+
+            pressKey("s");
+
+        }
+
+
+        if (key === "3") {
+
+            currentKey = "d";
+
+            pressKey("d");
+
+        }
+
+
+        if (key === "4") {
+
+            currentKey = "f";
+
+            pressKey("f");
+
+        }
+
+    }
+
+);
+
+
+/* =====================================================
+   AL SOLTAR UNA TECLA
+===================================================== */
+
+document.addEventListener(
+    "keyup",
+    function(event) {
+
+        const key =
+            event.key.toLowerCase();
+
+
+        pressedKeys.delete(
+            key
+        );
+
+    }
+
+);
+
+
+/* =====================================================
+   GOLPE INDIVIDUAL
+===================================================== */
+
+function hitNote(
+    index,
+    perfect
+) {
+
+    const note =
+        notes[index];
+
+
+    combo++;
+
+
+    const multiplier =
+
+        Math.min(
+            4,
+            1 +
+            Math.floor(
+                combo / 5
+            )
+        );
+
+
+    let points =
+        100 *
+        multiplier;
+
+
+    if (perfect) {
+
+        points += 50;
+
+
+        showFeedback(
+            "🔥 PERFECTO +" +
+            points,
+            true
+        );
+
+    }
+
+    else {
+
+        showFeedback(
+            "✅ BIEN +" +
+            points,
+            true
+        );
+
+    }
+
+
+    score += points;
+
+
+    note.element.style.transform =
+        "scale(1.5)";
+
+
+    note.element.style.opacity =
+        "0";
+
+
+    setTimeout(
+        () => {
+
+            if (
+                note.element.parentNode
+            ) {
+
+                note.element.remove();
+
+            }
+
+        },
+        120
+    );
+
+
+    notes.splice(
+        index,
+        1
+    );
+
+
+    flashScreen(true);
+
+
+    updateHUD();
+
+}
+
+
+/* =====================================================
+   FALLAR
+===================================================== */
+
+function missNote(index) {
+
+    const note =
+        notes[index];
+
+
+    note.element.remove();
+
+
+    notes.splice(
+        index,
+        1
+    );
+
+
+    lives--;
+
+    combo = 0;
+
+
+    pressedKeys.clear();
+
+
+    showFeedback(
+        "💥 ¡FALLASTE!",
+        false
+    );
+
+
+    flashScreen(false);
+
+
+    updateHUD();
+
+
+    if (
+        lives <= 0
+    ) {
+
+        finishGame(false);
+
+    }
+
+}
+
+
+/* =====================================================
+   FEEDBACK
+===================================================== */
+
+function showFeedback(
+    text,
+    good
+) {
+
+    const feedback =
+        document.getElementById(
+            "feedback"
+        );
+
+
+    feedback.textContent =
+        text;
+
+
+    feedback.style.color =
+
+        good
+            ? "#65e879"
+            : "#ff5555";
+
+
+    feedback.classList.remove(
+        "feedbackAnimation"
+    );
+
+
+    void feedback.offsetWidth;
+
+
+    feedback.classList.add(
+        "feedbackAnimation"
+    );
+
+}
+
+
+/* =====================================================
+   FLASH
+===================================================== */
+
+function flashScreen(good) {
+
+    const flash =
+        document.getElementById(
+            "flash"
+        );
+
+
+    flash.className = "";
+
+
+    void flash.offsetWidth;
+
+
+    flash.classList.add(
+
+        good
+            ? "flashGood"
+            : "flashBad"
+
+    );
+
+}
+
+
+/* =====================================================
+   HUD
+===================================================== */
+
+function updateHUD() {
+
+    document
+        .getElementById("score")
+        .textContent =
+        score;
+
+
+    document
+        .getElementById("lives")
+        .textContent =
+
+        "❤️".repeat(lives) +
+
+        "🖤".repeat(
+            3 - lives
+        );
+
+
+    document
+        .getElementById("level")
+        .textContent =
+        level;
+
+
+    const multiplier =
+
+        Math.min(
+            4,
+            1 +
+            Math.floor(
+                combo / 5
+            )
+        );
+
+
+    document
+        .getElementById(
+            "comboDisplay"
+        )
+        .textContent =
+
+        "COMBO x" +
+        multiplier +
+        "  (" +
+        combo +
+        ")";
+
+}
+
+
+/* =====================================================
+   FINAL
+===================================================== */
+
+function finishGame(won) {
+
+    running = false;
+
+
+    notes.forEach(
+        note => {
+
+            if (
+                note.element.parentNode
+            ) {
+
+                note.element.remove();
+
+            }
+
+        }
+    );
+
+
+    notes = [];
+
+
+    pressedKeys.clear();
+
+
+    document
+        .getElementById(
+            "gameScreen"
+        )
+        .classList.add(
+            "hidden"
+        );
+
+
+    document
+        .getElementById(
+            "end"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+
+    document
+        .getElementById(
+            "finalScore"
+        )
+        .textContent =
+
+        "Puntuación final: " +
+        score;
+
+
+    if (won) {
+
+        document
+            .getElementById(
+                "endTitle"
+            )
+            .textContent =
+
+            "🏆 ¡LA PAZ ESTÁ LIMPIA!";
+
+
+        document
+            .getElementById(
+                "finalMessage"
+            )
+            .textContent =
+
+            "¡Excelente trabajo! " +
+            "Has conseguido mantener " +
+            "la ciudad limpia y separar " +
+            "correctamente los residuos.";
+
+    }
+
+    else {
+
+        document
+            .getElementById(
+                "endTitle"
+            )
+            .textContent =
+
+            "💥 ¡TE QUEDASTE SIN VIDAS!";
+
+
+        document
+            .getElementById(
+                "finalMessage"
+            )
+            .textContent =
+
+            "Los residuos llegaron al final " +
+            "sin ser reciclados. " +
+            "¡Inténtalo nuevamente y " +
+            "supera tu puntuación!";
+
+    }
+
+}
+
+</script>
+
+</body>
+
+</html>

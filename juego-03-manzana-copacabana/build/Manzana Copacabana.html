@@ -1,0 +1,3499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Manzana Copacabana</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#000;
+    color:white;
+    font-family:Arial,Helvetica,sans-serif;
+
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    overflow:hidden;
+}
+
+#game{
+    width:min(1250px,98vw);
+    height:min(850px,98vh);
+
+    background:#000;
+
+    border:3px solid #2222ff;
+    border-radius:12px;
+
+    box-shadow:
+        0 0 20px #2222ff,
+        0 0 50px rgba(0,0,255,.3);
+
+    overflow:hidden;
+
+    display:flex;
+    flex-direction:column;
+}
+
+
+/* =========================
+   MENU
+========================= */
+
+#menu{
+    flex:1;
+
+    display:flex;
+    flex-direction:column;
+
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+}
+
+.menuApple{
+    font-size:75px;
+
+    animation:
+        floating 1s infinite alternate;
+}
+
+@keyframes floating{
+    from{
+        transform:translateY(0);
+    }
+
+    to{
+        transform:translateY(-10px);
+    }
+}
+
+.logo{
+    color:#45ff45;
+
+    font-size:
+        clamp(45px,8vw,80px);
+
+    font-weight:900;
+
+    text-shadow:
+        0 0 10px #45ff45,
+        0 0 25px #159b15;
+}
+
+.logo span{
+    display:block;
+
+    color:#ffe600;
+
+    font-size:.42em;
+
+    letter-spacing:9px;
+}
+
+.description{
+    max-width:650px;
+
+    color:#ccc;
+
+    line-height:1.6;
+
+    margin:20px;
+}
+
+.infoBox{
+    padding:18px 25px;
+
+    background:#05051c;
+
+    border:2px solid #3030ff;
+
+    border-radius:10px;
+
+    line-height:1.8;
+}
+
+.startButton{
+    margin-top:25px;
+
+    padding:14px 45px;
+
+    background:#000;
+
+    border:3px solid #ffe600;
+
+    border-radius:8px;
+
+    color:#ffe600;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+.startButton:hover{
+    background:#ffe600;
+
+    color:#000;
+
+    box-shadow:0 0 25px #ffe600;
+}
+
+
+/* =========================
+   HUD
+========================= */
+
+#hud{
+    height:65px;
+
+    flex-shrink:0;
+
+    display:none;
+
+    grid-template-columns:
+        1fr 1fr 1fr;
+
+    background:#03030f;
+
+    border-bottom:2px solid #2222ff;
+}
+
+.hudItem{
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#888;
+
+    font-size:12px;
+}
+
+.hudItem strong{
+    color:white;
+
+    font-size:21px;
+
+    margin-top:3px;
+}
+
+#score{
+    color:#ffe600;
+}
+
+#lives{
+    color:#ff3030;
+}
+
+#powerStatus{
+    color:#55ff55;
+}
+
+
+/* =========================
+   ÁREA DEL JUEGO
+========================= */
+
+#gameArea{
+    flex:1;
+
+    min-height:0;
+
+    display:none;
+
+    background:#000;
+}
+
+#canvasContainer{
+    flex:1;
+
+    min-width:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow:hidden;
+}
+
+canvas{
+    display:block;
+
+    image-rendering:pixelated;
+}
+
+
+/* =========================
+   PANEL
+========================= */
+
+#sidePanel{
+    width:285px;
+
+    flex-shrink:0;
+
+    border-left:2px solid #2020ff;
+
+    background:#03030f;
+
+    padding:18px;
+
+    overflow:auto;
+}
+
+.panelTitle{
+    text-align:center;
+
+    color:#ffe600;
+
+    font-weight:bold;
+
+    margin-bottom:15px;
+}
+
+#foodInfo{
+    min-height:185px;
+
+    padding:15px;
+
+    background:#05051c;
+
+    border:2px solid #3333ff;
+
+    border-radius:10px;
+}
+
+#foodEmoji{
+    font-size:48px;
+
+    text-align:center;
+}
+
+#foodName{
+    text-align:center;
+
+    color:#55ff55;
+
+    font-size:19px;
+
+    font-weight:bold;
+
+    margin:8px 0;
+}
+
+#foodDescription{
+    color:#ccc;
+
+    font-size:14px;
+
+    line-height:1.5;
+}
+
+.education{
+    color:#888;
+
+    font-size:13px;
+
+    line-height:1.5;
+
+    margin-top:20px;
+}
+
+
+/* =========================
+   FINAL
+========================= */
+
+#end{
+    flex:1;
+
+    display:none;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+}
+
+#end h1{
+    font-size:
+        clamp(35px,7vw,65px);
+
+    color:#ffe600;
+
+    text-shadow:
+        0 0 15px #ffe600;
+}
+
+#finalScore{
+    color:#55ff55;
+
+    font-size:28px;
+}
+
+#endText{
+    max-width:600px;
+
+    color:#ccc;
+
+    line-height:1.6;
+}
+
+
+/* =========================
+   MÓVIL
+========================= */
+
+#mobileControls{
+    display:none;
+
+    height:120px;
+
+    border-top:2px solid #2020ff;
+
+    position:relative;
+}
+
+.control{
+    position:absolute;
+
+    width:55px;
+
+    height:45px;
+
+    background:#101030;
+
+    border:2px solid #4444ff;
+
+    color:white;
+
+    border-radius:8px;
+
+    font-size:20px;
+}
+
+#up{
+    left:50%;
+    top:8px;
+
+    transform:translateX(-50%);
+}
+
+#left{
+    left:calc(50% - 62px);
+    top:58px;
+}
+
+#down{
+    left:50%;
+    top:58px;
+
+    transform:translateX(-50%);
+}
+
+#right{
+    left:calc(50% + 7px);
+    top:58px;
+}
+
+
+@media(max-width:800px){
+
+    body{
+        overflow:auto;
+    }
+
+    #game{
+        width:100vw;
+        height:100vh;
+
+        border-radius:0;
+
+        border-left:0;
+        border-right:0;
+    }
+
+    #sidePanel{
+        display:none;
+    }
+
+    #mobileControls{
+        display:block;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="game">
+
+
+<!-- =========================
+     MENÚ
+========================= -->
+
+<div id="menu">
+
+    <div class="menuApple">🍏</div>
+
+    <div class="logo">
+
+        MANZANA
+
+        <span>COPACABANA</span>
+
+    </div>
+
+    <div class="description">
+
+        Recorre el laberinto, descubre alimentos
+        saludables y evita la comida chatarra.
+
+        <br><br>
+
+        Consigue la manzana dorada para
+        convertirte temporalmente en cazador
+        de fantasmas.
+
+    </div>
+
+    <div class="infoBox">
+
+        🍏 Tú eres la manzana verde
+
+        <br>
+
+        🥦 Los alimentos saludables dan puntos
+
+        <br>
+
+        🟡 La manzana dorada permite comer fantasmas
+
+        <br>
+
+        🍔 🍟 🍕 🍩 Cuatro enemigos te perseguirán
+
+    </div>
+
+    <button
+        class="startButton"
+        onclick="startGame()">
+
+        ▶ JUGAR
+
+    </button>
+
+</div>
+
+
+<!-- =========================
+     HUD
+========================= -->
+
+<div id="hud">
+
+    <div class="hudItem">
+
+        PUNTOS
+
+        <strong id="score">0</strong>
+
+    </div>
+
+    <div class="hudItem">
+
+        VIDAS
+
+        <strong id="lives">❤️❤️❤️</strong>
+
+    </div>
+
+    <div class="hudItem">
+
+        PODER
+
+        <strong id="powerStatus">—</strong>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     JUEGO
+========================= -->
+
+<div id="gameArea">
+
+    <div id="canvasContainer">
+
+        <canvas id="canvas"></canvas>
+
+    </div>
+
+
+    <aside id="sidePanel">
+
+        <div class="panelTitle">
+            🍎 APRENDE JUGANDO
+        </div>
+
+
+        <div id="foodInfo">
+
+            <div id="foodEmoji">
+                🥦
+            </div>
+
+            <div id="foodName">
+                ALIMENTOS SALUDABLES
+            </div>
+
+            <div id="foodDescription">
+
+                Recorre el laberinto y recoge
+                alimentos saludables.
+
+                <br><br>
+
+                Cada alimento descubierto
+                mostrará aquí información
+                sobre sus beneficios.
+
+            </div>
+
+        </div>
+
+
+        <div class="education">
+
+            <b>OBJETIVO</b>
+
+            <br><br>
+
+            Come todos los alimentos
+            saludables del laberinto.
+
+            <br><br>
+
+            Consigue una manzana dorada para
+            poder derrotar temporalmente
+            a la comida chatarra.
+
+            <br><br>
+
+            <b>CONTROLES</b>
+
+            <br><br>
+
+            ⬆️ W / Flecha arriba
+
+            <br>
+
+            ⬇️ S / Flecha abajo
+
+            <br>
+
+            ⬅️ A / Flecha izquierda
+
+            <br>
+
+            ➡️ D / Flecha derecha
+
+        </div>
+
+    </aside>
+
+</div>
+
+
+<!-- =========================
+     CONTROLES MÓVILES
+========================= -->
+
+<div id="mobileControls">
+
+    <button
+        id="up"
+        class="control"
+        onclick="mobileMove('up')">
+        ▲
+    </button>
+
+    <button
+        id="left"
+        class="control"
+        onclick="mobileMove('left')">
+        ◀
+    </button>
+
+    <button
+        id="down"
+        class="control"
+        onclick="mobileMove('down')">
+        ▼
+    </button>
+
+    <button
+        id="right"
+        class="control"
+        onclick="mobileMove('right')">
+        ▶
+    </button>
+
+</div>
+
+
+<!-- =========================
+     FINAL
+========================= -->
+
+<div id="end">
+
+    <h1 id="endTitle">
+        🏆 ¡GANASTE!
+    </h1>
+
+    <div id="finalScore">
+        Puntuación: 0
+    </div>
+
+    <p id="endText"></p>
+
+    <button
+        class="startButton"
+        onclick="startGame()">
+
+        🔄 JUGAR DE NUEVO
+
+    </button>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   MAPA 28 × 31
+
+   1 = PARED
+   0 = CAMINO
+
+   Basado en la estructura clásica
+   del laberinto de Pac-Man.
+===================================================== */
+
+const MAP = [
+
+"1111111111111111111111111111",
+"1000000000000110000000000001",
+"1011110111110110111110111101",
+"1011110111110110111110111101",
+"1011110111110110111110111101",
+"1000000000000000000000000001",
+"1011110110111111110110111101",
+"1011110110111111110110111101",
+"1000000110000110000110000001",
+"1111110111110110111110111111",
+"0000010111110110111110100000",
+"0000010110000000000110100000",
+"0000010110111001110110100000",
+"1111110110100001010110111111",
+"0000000000100000010000000000",
+"1111110110100001010110111111",
+"0000010110111111110110100000",
+"0000010110000000000110100000",
+"0000010110111111110110100000",
+"1111110110111111110110111111",
+"1000000000000110000000000001",
+"1011110111110110111110111101",
+"1011110111110110111110111101",
+"1000110000000000000000110001",
+"1110110110111111110110110111",
+"1110110110111111110110110111",
+"1000000110000110000110000001",
+"1011111111110110111111111101",
+"1011111111110110111111111101",
+"1000000000000000000000000001",
+"1111111111111111111111111111"
+
+];
+
+
+const ROWS=MAP.length;
+
+const COLS=MAP[0].length;
+
+
+/* =====================================================
+   CANVAS
+===================================================== */
+
+const canvas=
+    document.getElementById("canvas");
+
+const ctx=
+    canvas.getContext("2d");
+
+
+let TILE=20;
+
+
+/* =====================================================
+   ESTADO
+===================================================== */
+
+let player;
+
+let enemies=[];
+
+let foods=[];
+
+let powerApples=[];
+
+let score=0;
+
+let lives=3;
+
+let running=false;
+
+let powerTime=0;
+
+let hitCooldown=0;
+
+let lastTime=0;
+
+let animationId;
+
+let modeTimer=0;
+
+let modeIndex=0;
+
+
+/* =====================================================
+   MODOS
+
+   Fases más cortas de dispersión y
+   fases de persecución más largas,
+   para que los fantasmas acosen
+   de forma más constante, como en
+   el arcade original a partir de
+   niveles avanzados.
+===================================================== */
+
+const modeSchedule=[
+
+    {
+        mode:"scatter",
+        time:5
+    },
+
+    {
+        mode:"chase",
+        time:20
+    },
+
+    {
+        mode:"scatter",
+        time:4
+    },
+
+    {
+        mode:"chase",
+        time:20
+    },
+
+    {
+        mode:"scatter",
+        time:3
+    },
+
+    {
+        mode:"chase",
+        time:999999
+    }
+
+];
+
+
+let currentMode="scatter";
+
+
+/* =====================================================
+   ALIMENTOS
+===================================================== */
+
+const healthyFoods=[
+
+    {
+        emoji:"🥦",
+        name:"BRÓCOLI",
+        color:"#39d353",
+
+        message:
+        "El brócoli aporta fibra, vitamina C y vitamina K. La fibra ayuda al funcionamiento saludable del sistema digestivo."
+    },
+
+    {
+        emoji:"🥕",
+        name:"ZANAHORIA",
+        color:"#ff8c00",
+
+        message:
+        "La zanahoria aporta betacarotenos, que el cuerpo puede convertir en vitamina A. La vitamina A ayuda a mantener una visión saludable."
+    },
+
+    {
+        emoji:"🍌",
+        name:"BANANA",
+        color:"#ffe600",
+
+        message:
+        "La banana aporta potasio y carbohidratos. El potasio contribuye al funcionamiento normal de los músculos y del sistema nervioso."
+    },
+
+    {
+        emoji:"🍓",
+        name:"FRESA",
+        color:"#ff3b5c",
+
+        message:
+        "La fresa aporta vitamina C, agua y fibra. Las frutas ayudan a incorporar nutrientes importantes dentro de una alimentación variada."
+    },
+
+    {
+        emoji:"🥑",
+        name:"AGUACATE",
+        color:"#50c878",
+
+        message:
+        "El aguacate contiene grasas insaturadas, fibra y diferentes vitaminas y minerales."
+    },
+
+    {
+        emoji:"🍊",
+        name:"NARANJA",
+        color:"#ff8c00",
+
+        message:
+        "La naranja contiene vitamina C y agua. La vitamina C contribuye al funcionamiento normal del sistema inmunitario."
+    },
+
+    {
+        emoji:"🍎",
+        name:"MANZANA",
+        color:"#e53935",
+
+        message:
+        "La manzana aporta fibra y agua. Consumir diferentes frutas ayuda a mantener una alimentación variada."
+    }
+
+];
+
+
+/* =====================================================
+   COMIDA CHATARRA
+===================================================== */
+
+const junkFoods=[
+
+    {
+        emoji:"🍔",
+        name:"HAMBURGUESA",
+        color:"#ff3030"
+    },
+
+    {
+        emoji:"🍕",
+        name:"PIZZA",
+        color:"#ff55aa"
+    },
+
+    {
+        emoji:"🍟",
+        name:"PAPAS FRITAS",
+        color:"#ff8c00"
+    },
+
+    {
+        emoji:"🍩",
+        name:"DONA",
+        color:"#55aaff"
+    }
+
+];
+
+
+/* =====================================================
+   POSICIONES
+===================================================== */
+
+const playerStart={
+    r:23,
+    c:14
+};
+
+
+const enemyStarts=[
+
+    {
+        r:14,
+        c:13
+    },
+
+    {
+        r:14,
+        c:14
+    },
+
+    {
+        r:15,
+        c:13
+    },
+
+    {
+        r:15,
+        c:14
+    }
+
+];
+
+
+const corners=[
+
+    {
+        r:1,
+        c:26
+    },
+
+    {
+        r:1,
+        c:1
+    },
+
+    {
+        r:29,
+        c:26
+    },
+
+    {
+        r:29,
+        c:1
+    }
+
+];
+
+
+const tunnelRows=[
+    14
+];
+
+
+/* =====================================================
+   COMPROBAR PARED
+===================================================== */
+
+function isWall(r,c){
+
+    if(
+        c<0 ||
+        c>=COLS
+    ){
+
+        return false;
+
+    }
+
+
+    if(
+        r<0 ||
+        r>=ROWS
+    ){
+
+        return true;
+
+    }
+
+
+    return MAP[r][c]==="1";
+
+}
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
+function startGame(){
+
+    cancelAnimationFrame(
+        animationId
+    );
+
+
+    document
+        .getElementById("menu")
+        .style.display="none";
+
+
+    document
+        .getElementById("end")
+        .style.display="none";
+
+
+    document
+        .getElementById("hud")
+        .style.display="grid";
+
+
+    document
+        .getElementById("gameArea")
+        .style.display="flex";
+
+
+    score=0;
+
+    lives=3;
+
+    powerTime=0;
+
+    hitCooldown=2;
+
+    modeTimer=0;
+
+    modeIndex=0;
+
+    currentMode="scatter";
+
+    running=true;
+
+
+    resizeCanvas();
+
+
+    createPlayer();
+
+    createFoods();
+
+    createPowerApples();
+
+    createEnemies();
+
+
+    updateHUD();
+
+    updateFoodPanelDefault();
+
+
+    lastTime=
+        performance.now();
+
+
+    animationId=
+        requestAnimationFrame(
+            gameLoop
+        );
+
+}
+
+
+/* =====================================================
+   REDIMENSIONAR
+===================================================== */
+
+function resizeCanvas(){
+
+    const area=
+        document.getElementById(
+            "canvasContainer"
+        );
+
+
+    const maxWidth=
+        area.clientWidth;
+
+
+    const maxHeight=
+        area.clientHeight;
+
+
+    TILE=Math.floor(
+
+        Math.min(
+
+            maxWidth/COLS,
+
+            maxHeight/ROWS
+
+        )
+
+    );
+
+
+    TILE=Math.max(
+        10,
+        TILE
+    );
+
+
+    canvas.width=
+        COLS*TILE;
+
+
+    canvas.height=
+        ROWS*TILE;
+
+}
+
+
+window.addEventListener(
+    "resize",
+    ()=>{
+
+        if(running){
+
+            resizeCanvas();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   JUGADOR
+===================================================== */
+
+function createPlayer(){
+
+    player={
+
+        r:playerStart.r,
+
+        c:playerStart.c,
+
+        x:playerStart.c,
+
+        y:playerStart.r,
+
+        dirX:0,
+
+        dirY:0,
+
+        nextX:0,
+
+        nextY:0,
+
+        speed:5.1
+
+    };
+
+}
+
+
+/* =====================================================
+   ALIMENTOS
+===================================================== */
+
+function createFoods(){
+
+    foods=[];
+
+    let index=0;
+
+
+    for(
+        let r=0;
+        r<ROWS;
+        r++
+    ){
+
+        for(
+            let c=0;
+            c<COLS;
+            c++
+        ){
+
+            if(
+                MAP[r][c]!=="0"
+            )
+                continue;
+
+
+            /*
+               No colocar alimento
+               dentro de la casa.
+            */
+
+            if(
+                r>=10 &&
+                r<=18 &&
+                c>=9 &&
+                c<=18
+            )
+                continue;
+
+
+            /*
+               No poner debajo
+               de la posición inicial.
+            */
+
+            if(
+                Math.abs(
+                    r-playerStart.r
+                )<=1
+                &&
+                Math.abs(
+                    c-playerStart.c
+                )<=1
+            )
+                continue;
+
+
+            foods.push({
+
+                r:r,
+
+                c:c,
+
+                type:
+                    healthyFoods[
+                        index%
+                        healthyFoods.length
+                    ],
+
+                collected:false
+
+            });
+
+
+            index++;
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   MANZANAS DORADAS
+===================================================== */
+
+function createPowerApples(){
+
+    powerApples=[
+
+        {
+            r:7,
+            c:1,
+            collected:false
+        },
+
+        {
+            r:7,
+            c:26,
+            collected:false
+        },
+
+        {
+            r:23,
+            c:1,
+            collected:false
+        },
+
+        {
+            r:23,
+            c:26,
+            collected:false
+        }
+
+    ];
+
+}
+
+
+/* =====================================================
+   FANTASMAS
+===================================================== */
+
+function createEnemies(){
+
+    enemies=[];
+
+
+    for(
+        let i=0;
+        i<4;
+        i++
+    ){
+
+        const p=
+            enemyStarts[i];
+
+
+        enemies.push({
+
+            id:i,
+
+            r:p.r,
+
+            c:p.c,
+
+            x:p.c,
+
+            y:p.r,
+
+            dirX:
+                i%2===0
+                    ?1
+                    :-1,
+
+            dirY:0,
+
+            /*
+               Los fantasmas ahora son
+               más rápidos que la manzana
+               (5.1) para que realmente
+               puedan alcanzarte y cerrar
+               el paso en las esquinas,
+               como en el Pac-Man original.
+            */
+
+            speed:
+                5.65+
+                i*.12,
+
+            type:
+                junkFoods[i],
+
+            color:
+                junkFoods[i].color,
+
+            home:
+                corners[i]
+
+        });
+
+    }
+
+}
+
+
+/* =====================================================
+   DIRECCIÓN
+===================================================== */
+
+function setDirection(dx,dy){
+
+    if(!running)
+        return;
+
+
+    player.nextX=dx;
+
+    player.nextY=dy;
+
+}
+
+
+/* =====================================================
+   JUGADOR
+===================================================== */
+
+function updatePlayer(dt){
+
+    if(
+
+        Math.abs(
+            player.x-
+            Math.round(player.x)
+        )<.13
+
+        &&
+
+        Math.abs(
+            player.y-
+            Math.round(player.y)
+        )<.13
+
+    ){
+
+        const r=
+            Math.round(player.y);
+
+        const c=
+            Math.round(player.x);
+
+
+        if(
+            !isWall(
+                r+player.nextY,
+                c+player.nextX
+            )
+        ){
+
+            player.dirX=
+                player.nextX;
+
+            player.dirY=
+                player.nextY;
+
+        }
+
+    }
+
+
+    let nx=
+        player.x+
+        player.dirX*
+        player.speed*
+        dt;
+
+
+    let ny=
+        player.y+
+        player.dirY*
+        player.speed*
+        dt;
+
+
+    /*
+       TÚNEL ORIGINAL
+
+       Solo en la fila del túnel.
+    */
+
+    if(
+        tunnelRows.includes(
+            Math.round(player.y)
+        )
+    ){
+
+        if(
+            nx<0
+        ){
+
+            nx=COLS-1;
+
+        }
+
+
+        if(
+            nx>=COLS
+        ){
+
+            nx=0;
+
+        }
+
+    }
+
+
+    if(
+        !isWall(
+            Math.round(player.y),
+            Math.round(nx)
+        )
+    ){
+
+        player.x=nx;
+
+    }
+    else{
+
+        player.x=
+            Math.round(player.x);
+
+        player.dirX=0;
+
+    }
+
+
+    if(
+        !isWall(
+            Math.round(ny),
+            Math.round(player.x)
+        )
+    ){
+
+        player.y=ny;
+
+    }
+    else{
+
+        player.y=
+            Math.round(player.y);
+
+        player.dirY=0;
+
+    }
+
+
+    collectFood();
+
+}
+
+
+/* =====================================================
+   COMER
+===================================================== */
+
+function collectFood(){
+
+    const r=
+        Math.round(player.y);
+
+    const c=
+        Math.round(player.x);
+
+
+    for(
+        const food of foods
+    ){
+
+        if(
+
+            !food.collected
+
+            &&
+
+            food.r===r
+
+            &&
+
+            food.c===c
+
+        ){
+
+            food.collected=true;
+
+            score+=10;
+
+            showFoodInfo(
+                food.type
+            );
+
+        }
+
+    }
+
+
+    for(
+        const apple of powerApples
+    ){
+
+        if(
+
+            !apple.collected
+
+            &&
+
+            apple.r===r
+
+            &&
+
+            apple.c===c
+
+        ){
+
+            apple.collected=true;
+
+            powerTime=8;
+
+            score+=50;
+
+            showPowerInfo();
+
+        }
+
+    }
+
+
+    if(
+        foods.every(
+            food =>
+            food.collected
+        )
+    ){
+
+        winGame();
+
+    }
+
+}
+
+
+/* =====================================================
+   PANEL EDUCATIVO
+===================================================== */
+
+function updateFoodPanelDefault(){
+
+    document
+        .getElementById("foodEmoji")
+        .textContent="🥦";
+
+
+    document
+        .getElementById("foodName")
+        .textContent=
+        "ALIMENTOS SALUDABLES";
+
+
+    document
+        .getElementById("foodName")
+        .style.color=
+        "#55ff55";
+
+
+    document
+        .getElementById("foodDescription")
+        .textContent=
+        "Recoge los alimentos saludables del laberinto. La información aparecerá aquí sin detener la partida.";
+
+}
+
+
+function showFoodInfo(food){
+
+    document
+        .getElementById("foodEmoji")
+        .textContent=
+        food.emoji;
+
+
+    document
+        .getElementById("foodName")
+        .textContent=
+        food.name;
+
+
+    document
+        .getElementById("foodName")
+        .style.color=
+        food.color;
+
+
+    document
+        .getElementById("foodDescription")
+        .textContent=
+        food.message;
+
+}
+
+
+function showPowerInfo(){
+
+    document
+        .getElementById("foodEmoji")
+        .textContent=
+        "🟡";
+
+
+    document
+        .getElementById("foodName")
+        .textContent=
+        "MANZANA DORADA";
+
+
+    document
+        .getElementById("foodName")
+        .style.color=
+        "#ffd700";
+
+
+    document
+        .getElementById("foodDescription")
+        .textContent=
+        "¡Poder activado! Durante 8 segundos puedes comer los fantasmas de comida chatarra.";
+
+}
+
+
+/* =====================================================
+   IA
+===================================================== */
+
+function updateMode(dt){
+
+    modeTimer+=dt;
+
+
+    const current=
+        modeSchedule[modeIndex];
+
+
+    if(
+        modeTimer>=current.time
+    ){
+
+        modeTimer=0;
+
+
+        if(
+            modeIndex<
+            modeSchedule.length-1
+        ){
+
+            modeIndex++;
+
+        }
+
+
+        currentMode=
+            modeSchedule[
+                modeIndex
+            ].mode;
+
+
+        /*
+           Cambio de dirección
+           al cambiar de fase.
+        */
+
+        for(
+            const enemy of enemies
+        ){
+
+            enemy.dirX*=-1;
+
+            enemy.dirY*=-1;
+
+        }
+
+    }
+
+}
+
+
+function getTarget(enemy){
+
+    const pr=
+        Math.round(player.y);
+
+    const pc=
+        Math.round(player.x);
+
+
+    /*
+       DISPERSIÓN
+    */
+
+    if(
+        currentMode==="scatter"
+    ){
+
+        return enemy.home;
+
+    }
+
+
+    /*
+       BLINKY
+       Persecución directa.
+    */
+
+    if(
+        enemy.id===0
+    ){
+
+        return {
+            r:pr,
+            c:pc
+        };
+
+    }
+
+
+    /*
+       PINKY
+       Intercepta.
+    */
+
+    if(
+        enemy.id===1
+    ){
+
+        return {
+
+            r:
+                pr+
+                player.dirY*4,
+
+            c:
+                pc+
+                player.dirX*4
+
+        };
+
+    }
+
+
+    /*
+       CLYDE
+       Cambia entre perseguir
+       y escapar.
+    */
+
+    if(
+        enemy.id===2
+    ){
+
+        const distance=
+            Math.abs(
+                enemy.x-player.x
+            )+
+            Math.abs(
+                enemy.y-player.y
+            );
+
+
+        if(
+            distance>8
+        ){
+
+            return {
+                r:pr,
+                c:pc
+            };
+
+        }
+
+
+        return enemy.home;
+
+    }
+
+
+    /*
+       INKY
+       Emboscada.
+    */
+
+    if(
+        enemy.id===3
+    ){
+
+        const blinky=
+            enemies[0];
+
+
+        const aheadR=
+            pr+
+            player.dirY*2;
+
+
+        const aheadC=
+            pc+
+            player.dirX*2;
+
+
+        return {
+
+            r:
+                aheadR+
+                (
+                    aheadR-
+                    Math.round(
+                        blinky.y
+                    )
+                ),
+
+            c:
+                aheadC+
+                (
+                    aheadC-
+                    Math.round(
+                        blinky.x
+                    )
+                )
+
+        };
+
+    }
+
+}
+
+
+/* =====================================================
+   ELEGIR DIRECCIÓN
+===================================================== */
+
+function chooseEnemyDirection(enemy){
+
+    const r=
+        Math.round(enemy.y);
+
+    const c=
+        Math.round(enemy.x);
+
+
+    const directions=[
+
+        {
+            x:1,
+            y:0
+        },
+
+        {
+            x:-1,
+            y:0
+        },
+
+        {
+            x:0,
+            y:1
+        },
+
+        {
+            x:0,
+            y:-1
+        }
+
+    ];
+
+
+    let possible=
+        directions.filter(
+            d =>
+            !isWall(
+                r+d.y,
+                c+d.x
+            )
+        );
+
+
+    if(
+        possible.length===0
+    )
+        return;
+
+
+    /*
+       Evitar reversa salvo necesidad.
+    */
+
+    let candidates=
+        possible.filter(
+            d =>
+            !(
+                d.x===
+                -enemy.dirX
+                &&
+                d.y===
+                -enemy.dirY
+            )
+        );
+
+
+    if(
+        candidates.length===0
+    ){
+
+        candidates=possible;
+
+    }
+
+
+    const target=
+        getTarget(enemy);
+
+
+    candidates.sort(
+        (a,b)=>{
+
+            const da=
+                Math.abs(
+                    c+a.x-target.c
+                )+
+                Math.abs(
+                    r+a.y-target.r
+                );
+
+
+            const db=
+                Math.abs(
+                    c+b.x-target.c
+                )+
+                Math.abs(
+                    r+b.y-target.r
+                );
+
+
+            return da-db;
+
+        }
+    );
+
+
+    /*
+       Solo en muy raras ocasiones
+       elegimos la segunda mejor ruta,
+       para que la persecución sea
+       más directa y agresiva.
+    */
+
+    let selected=
+        candidates[0];
+
+
+    if(
+        candidates.length>1
+        &&
+        Math.random()<.035
+    ){
+
+        selected=
+            candidates[1];
+
+    }
+
+
+    enemy.dirX=
+        selected.x;
+
+    enemy.dirY=
+        selected.y;
+
+}
+
+
+/* =====================================================
+   FANTASMAS
+===================================================== */
+
+function updateEnemies(dt){
+
+    if(
+        powerTime>0
+    ){
+
+        powerTime-=dt;
+
+
+        if(
+            powerTime<0
+        ){
+
+            powerTime=0;
+
+        }
+
+    }
+
+
+    for(
+        const enemy of enemies
+    ){
+
+        if(
+
+            Math.abs(
+                enemy.x-
+                Math.round(enemy.x)
+            )<.17
+
+            &&
+
+            Math.abs(
+                enemy.y-
+                Math.round(enemy.y)
+            )<.17
+
+        ){
+
+            chooseEnemyDirection(
+                enemy
+            );
+
+        }
+
+
+        const speed=
+            powerTime>0
+                ?enemy.speed*.42
+                :enemy.speed;
+
+
+        let nx=
+            enemy.x+
+            enemy.dirX*
+            speed*
+            dt;
+
+
+        let ny=
+            enemy.y+
+            enemy.dirY*
+            speed*
+            dt;
+
+
+        /*
+           Túnel.
+        */
+
+        if(
+            tunnelRows.includes(
+                Math.round(enemy.y)
+            )
+        ){
+
+            if(
+                nx<0
+            ){
+
+                nx=COLS-1;
+
+            }
+
+
+            if(
+                nx>=COLS
+            ){
+
+                nx=0;
+
+            }
+
+        }
+
+
+        if(
+            !isWall(
+                Math.round(enemy.y),
+                Math.round(nx)
+            )
+        ){
+
+            enemy.x=nx;
+
+        }
+        else{
+
+            enemy.x=
+                Math.round(enemy.x);
+
+        }
+
+
+        if(
+            !isWall(
+                Math.round(ny),
+                Math.round(enemy.x)
+            )
+        ){
+
+            enemy.y=ny;
+
+        }
+        else{
+
+            enemy.y=
+                Math.round(enemy.y);
+
+        }
+
+
+        checkEnemyCollision(
+            enemy
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   COLISIÓN
+===================================================== */
+
+function checkEnemyCollision(enemy){
+
+    const dx=
+        player.x-
+        enemy.x;
+
+
+    const dy=
+        player.y-
+        enemy.y;
+
+
+    const distance=
+        Math.sqrt(
+            dx*dx+
+            dy*dy
+        );
+
+
+    if(
+        distance<.55
+        &&
+        hitCooldown<=0
+    ){
+
+        if(
+            powerTime>0
+        ){
+
+            score+=200;
+
+
+            const start=
+                enemyStarts[
+                    enemy.id
+                ];
+
+
+            enemy.x=
+                start.c;
+
+            enemy.y=
+                start.r;
+
+            enemy.dirX=0;
+
+            enemy.dirY=-1;
+
+        }
+        else{
+
+            loseLife();
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   PERDER VIDA
+===================================================== */
+
+function loseLife(){
+
+    lives--;
+
+    hitCooldown=2;
+
+
+    updateHUD();
+
+
+    player.x=
+        playerStart.c;
+
+    player.y=
+        playerStart.r;
+
+    player.dirX=0;
+
+    player.dirY=0;
+
+    player.nextX=0;
+
+    player.nextY=0;
+
+
+    for(
+        let i=0;
+        i<enemies.length;
+        i++
+    ){
+
+        enemies[i].x=
+            enemyStarts[i].c;
+
+        enemies[i].y=
+            enemyStarts[i].r;
+
+        enemies[i].dirX=
+            i%2===0
+                ?1
+                :-1;
+
+        enemies[i].dirY=0;
+
+    }
+
+
+    if(
+        lives<=0
+    ){
+
+        gameOver();
+
+    }
+
+}
+
+
+/* =====================================================
+   HUD
+===================================================== */
+
+function updateHUD(){
+
+    document
+        .getElementById("score")
+        .textContent=
+        score;
+
+
+    document
+        .getElementById("lives")
+        .textContent=
+        "❤️".repeat(
+            Math.max(
+                lives,
+                0
+            )
+        );
+
+
+    document
+        .getElementById("powerStatus")
+        .textContent=
+
+        powerTime>0
+
+        ?
+
+        "🟡 "+
+        Math.ceil(
+            powerTime
+        )+
+        "s"
+
+        :
+
+        "—";
+
+}
+
+
+/* =====================================================
+   GAME LOOP
+===================================================== */
+
+function gameLoop(time){
+
+    if(!running)
+        return;
+
+
+    let dt=
+        (time-lastTime)/1000;
+
+
+    lastTime=time;
+
+
+    dt=
+        Math.min(
+            dt,
+            .05
+        );
+
+
+    hitCooldown=
+        Math.max(
+            0,
+            hitCooldown-dt
+        );
+
+
+    updateMode(dt);
+
+    updatePlayer(dt);
+
+    updateEnemies(dt);
+
+    updateHUD();
+
+    draw();
+
+
+    animationId=
+        requestAnimationFrame(
+            gameLoop
+        );
+
+}
+
+
+/* =====================================================
+   DIBUJAR
+===================================================== */
+
+function draw(){
+
+    ctx.fillStyle="#000";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    drawMaze();
+
+    drawFoods();
+
+    drawPowerApples();
+
+    drawEnemies();
+
+    drawPlayer();
+
+}
+
+
+/* =====================================================
+   LABERINTO
+===================================================== */
+
+function drawMaze(){
+
+    /*
+       Fondo negro.
+    */
+
+    ctx.fillStyle="#000";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    /*
+       Dibujar cada pared como
+       segmento continuo.
+
+       Esto hace que visualmente
+       se parezca mucho más al
+       estilo arcade original.
+    */
+
+    ctx.strokeStyle=
+        "#3030ff";
+
+    ctx.lineWidth=
+        Math.max(
+            2,
+            TILE*.13
+        );
+
+    ctx.lineCap="round";
+
+    ctx.lineJoin="round";
+
+
+    for(
+        let r=0;
+        r<ROWS;
+        r++
+    ){
+
+        for(
+            let c=0;
+            c<COLS;
+            c++
+        ){
+
+            if(
+                MAP[r][c]!=="1"
+            )
+                continue;
+
+
+            const x=
+                c*TILE;
+
+            const y=
+                r*TILE;
+
+
+            /*
+               Solo dibujar los bordes
+               que colindan con camino.
+            */
+
+            if(
+                r===0 ||
+                MAP[r-1][c]!=="1"
+            ){
+
+                drawWallLine(
+                    x,
+                    y,
+                    x+TILE,
+                    y
+                );
+
+            }
+
+
+            if(
+                r===ROWS-1 ||
+                MAP[r+1][c]!=="1"
+            ){
+
+                drawWallLine(
+                    x,
+                    y+TILE,
+                    x+TILE,
+                    y+TILE
+                );
+
+            }
+
+
+            if(
+                c===0 ||
+                MAP[r][c-1]!=="1"
+            ){
+
+                drawWallLine(
+                    x,
+                    y,
+                    x,
+                    y+TILE
+                );
+
+            }
+
+
+            if(
+                c===COLS-1 ||
+                MAP[r][c+1]!=="1"
+            ){
+
+                drawWallLine(
+                    x+TILE,
+                    y,
+                    x+TILE,
+                    y+TILE
+                );
+
+            }
+
+        }
+
+    }
+
+
+    /*
+       Casa central.
+    */
+
+    const gx=
+        11*TILE;
+
+    const gy=
+        13*TILE;
+
+    const gw=
+        7*TILE;
+
+    const gh=
+        3*TILE;
+
+
+    ctx.strokeStyle=
+        "#ff8fa3";
+
+    ctx.lineWidth=
+        Math.max(
+            2,
+            TILE*.1
+        );
+
+
+    ctx.beginPath();
+
+
+    ctx.moveTo(
+        gx,
+        gy+gh
+    );
+
+    ctx.lineTo(
+        gx+gw,
+        gy+gh
+    );
+
+
+    ctx.stroke();
+
+
+    /*
+       Entrada de la casa.
+    */
+
+    ctx.strokeStyle=
+        "#fff";
+
+    ctx.lineWidth=
+        Math.max(
+            2,
+            TILE*.08
+        );
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        gx+
+        3*TILE,
+        gy
+    );
+
+    ctx.lineTo(
+        gx+
+        4*TILE,
+        gy
+    );
+
+    ctx.stroke();
+
+}
+
+
+function drawWallLine(
+    x1,
+    y1,
+    x2,
+    y2
+){
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        x1,
+        y1
+    );
+
+    ctx.lineTo(
+        x2,
+        y2
+    );
+
+    ctx.stroke();
+
+}
+
+
+/* =====================================================
+   COMIDA SALUDABLE
+===================================================== */
+
+function drawFoods(){
+
+    for(
+        const food of foods
+    ){
+
+        if(
+            food.collected
+        )
+            continue;
+
+
+        const x=
+            food.c*TILE+
+            TILE/2;
+
+
+        const y=
+            food.r*TILE+
+            TILE/2;
+
+
+        ctx.font=
+            `${TILE*.52}px Arial`;
+
+        ctx.textAlign=
+            "center";
+
+        ctx.textBaseline=
+            "middle";
+
+
+        ctx.fillText(
+            food.type.emoji,
+            x,
+            y
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   MANZANAS DORADAS
+
+   Ya no se usa el emoji 🍎 (que
+   siempre se ve rojo). Se dibuja
+   una manzana vectorial, del mismo
+   estilo que la del jugador, pero
+   en color dorado, para que se
+   note claramente que es la
+   manzana de poder.
+===================================================== */
+
+function drawPowerApples(){
+
+    for(
+        const apple of powerApples
+    ){
+
+        if(
+            apple.collected
+        )
+            continue;
+
+
+        const x=
+            apple.c*TILE+
+            TILE/2;
+
+
+        const y=
+            apple.r*TILE+
+            TILE/2;
+
+
+        const pulse=
+            1+
+            Math.sin(
+                performance.now()/100
+            )*.15;
+
+
+        ctx.save();
+
+
+        ctx.translate(
+            x,
+            y
+        );
+
+
+        ctx.scale(
+            pulse,
+            pulse
+        );
+
+
+        ctx.shadowColor=
+            "#ffd700";
+
+        ctx.shadowBlur=22;
+
+
+        /*
+           Cuerpo dorado.
+        */
+
+        ctx.fillStyle=
+            "#ffd700";
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            -TILE*.13,
+            TILE*.04,
+            TILE*.24,
+            0,
+            Math.PI*2
+        );
+
+        ctx.arc(
+            TILE*.13,
+            TILE*.04,
+            TILE*.24,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            0,
+            TILE*.16,
+            TILE*.27,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+
+        /*
+           Brillo interior.
+        */
+
+        ctx.fillStyle=
+            "#fff2b0";
+
+        ctx.beginPath();
+
+        ctx.ellipse(
+            -TILE*.1,
+            -TILE*.02,
+            TILE*.08,
+            TILE*.05,
+            -.6,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+
+        /*
+           Hoja.
+        */
+
+        ctx.fillStyle=
+            "#57ff79";
+
+
+        ctx.beginPath();
+
+        ctx.ellipse(
+            TILE*.14,
+            -TILE*.23,
+            TILE*.13,
+            TILE*.06,
+            -.45,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+
+        /*
+           Tallo.
+        */
+
+        ctx.strokeStyle=
+            "#75401d";
+
+        ctx.lineWidth=
+            Math.max(
+                1.5,
+                TILE*.06
+            );
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            0,
+            -TILE*.17
+        );
+
+        ctx.lineTo(
+            TILE*.05,
+            -TILE*.32
+        );
+
+        ctx.stroke();
+
+
+        ctx.restore();
+
+    }
+
+}
+
+
+/* =====================================================
+   JUGADOR
+===================================================== */
+
+function drawPlayer(){
+
+    const x=
+        player.x*TILE;
+
+    const y=
+        player.y*TILE;
+
+
+    ctx.save();
+
+
+    ctx.translate(
+        x,
+        y
+    );
+
+
+    ctx.shadowColor=
+        "#55ff55";
+
+    ctx.shadowBlur=15;
+
+
+    /*
+       Manzana.
+    */
+
+    ctx.fillStyle=
+        "#3ee55b";
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+        -5,
+        3,
+        TILE*.30,
+        0,
+        Math.PI*2
+    );
+
+    ctx.arc(
+        5,
+        3,
+        TILE*.30,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+
+    /*
+       Parte inferior.
+    */
+
+    ctx.beginPath();
+
+    ctx.arc(
+        0,
+        8,
+        TILE*.34,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+
+    /*
+       Hoja.
+    */
+
+    ctx.fillStyle=
+        "#57ff79";
+
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+        6,
+        -TILE*.34,
+        TILE*.18,
+        TILE*.08,
+        -.45,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+
+    /*
+       Tallo.
+    */
+
+    ctx.strokeStyle=
+        "#75401d";
+
+    ctx.lineWidth=3;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        0,
+        -TILE*.25
+    );
+
+    ctx.lineTo(
+        2,
+        -TILE*.45
+    );
+
+    ctx.stroke();
+
+
+    ctx.restore();
+
+}
+
+
+/* =====================================================
+   FANTASMAS
+===================================================== */
+
+function drawEnemies(){
+
+    for(
+        const enemy of enemies
+    ){
+
+        const x=
+            enemy.x*TILE;
+
+        const y=
+            enemy.y*TILE;
+
+
+        const frightened=
+            powerTime>0;
+
+
+        ctx.save();
+
+
+        ctx.translate(
+            x,
+            y
+        );
+
+
+        ctx.fillStyle=
+            frightened
+                ? "#1747df"
+                : enemy.color;
+
+
+        ctx.shadowColor=
+            frightened
+                ? "#fff"
+                : enemy.color;
+
+        ctx.shadowBlur=12;
+
+
+        /*
+           Cabeza.
+        */
+
+        ctx.beginPath();
+
+        ctx.arc(
+            0,
+            -TILE*.04,
+            TILE*.37,
+            Math.PI,
+            0
+        );
+
+
+        /*
+           Parte inferior.
+        */
+
+        ctx.lineTo(
+            TILE*.37,
+            TILE*.35
+        );
+
+        ctx.lineTo(
+            TILE*.18,
+            TILE*.22
+        );
+
+        ctx.lineTo(
+            0,
+            TILE*.35
+        );
+
+        ctx.lineTo(
+            -TILE*.18,
+            TILE*.22
+        );
+
+        ctx.lineTo(
+            -TILE*.37,
+            TILE*.35
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        /*
+           Comida chatarra.
+        */
+
+        if(
+            !frightened
+        ){
+
+            ctx.font=
+                `${TILE*.35}px Arial`;
+
+            ctx.textAlign=
+                "center";
+
+            ctx.textBaseline=
+                "middle";
+
+
+            ctx.fillText(
+                enemy.type.emoji,
+                0,
+                0
+            );
+
+        }
+        else{
+
+            /*
+               Ojos asustados.
+            */
+
+            ctx.fillStyle="#fff";
+
+
+            ctx.beginPath();
+
+            ctx.arc(
+                -6,
+                -5,
+                3,
+                0,
+                Math.PI*2
+            );
+
+            ctx.arc(
+                6,
+                -5,
+                3,
+                0,
+                Math.PI*2
+            );
+
+            ctx.fill();
+
+
+            ctx.strokeStyle="#fff";
+
+            ctx.lineWidth=2;
+
+
+            ctx.beginPath();
+
+            ctx.arc(
+                0,
+                5,
+                7,
+                0,
+                Math.PI
+            );
+
+            ctx.stroke();
+
+        }
+
+
+        ctx.restore();
+
+    }
+
+}
+
+
+/* =====================================================
+   GANAR
+===================================================== */
+
+function winGame(){
+
+    running=false;
+
+
+    document
+        .getElementById("gameArea")
+        .style.display="none";
+
+
+    document
+        .getElementById("hud")
+        .style.display="none";
+
+
+    document
+        .getElementById("end")
+        .style.display="flex";
+
+
+    document
+        .getElementById("endTitle")
+        .textContent=
+        "🏆 ¡GANASTE!";
+
+
+    document
+        .getElementById("finalScore")
+        .textContent=
+        "Puntuación: "+
+        score;
+
+
+    document
+        .getElementById("endText")
+        .textContent=
+        "¡Excelente! Recorriste el laberinto y descubriste diferentes alimentos saludables.";
+}
+
+
+/* =====================================================
+   GAME OVER
+===================================================== */
+
+function gameOver(){
+
+    running=false;
+
+
+    document
+        .getElementById("gameArea")
+        .style.display="none";
+
+
+    document
+        .getElementById("hud")
+        .style.display="none";
+
+
+    document
+        .getElementById("end")
+        .style.display="flex";
+
+
+    document
+        .getElementById("endTitle")
+        .textContent=
+        "💀 ¡TE ATRAPARON!";
+
+
+    document
+        .getElementById("finalScore")
+        .textContent=
+        "Puntuación: "+
+        score;
+
+
+    document
+        .getElementById("endText")
+        .textContent=
+        "La comida chatarra consiguió atraparte. Utiliza las esquinas, los túneles y las manzanas doradas para sobrevivir.";
+
+}
+
+
+/* =====================================================
+   TECLADO
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(e){
+
+        switch(
+            e.key.toLowerCase()
+        ){
+
+            case "w":
+
+            case "arrowup":
+
+                setDirection(
+                    0,
+                    -1
+                );
+
+                break;
+
+
+            case "s":
+
+            case "arrowdown":
+
+                setDirection(
+                    0,
+                    1
+                );
+
+                break;
+
+
+            case "a":
+
+            case "arrowleft":
+
+                setDirection(
+                    -1,
+                    0
+                );
+
+                break;
+
+
+            case "d":
+
+            case "arrowright":
+
+                setDirection(
+                    1,
+                    0
+                );
+
+                break;
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   CONTROLES MÓVILES
+===================================================== */
+
+function mobileMove(direction){
+
+    if(
+        direction==="up"
+    ){
+
+        setDirection(
+            0,
+            -1
+        );
+
+    }
+
+
+    if(
+        direction==="down"
+    ){
+
+        setDirection(
+            0,
+            1
+        );
+
+    }
+
+
+    if(
+        direction==="left"
+    ){
+
+        setDirection(
+            -1,
+            0
+        );
+
+    }
+
+
+    if(
+        direction==="right"
+    ){
+
+        setDirection(
+            1,
+            0
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   EVITAR SCROLL
+===================================================== */
+
+window.addEventListener(
+    "keydown",
+    function(e){
+
+        if(
+
+            [
+                "ArrowUp",
+                "ArrowDown",
+                "ArrowLeft",
+                "ArrowRight"
+            ].includes(e.key)
+
+        ){
+
+            e.preventDefault();
+
+        }
+
+    },
+
+    {
+        passive:false
+    }
+
+);
+
+</script>
+
+</body>
+</html>

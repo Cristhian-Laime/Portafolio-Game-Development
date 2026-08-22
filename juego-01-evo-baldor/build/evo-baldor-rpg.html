@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Evo y Baldor: Misión en el CHAPARE</title>
+<style>
+  :root{
+    --navy: #14245A;
+    --navy-dark: #0B1330;
+    --navy-light: #23377E;
+    --lime: #B2D234;
+    --lime-dark: #7F9A1F;
+    --lime-glow: #D4F06B;
+    --white: #F4F6EE;
+    --red: #E24B4A;
+    --red-dark: #A32D2D;
+    --green: #63C97A;
+    --green-dark: #2E7D45;
+    --sun: #FFE08A;
+    --water: #2E6FB0;
+    --water-light: #6FB4E8;
+    --wood: #7F4B22;
+    --wood-dark: #4A2E18;
+    --gold: #F2C230;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0; padding:0; min-height:100%;
+    background: radial-gradient(ellipse at 50% 0%, #1B2A63 0%, #0B1330 70%);
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--white);
+  }
+
+  #app{
+    max-width: 820px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display:flex;
+    flex-direction:column;
+    background: linear-gradient(180deg, var(--navy) 0%, #101C4A 100%);
+    box-shadow: 0 0 40px rgba(0,0,0,.6);
+  }
+
+  header{
+    padding: 14px 16px 10px;
+    background: linear-gradient(180deg, var(--navy-dark) 0%, #08102A 100%);
+    border-bottom: 4px solid var(--lime);
+    text-align:center;
+  }
+  header h1{
+    margin:0 0 4px;
+    font-size: clamp(16px,4.5vw,24px);
+    letter-spacing:2px;
+    color: var(--lime);
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(178,210,52,.55), 2px 2px 0 rgba(0,0,0,.4);
+  }
+  header p{ margin:0; font-size:11px; opacity:.8; letter-spacing:1px; }
+
+  /* ===================== HUD ===================== */
+  #hud{
+    display:flex; align-items:center; gap:10px;
+    padding: 8px 12px;
+    background: linear-gradient(180deg, var(--navy-light) 0%, #1A2C68 100%);
+    border-bottom: 2px solid var(--navy-dark);
+    box-shadow: 0 3px 8px rgba(0,0,0,.35) inset;
+    flex-wrap: wrap;
+    font-size: 11px;
+  }
+  #hud .badge{
+    background: var(--navy-dark);
+    border: 2px solid var(--lime);
+    border-radius: 5px;
+    padding: 5px 8px;
+    color: var(--lime);
+    font-weight: bold;
+    white-space: nowrap;
+    box-shadow: 0 0 8px rgba(178,210,52,.3);
+  }
+  #inventory{
+    display:flex; gap:6px; align-items:center;
+  }
+  .invSlot{
+    width: 28px; height: 28px;
+    border: 2px solid var(--navy-dark);
+    border-radius: 5px;
+    background: #0d1638;
+    display:flex; align-items:center; justify-content:center;
+    font-size: 15px;
+    opacity: .35;
+    filter: grayscale(1);
+    transition: all .2s ease;
+  }
+  .invSlot.have{
+    opacity: 1;
+    filter: none;
+    border-color: var(--gold);
+    background: linear-gradient(160deg,#2c3f8a,#182a63);
+    box-shadow: 0 0 10px rgba(242,194,48,.55);
+  }
+  .invSlot.equipped{
+    border-color: var(--lime);
+    box-shadow: 0 0 12px rgba(178,210,52,.9);
+    transform: scale(1.12);
+  }
+  .invSlot .keyTag{
+    position: absolute;
+    font-size: 7px;
+    bottom: -1px; right: -1px;
+    background: var(--navy-dark);
+    color: var(--lime);
+    border-radius: 3px;
+    padding: 0 2px;
+  }
+  .invSlot{ position: relative; }
+  #objGoal{ margin-left:auto; }
+
+  /* ===================== CANVAS ===================== */
+  #gameWrap{
+    position: relative;
+    background: #0c1740;
+    border-bottom: 4px solid var(--navy-dark);
+  }
+  #gameCanvas{
+    display:block;
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+  }
+  #toastLayer{
+    position:absolute;
+    top: 8px; left: 50%;
+    transform: translateX(-50%);
+    display:flex; flex-direction:column; gap:6px;
+    pointer-events:none;
+    width: 90%;
+    align-items:center;
+  }
+  .toast{
+    background: rgba(11,19,48,.92);
+    border: 2px solid var(--lime);
+    color: var(--lime);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    text-align:center;
+    box-shadow: 0 4px 10px rgba(0,0,0,.4);
+    animation: toastIn .2s ease, toastOut .3s ease 1.9s forwards;
+  }
+  .toast.warn{ border-color: var(--red); color: var(--red); }
+  .toast.gold{ border-color: var(--gold); color: var(--gold); }
+  @keyframes toastIn{ from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes toastOut{ to{opacity:0; transform:translateY(-6px);} }
+
+  #controlsHint{
+    position:absolute;
+    bottom: 8px; left: 8px;
+    background: rgba(11,19,48,.8);
+    border: 2px solid var(--navy-dark);
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-size: 10px;
+    color: var(--white);
+    opacity: .85;
+    line-height:1.5;
+  }
+  #controlsHint b{ color: var(--lime); }
+
+  /* ===================== PANELES / PANTALLAS ===================== */
+  main{
+    flex:1;
+    padding: 16px;
+    display:flex;
+    flex-direction:column;
+    gap: 14px;
+  }
+  .screen{ display:none; flex-direction:column; gap:14px; }
+  .screen.active{ display:flex; animation: fadeIn .35s ease; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .panel{
+    background: linear-gradient(160deg, var(--navy-light) 0%, #182a63 100%);
+    border: 3px solid var(--navy-dark);
+    border-radius: 8px;
+    padding: 18px;
+    box-shadow: 0 6px 14px rgba(0,0,0,.35), 0 0 0 1px rgba(178,210,52,.15) inset;
+  }
+  #welcomeScreen p{ font-size:13px; line-height:1.6; margin:0 0 10px; }
+  #welcomeScreen ul{ font-size:12px; line-height:1.7; padding-left:18px; margin:0 0 8px; }
+  #welcomeScreen li b{ color: var(--lime); }
+
+  .actionBtn{
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 13px 20px;
+    background: linear-gradient(160deg, var(--lime-glow), var(--lime));
+    color: var(--navy-dark);
+    border: 3px solid var(--lime-dark);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    align-self: center;
+    box-shadow: 0 4px 0 var(--lime-dark), 0 8px 14px rgba(0,0,0,.3);
+    transition: transform .12s ease;
+  }
+  .actionBtn:hover{ filter: brightness(1.05); }
+  .actionBtn:active{ transform: translateY(3px); box-shadow: 0 1px 0 var(--lime-dark), 0 4px 8px rgba(0,0,0,.3); }
+
+  /* ===================== MODAL DE PREGUNTA ===================== */
+  #questionOverlay{
+    position:absolute; inset:0;
+    background: rgba(6,10,28,.88);
+    display:none;
+    align-items:center; justify-content:center;
+    padding: 16px;
+    z-index: 20;
+  }
+  #questionOverlay.active{ display:flex; }
+  #questionModal{
+    width: 100%; max-width: 420px;
+    background: linear-gradient(160deg, var(--navy-light) 0%, #182a63 100%);
+    border: 3px solid var(--lime);
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: 0 0 30px rgba(178,210,52,.35), 0 10px 24px rgba(0,0,0,.5);
+  }
+  #questionModal p.qlabel{
+    margin:0 0 4px; font-size:11px; color: var(--lime);
+    letter-spacing:1px; text-transform:uppercase; text-align:center;
+  }
+  #qWeaponName{ color: var(--gold); }
+  #questionText{
+    font-size: clamp(22px,6vw,32px);
+    text-align:center;
+    margin: 6px 0 16px;
+    letter-spacing:2px;
+    text-shadow: 0 0 12px rgba(178,210,52,.35), 2px 2px 0 rgba(0,0,0,.35);
+  }
+  #answersGrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .answerBtn{
+    font-family: inherit; font-size:17px; padding:14px 6px;
+    background: linear-gradient(160deg,#17255C, var(--navy-dark));
+    color: var(--white);
+    border: 3px solid var(--lime);
+    border-radius: 6px;
+    cursor:pointer;
+    transition: transform .12s ease, background .15s ease;
+    box-shadow: 0 4px 0 var(--lime-dark), 0 6px 10px rgba(0,0,0,.35);
+  }
+  .answerBtn:hover:not(:disabled){ background: linear-gradient(160deg, var(--lime-glow), var(--lime)); color: var(--navy-dark); transform: translateY(-2px); }
+  .answerBtn:active:not(:disabled){ transform: translateY(2px); }
+  .answerBtn:disabled{ cursor:default; opacity:.65; }
+  .answerBtn.correct{ background: linear-gradient(160deg,#8CE29F, var(--green)); border-color: var(--green-dark); color: var(--navy-dark); }
+  .answerBtn.incorrect{ background: linear-gradient(160deg,#F0807F, var(--red)); border-color: var(--red-dark); color: var(--white); }
+  #qFeedback{
+    margin-top: 12px; text-align:center; font-size:12px; min-height: 16px; color: var(--lime);
+  }
+  #qFeedback.bad{ color: var(--red); }
+  .kbdHint{ text-align:center; font-size:10px; opacity:.6; margin-top:8px; }
+
+  /* ===================== RESULTADO ===================== */
+  #resultScreen{ text-align:center; }
+  #resultScore{
+    font-size: 44px; color: var(--lime); margin:8px 0; letter-spacing:2px;
+    text-shadow: 0 0 20px rgba(178,210,52,.6), 3px 3px 0 rgba(0,0,0,.35);
+  }
+  #resultMessage{ font-size:13px; margin:0 0 8px; line-height:1.6; }
+  #resultBreakdown{ font-size:11px; opacity:.85; line-height:1.9; margin:0 0 14px; }
+
+  footer{ text-align:center; font-size:10px; opacity:.5; padding:10px; }
+
+  @media (max-width:380px){ #answersGrid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <header>
+    <h1>Evo y Baldor</h1>
+    <p>Misión matemática en el CHAPARE</p>
+  </header>
+
+  <div id="hud">
+    <span class="badge" id="scoreBadge">Puntos: 0</span>
+    <div id="inventory">
+      <div class="invSlot" id="slotHacha" title="Hacha (tecla 1)">🪓<span class="keyTag">1</span></div>
+      <div class="invSlot" id="slotRed" title="Pala (tecla 2)">⛏️<span class="keyTag">2</span></div>
+      <div class="invSlot" id="slotPalo" title="Palo (tecla 3)">🏏<span class="keyTag">3</span></div>
+    </div>
+    <span class="badge" id="objGoal">Misiones: 0 / 3</span>
+  </div>
+
+  <div id="gameWrap">
+    <canvas id="gameCanvas" width="760" height="420"></canvas>
+    <div id="toastLayer"></div>
+    <div id="controlsHint"><b>Flechas / WASD</b>: mover&nbsp;&nbsp;<b>E</b>: abrir cofre&nbsp;&nbsp;<b>1/2/3</b>: cambiar arma&nbsp;&nbsp;<b>Espacio</b>: atacar</div>
+
+    <div id="questionOverlay">
+      <div id="questionModal">
+        <p class="qlabel">Cofre bloqueado — consigue: <span id="qWeaponName">?</span></p>
+        <p id="questionText">0 + 0</p>
+        <div id="answersGrid"></div>
+        <p id="qFeedback"></p>
+        <p class="kbdHint">También puedes usar las teclas 1, 2, 3, 4</p>
+      </div>
+    </div>
+  </div>
+
+  <main>
+
+    <section id="welcomeScreen" class="screen active">
+      <div class="panel">
+        <p><strong>¡Hola! Evo y Baldor necesitan tu ayuda</strong> para completar su misión en el Chapare.</p>
+        <ul>
+          <li>Muévete por el mapa con <b>flechas o WASD</b>.</li>
+          <li>Acércate a un <b>cofre</b> y presiona <b>E</b> para abrirlo: deberás resolver una operación matemática para conseguir el arma.</li>
+          <li><b>🪓 Hacha</b> (tecla 1) → para talar árboles. <b>⛏️ Pala</b> (tecla 2) → para despejar un derrumbe de rocas. <b>🏏 Palo</b> (tecla 3) → para enfrentar a los policías.</li>
+          <li>Usa las teclas <b>1, 2 o 3</b> para <b>equipar</b> el arma que tengas en el inventario (solo puedes equipar armas que ya conseguiste).</li>
+          <li>Con el arma correcta <b>equipada</b>, acércate al objetivo y presiona <b>Espacio</b> para atacar y superarlo.</li>
+          <li>Hay <b>3 policías patrullando</b> el mapa: si te acercas sin el palo equipado, ¡te empujarán hacia atrás! Esquívalos o vence a los 6 objetivos para ganar.</li>
+        </ul>
+      </div>
+      <button class="actionBtn" id="startBtn">Comenzar misión</button>
+    </section>
+
+    <section id="resultScreen" class="screen">
+      <div class="panel">
+        <p style="margin:0; font-size:12px; letter-spacing:1px; color: var(--lime);">MISIÓN COMPLETADA</p>
+        <p id="resultScore">0</p>
+        <p id="resultMessage">Mensaje motivador aquí.</p>
+        <p id="resultBreakdown"></p>
+      </div>
+      <button class="actionBtn" id="restartBtn">Jugar de nuevo</button>
+    </section>
+
+  </main>
+
+  <footer>Evo y Baldor: Misión en el CHAPARE — juego educativo RPG</footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ============================================================
+     UTILIDADES
+     ============================================================ */
+  function randInt(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  function rectsOverlap(a, b){
+    return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  }
+  function dist(a, b){
+    const dx = (a.x + a.w/2) - (b.x + b.w/2);
+    const dy = (a.y + a.h/2) - (b.y + b.h/2);
+    return Math.sqrt(dx*dx + dy*dy);
+  }
+
+  /* ============================================================
+     GENERADOR DE PREGUNTAS (igual lógica que la versión original)
+     ============================================================ */
+  function generarPregunta(){
+    const tipos = ['suma', 'resta', 'multiplicacion', 'division'];
+    const tipo = tipos[randInt(0, tipos.length - 1)];
+    let a, b, resultado, enunciado;
+
+    switch(tipo){
+      case 'suma':
+        a = randInt(5, 60); b = randInt(5, 60);
+        resultado = a + b; enunciado = a + ' + ' + b;
+        break;
+      case 'resta':
+        a = randInt(10, 70); b = randInt(1, a);
+        resultado = a - b; enunciado = a + ' - ' + b;
+        break;
+      case 'multiplicacion':
+        a = randInt(2, 12); b = randInt(2, 12);
+        resultado = a * b; enunciado = a + ' x ' + b;
+        break;
+      case 'division':
+        b = randInt(2, 10); resultado = randInt(2, 12); a = b * resultado;
+        enunciado = a + ' ÷ ' + b;
+        break;
+    }
+
+    const opciones = new Set([resultado]);
+    while(opciones.size < 4){
+      const variacion = randInt(-8, 8);
+      let falsa = resultado + variacion;
+      if(falsa < 0) falsa = resultado + Math.abs(variacion) + 1;
+      if(falsa !== resultado) opciones.add(falsa);
+    }
+
+    return { enunciado: enunciado, correcta: resultado, opciones: shuffle(Array.from(opciones)) };
+  }
+
+  /* ============================================================
+     ESTADO DEL JUEGO
+     ============================================================ */
+  const CANVAS_W = 760, CANVAS_H = 420;
+  const WEAPON_NAMES = { hacha: '🪓 Hacha', red: '⛏️ Pala', palo: '🏏 Palo' };
+  const WEAPON_BY_KEY = { '1': 'hacha', '2': 'red', '3': 'palo' };
+
+  const state = {
+    screen: 'welcome', // welcome | playing | question | result
+    score: 0,
+    inventory: { hacha:false, red:false, palo:false },
+    equipped: null,
+    objectivesDone: 0,
+    objectivesTotal: 0, // se calcula a partir de objectives.length
+    activeQuestion: null, // { pregunta, context: {type:'chest', id} }
+    lastPushBackToast: 0
+  };
+
+  const player = { x: 40, y: 200, w: 26, h: 30, speed: 150, dir: 'down' };
+
+  const keys = {};
+
+  // Obstáculos estáticos decorativos que bloquean el paso (más variedad para dificultar el recorrido)
+  const obstacles = [
+    { x: 0, y: 0, w: CANVAS_W, h: 26 },              // borde superior
+    { x: 0, y: CANVAS_H-18, w: CANVAS_W, h: 18 },    // borde inferior
+    { x: 130, y: 60,  w: 26, h: 60, kind:'tree' },
+    { x: 430, y: 50,  w: 26, h: 60, kind:'tree' },
+    { x: 660, y: 180, w: 26, h: 60, kind:'tree' },
+    { x: 150, y: 300, w: 26, h: 60, kind:'tree' },
+    { x: 460, y: 320, w: 26, h: 60, kind:'tree' },
+    { x: 300, y: 90,  w: 24, h: 24, kind:'rock' },
+    { x: 520, y: 130, w: 24, h: 24, kind:'rock' },
+    { x: 220, y: 260, w: 24, h: 24, kind:'rock' },
+    { x: 620, y: 340, w: 24, h: 24, kind:'rock' },
+    { x: 340, y: 340, w: 24, h: 24, kind:'rock' },
+  ];
+
+  const chests = [
+    { id:'c1', x: 40,  y: 60,  w: 28, h: 24, weapon:'hacha', opened:false },
+    { id:'c2', x: 706, y: 60,  w: 28, h: 24, weapon:'red',   opened:false },
+    { id:'c3', x: 40,  y: 340, w: 28, h: 24, weapon:'palo',  opened:false },
+  ];
+
+  const objectives = [
+    { id:'o_tree1', type:'tree',  x: 250, y: 140, w: 30, h: 44, weaponNeeded:'hacha', resolved:false },
+    { id:'o_tree2', type:'tree',  x: 590, y: 260, w: 30, h: 44, weaponNeeded:'hacha', resolved:false },
+    { id:'o_rocks', type:'rocks', x: 380, y: 175, w: 56, h: 40, weaponNeeded:'red',  resolved:false },
+    { id:'o_police1', type:'police', x: 260, y: 70, w: 26, h: 32, weaponNeeded:'palo', resolved:false,
+      patrol:{ axis:'x', min: 260, max: 400, speed: 55, dir: 1 } },
+    { id:'o_police2', type:'police', x: 700, y: 200, w: 26, h: 32, weaponNeeded:'palo', resolved:false,
+      patrol:{ axis:'y', min: 130, max: 250, speed: 48, dir: 1 } },
+    { id:'o_police3', type:'police', x: 150, y: 200, w: 26, h: 32, weaponNeeded:'palo', resolved:false,
+      patrol:{ axis:'x', min: 150, max: 280, speed: 50, dir: -1 } },
+  ];
+  state.objectivesTotal = objectives.length;
+
+  const toastLayer = document.getElementById('toastLayer');
+  function toast(msg, kind){
+    const t = document.createElement('div');
+    t.className = 'toast' + (kind ? ' ' + kind : '');
+    t.textContent = msg;
+    toastLayer.appendChild(t);
+    window.setTimeout(function(){ t.remove(); }, 2200);
+  }
+
+  /* ============================================================
+     DOM refs
+     ============================================================ */
+  const el = {
+    welcomeScreen: document.getElementById('welcomeScreen'),
+    resultScreen: document.getElementById('resultScreen'),
+    startBtn: document.getElementById('startBtn'),
+    restartBtn: document.getElementById('restartBtn'),
+
+    scoreBadge: document.getElementById('scoreBadge'),
+    objGoal: document.getElementById('objGoal'),
+    slotHacha: document.getElementById('slotHacha'),
+    slotRed: document.getElementById('slotRed'),
+    slotPalo: document.getElementById('slotPalo'),
+
+    canvas: document.getElementById('gameCanvas'),
+    questionOverlay: document.getElementById('questionOverlay'),
+    qWeaponName: document.getElementById('qWeaponName'),
+    questionText: document.getElementById('questionText'),
+    answersGrid: document.getElementById('answersGrid'),
+    qFeedback: document.getElementById('qFeedback'),
+
+    resultScore: document.getElementById('resultScore'),
+    resultMessage: document.getElementById('resultMessage'),
+    resultBreakdown: document.getElementById('resultBreakdown')
+  };
+
+  const ctx = el.canvas.getContext('2d');
+
+  function mostrarPantalla(nombre){
+    state.screen = nombre;
+    [el.welcomeScreen, el.resultScreen].forEach(function(s){ s.classList.remove('active'); });
+    if(nombre === 'welcome') el.welcomeScreen.classList.add('active');
+    if(nombre === 'result') el.resultScreen.classList.add('active');
+  }
+
+  function actualizarHUD(){
+    el.scoreBadge.textContent = 'Puntos: ' + state.score;
+    el.objGoal.textContent = 'Misiones: ' + state.objectivesDone + ' / ' + state.objectivesTotal;
+    el.slotHacha.classList.toggle('have', state.inventory.hacha);
+    el.slotRed.classList.toggle('have', state.inventory.red);
+    el.slotPalo.classList.toggle('have', state.inventory.palo);
+    el.slotHacha.classList.toggle('equipped', state.equipped === 'hacha');
+    el.slotRed.classList.toggle('equipped', state.equipped === 'red');
+    el.slotPalo.classList.toggle('equipped', state.equipped === 'palo');
+  }
+
+  function equiparArma(key){
+    const weapon = WEAPON_BY_KEY[key];
+    if(!weapon) return;
+    if(!state.inventory[weapon]){
+      toast('Aún no tienes ' + WEAPON_NAMES[weapon] + '. ¡Búscala en un cofre!', 'warn');
+      return;
+    }
+    state.equipped = weapon;
+    toast(WEAPON_NAMES[weapon] + ' equipada.', null);
+    actualizarHUD();
+  }
+
+  /* ============================================================
+     PREGUNTAS (cofres)
+     ============================================================ */
+  function abrirPreguntaParaCofre(chest){
+    state.activeQuestion = { pregunta: generarPregunta(), context: { type:'chest', id: chest.id } };
+    el.qWeaponName.textContent = WEAPON_NAMES[chest.weapon];
+    renderPregunta();
+    el.questionOverlay.classList.add('active');
+    state.screen = 'question';
+  }
+
+  function renderPregunta(){
+    const p = state.activeQuestion.pregunta;
+    el.questionText.textContent = p.enunciado;
+    el.qFeedback.textContent = '';
+    el.qFeedback.className = '';
+    el.answersGrid.innerHTML = '';
+    p.opciones.forEach(function(opcion){
+      const btn = document.createElement('button');
+      btn.className = 'answerBtn';
+      btn.type = 'button';
+      btn.textContent = opcion;
+      btn.addEventListener('click', function(){ evaluarRespuesta(opcion, btn); });
+      el.answersGrid.appendChild(btn);
+    });
+  }
+
+  function evaluarRespuesta(opcionElegida, btnElegido){
+    const p = state.activeQuestion.pregunta;
+    const botones = el.answersGrid.querySelectorAll('.answerBtn');
+    const esCorrecta = opcionElegida === p.correcta;
+
+    if(esCorrecta){
+      botones.forEach(function(b){ b.disabled = true; });
+      if(btnElegido) btnElegido.classList.add('correct');
+      el.qFeedback.textContent = '¡Correcto! Cofre abierto.';
+      el.qFeedback.className = '';
+      window.setTimeout(function(){ resolverCofre(true); }, 550);
+    } else {
+      if(btnElegido) btnElegido.classList.add('incorrect');
+      el.qFeedback.textContent = 'Incorrecto, intenta con la siguiente pregunta...';
+      el.qFeedback.className = 'bad';
+      window.setTimeout(function(){
+        state.activeQuestion.pregunta = generarPregunta();
+        renderPregunta();
+      }, 700);
+    }
+  }
+
+  function resolverCofre(exito){
+    const ctxq = state.activeQuestion.context;
+    el.questionOverlay.classList.remove('active');
+    state.screen = 'playing';
+    if(exito && ctxq.type === 'chest'){
+      const chest = chests.find(function(c){ return c.id === ctxq.id; });
+      if(chest && !chest.opened){
+        chest.opened = true;
+        state.inventory[chest.weapon] = true;
+        state.score += 2;
+        if(!state.equipped) state.equipped = chest.weapon;
+        toast('¡Conseguiste ' + WEAPON_NAMES[chest.weapon] + '!', 'gold');
+        actualizarHUD();
+      }
+    }
+    state.activeQuestion = null;
+  }
+
+  // Teclas 1-4 para responder cuando el modal está activo
+  window.addEventListener('keydown', function(e){
+    if(state.screen === 'question' && ['1','2','3','4'].includes(e.key)){
+      const idx = parseInt(e.key, 10) - 1;
+      const botones = el.answersGrid.querySelectorAll('.answerBtn');
+      if(botones[idx] && !botones[idx].disabled) botones[idx].click();
+      return;
+    }
+  });
+
+  /* ============================================================
+     OBJETIVOS
+     ============================================================ */
+  function intentarResolverObjetivo(obj){
+    if(obj.resolved) return;
+    if(!state.inventory[obj.weaponNeeded]){
+      toast('Necesitas ' + WEAPON_NAMES[obj.weaponNeeded] + ' para esto. ¡Busca un cofre!', 'warn');
+      return;
+    }
+    if(state.equipped !== obj.weaponNeeded){
+      toast('Arma equivocada. Equipa ' + WEAPON_NAMES[obj.weaponNeeded] + ' con la tecla correspondiente.', 'warn');
+      return;
+    }
+    obj.resolved = true;
+    state.objectivesDone++;
+    state.score += 5;
+    actualizarHUD();
+
+    if(obj.type === 'tree') toast('¡Árbol talado con el hacha! +5 puntos', 'gold');
+    if(obj.type === 'rocks') toast('¡Derrumbe despejado con la pala! Camino libre. +5 puntos', 'gold');
+    if(obj.type === 'police') toast('¡Policía superado con el palo! +5 puntos', 'gold');
+
+    if(state.objectivesDone >= state.objectivesTotal){
+      window.setTimeout(finalizarJuego, 500);
+    }
+  }
+
+  function finalizarJuego(){
+    state.screen = 'result';
+    el.resultScore.textContent = state.score + ' PUNTOS';
+    let mensaje;
+    if(state.score >= 32){
+      mensaje = '¡Misión perfecta! Evo y Baldor resolvieron todo a la primera.';
+    } else if(state.score >= 24){
+      mensaje = '¡Gran trabajo! Completaron la misión en el Chapare.';
+    } else {
+      mensaje = '¡Misión completada! Con más práctica sumarán más puntos.';
+    }
+    el.resultMessage.textContent = mensaje;
+    el.resultBreakdown.textContent =
+      'Cofres abiertos: ' + chests.filter(function(c){return c.opened;}).length + ' / ' + chests.length +
+      '  •  Objetivos superados: ' + state.objectivesDone + ' / ' + state.objectivesTotal;
+    mostrarPantalla('result');
+  }
+
+  /* ============================================================
+     ENTRADA DE TECLADO (movimiento)
+     ============================================================ */
+  const MOVE_KEYS = ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d','W','A','S','D',' ','Spacebar'];
+  window.addEventListener('keydown', function(e){
+    if(MOVE_KEYS.includes(e.key)) e.preventDefault();
+    keys[e.key.toLowerCase()] = true;
+
+    if(state.screen !== 'playing') return;
+
+    const k = e.key.toLowerCase();
+    if(k === 'e'){
+      manejarAperturaCofre();
+    } else if(k === ' ' || k === 'spacebar'){
+      manejarAtaque();
+    } else if(WEAPON_BY_KEY[e.key]){
+      equiparArma(e.key);
+    }
+  });
+  window.addEventListener('keyup', function(e){
+    keys[e.key.toLowerCase()] = false;
+  });
+
+  function manejarAperturaCofre(){
+    for(const chest of chests){
+      if(!chest.opened && dist(player, chest) < 42){
+        abrirPreguntaParaCofre(chest);
+        return;
+      }
+    }
+  }
+
+  function manejarAtaque(){
+    for(const obj of objectives){
+      if(!obj.resolved && dist(player, obj) < 46){
+        intentarResolverObjetivo(obj);
+        return;
+      }
+    }
+    toast('Nada cerca para atacar.', null);
+  }
+
+  /* ============================================================
+     LOOP DEL JUEGO
+     ============================================================ */
+  let lastTime = 0;
+  let pushCooldown = 0;
+
+  function getObstacleList(){
+    const list = obstacles.slice();
+    // árboles objetivo bloquean hasta ser talados
+    objectives.forEach(function(o){
+      if((o.type === 'tree' || o.type === 'rocks') && !o.resolved) list.push(o);
+    });
+    // cofres bloquean físicamente (pequeño obstáculo)
+    chests.forEach(function(c){ if(!c.opened) list.push(c); });
+    return list;
+  }
+
+  function moverJugador(dt){
+    let dx = 0, dy = 0;
+    if(keys['arrowup'] || keys['w']) dy -= 1;
+    if(keys['arrowdown'] || keys['s']) dy += 1;
+    if(keys['arrowleft'] || keys['a']) dx -= 1;
+    if(keys['arrowright'] || keys['d']) dx += 1;
+
+    if(dx !== 0 && dy !== 0){ dx *= 0.7071; dy *= 0.7071; }
+    if(dx !== 0 || dy !== 0){
+      player.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+    }
+
+    const obstacleList = getObstacleList();
+    const step = player.speed * dt;
+
+    // eje X
+    let nx = player.x + dx * step;
+    let testX = { x: nx, y: player.y, w: player.w, h: player.h };
+    if(nx < 0) nx = 0;
+    if(nx + player.w > CANVAS_W) nx = CANVAS_W - player.w;
+    testX.x = nx;
+    const blockedX = obstacleList.some(function(o){ return rectsOverlap(testX, o); });
+    if(!blockedX) player.x = nx;
+
+    // eje Y
+    let ny = player.y + dy * step;
+    let testY = { x: player.x, y: ny, w: player.w, h: player.h };
+    if(ny < 0) ny = 0;
+    if(ny + player.h > CANVAS_H) ny = CANVAS_H - player.h;
+    testY.y = ny;
+    const blockedY = obstacleList.some(function(o){ return rectsOverlap(testY, o); });
+    if(!blockedY) player.y = ny;
+  }
+
+  function moverPolicias(dt){
+    objectives.forEach(function(obj){
+      if(obj.type !== 'police' || obj.resolved) return;
+      const p = obj.patrol;
+      if(p.axis === 'y'){
+        obj.y += p.dir * p.speed * dt;
+        if(obj.y < p.min){ obj.y = p.min; p.dir = 1; }
+        if(obj.y > p.max){ obj.y = p.max; p.dir = -1; }
+      } else {
+        obj.x += p.dir * p.speed * dt;
+        if(obj.x < p.min){ obj.x = p.min; p.dir = 1; }
+        if(obj.x > p.max){ obj.x = p.max; p.dir = -1; }
+      }
+    });
+  }
+
+  function chequearColisionPolicia(dt){
+    if(pushCooldown > 0){ pushCooldown -= dt; return; }
+    objectives.forEach(function(obj){
+      if(obj.type !== 'police' || obj.resolved) return;
+      if(state.equipped === 'palo') return; // con el palo equipado no hay empuje, se resuelve con Espacio
+      if(rectsOverlap(player, obj)){
+        // empujar al jugador hacia atrás
+        const pushDir = player.x < obj.x ? -1 : 1;
+        player.x = Math.max(0, Math.min(CANVAS_W - player.w, player.x + pushDir * 40));
+        toast('¡Un policía te detuvo! Consigue el palo 🏏 para pasar.', 'warn');
+        pushCooldown = 1.2;
+      }
+    });
+  }
+
+  function drawBackground(){
+    ctx.fillStyle = '#1c3a2f';
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+    // pasto con textura simple
+    ctx.fillStyle = 'rgba(178,210,52,0.06)';
+    for(let i=0;i<26;i++){
+      ctx.fillRect((i*37)%CANVAS_W, (i*53)%CANVAS_H, 20, 4);
+    }
+
+    // senderos
+    ctx.fillStyle = '#3a5a2c';
+    ctx.fillRect(0, 118, CANVAS_W, 16);
+    ctx.fillRect(0, 240, CANVAS_W, 16);
+
+    // derrumbe de rocas (objetivo)
+    const rocksObj = objectives.find(function(o){ return o.type === 'rocks'; });
+    if(rocksObj && !rocksObj.resolved){
+      ctx.fillStyle = '#5a4a3a';
+      ctx.beginPath();
+      ctx.ellipse(rocksObj.x + rocksObj.w/2, rocksObj.y + rocksObj.h/2, rocksObj.w/2 - 4, rocksObj.h/2 - 4, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = '#3d3226';
+      for(let i=0;i<3;i++){
+        ctx.beginPath();
+        ctx.ellipse(rocksObj.x + 12 + i*14, rocksObj.y + rocksObj.h/2, 7, 5, 0, 0, Math.PI*2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#F4F6EE';
+      ctx.font = '9px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('DERRUMBE', rocksObj.x + rocksObj.w/2, rocksObj.y + rocksObj.h/2 + 16);
+    }
+
+    // árboles y rocas decorativas
+    obstacles.forEach(function(o){
+      if(o.kind === 'tree'){
+        drawTree(o.x, o.y, o.w, o.h);
+      } else if(o.kind === 'rock'){
+        ctx.fillStyle = '#6b6b6b';
+        ctx.beginPath();
+        ctx.ellipse(o.x+o.w/2, o.y+o.h/2, o.w/2, o.h/2, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = '#8a8a8a';
+        ctx.beginPath();
+        ctx.ellipse(o.x+o.w/2-3, o.y+o.h/2-3, o.w/5, o.h/5, 0, 0, Math.PI*2);
+        ctx.fill();
+      }
+    });
+  }
+
+  function drawTree(x,y,w,h){
+    ctx.fillStyle = '#4A2E18';
+    ctx.fillRect(x + w/2 - 3, y + h - 14, 6, 14);
+    ctx.fillStyle = '#2E7D45';
+    ctx.beginPath();
+    ctx.moveTo(x, y + h - 12);
+    ctx.lineTo(x + w/2, y - 4);
+    ctx.lineTo(x + w, y + h - 12);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#3fae67';
+    ctx.beginPath();
+    ctx.moveTo(x+4, y + h - 20);
+    ctx.lineTo(x + w/2, y + 6);
+    ctx.lineTo(x + w - 4, y + h - 20);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function drawChests(){
+    chests.forEach(function(c){
+      if(c.opened){
+        ctx.fillStyle = '#7F4B22';
+        ctx.fillRect(c.x, c.y + c.h*0.4, c.w, c.h*0.6);
+        ctx.fillStyle = '#F2C230';
+        ctx.fillRect(c.x+2, c.y + c.h*0.15, c.w-4, c.h*0.3);
+      } else {
+        ctx.fillStyle = '#7F4B22';
+        ctx.fillRect(c.x, c.y, c.w, c.h);
+        ctx.strokeStyle = '#4A2E18';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(c.x, c.y, c.w, c.h);
+        ctx.fillStyle = '#F2C230';
+        ctx.fillRect(c.x + c.w/2 - 3, c.y + c.h/2 - 4, 6, 8);
+        // brillo pulsante
+        const pulse = 0.5 + 0.5*Math.sin(Date.now()/300);
+        ctx.strokeStyle = 'rgba(178,210,52,' + (0.3+0.4*pulse) + ')';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(c.x-3, c.y-3, c.w+6, c.h+6);
+      }
+    });
+  }
+
+  function drawObjectives(){
+    objectives.forEach(function(obj){
+      if(obj.type === 'tree' && !obj.resolved){
+        drawTree(obj.x, obj.y, obj.w, obj.h);
+        return;
+      }
+      if(obj.type === 'police' && !obj.resolved){
+        ctx.fillStyle = '#1c2c66';
+        ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
+        ctx.fillStyle = '#FFDCA8';
+        ctx.fillRect(obj.x+6, obj.y-8, 14, 12);
+        ctx.fillStyle = '#E24B4A';
+        ctx.fillRect(obj.x, obj.y-2, obj.w, 4);
+        ctx.fillStyle = '#F2C230';
+        ctx.font = '9px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('POLICÍA', obj.x + obj.w/2, obj.y + obj.h + 12);
+      }
+      if(obj.resolved){
+        ctx.fillStyle = 'rgba(99,201,122,.8)';
+        ctx.font = 'bold 14px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('✔', obj.x + obj.w/2, obj.y + obj.h/2);
+      }
+    });
+  }
+
+  function drawPlayer(){
+    const p = player;
+    ctx.fillStyle = 'rgba(0,0,0,.35)';
+    ctx.beginPath();
+    ctx.ellipse(p.x+p.w/2, p.y+p.h+2, p.w/2-2, 4, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle = '#B2D234';
+    ctx.fillRect(p.x+2, p.y+8, p.w-4, p.h-14);
+    ctx.strokeStyle = '#0B1330';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(p.x+2, p.y+8, p.w-4, p.h-14);
+
+    ctx.fillStyle = '#FFDCA8';
+    ctx.fillRect(p.x+6, p.y-2, p.w-12, 12);
+    ctx.strokeRect(p.x+6, p.y-2, p.w-12, 12);
+
+    ctx.fillStyle = '#E24B4A';
+    ctx.fillRect(p.x+5, p.y-4, p.w-10, 5);
+
+    // indicador de dirección
+    ctx.fillStyle = '#F4F6EE';
+    let ix = p.x + p.w/2, iy = p.y + p.h/2;
+    if(p.dir === 'up') iy -= 4;
+    if(p.dir === 'down') iy += 4;
+    if(p.dir === 'left') ix -= 4;
+    if(p.dir === 'right') ix += 4;
+    ctx.beginPath();
+    ctx.arc(ix, iy, 2, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  function drawHUDHelp(){
+    ctx.fillStyle = 'rgba(244,246,238,0.7)';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'left';
+  }
+
+  function render(){
+    ctx.clearRect(0,0,CANVAS_W,CANVAS_H);
+    drawBackground();
+    drawChests();
+    drawObjectives();
+    drawPlayer();
+  }
+
+  function loop(ts){
+    if(!lastTime) lastTime = ts;
+    const dt = Math.min((ts - lastTime) / 1000, 0.05);
+    lastTime = ts;
+
+    if(state.screen === 'playing'){
+      moverJugador(dt);
+      moverPolicias(dt);
+      chequearColisionPolicia(dt);
+    }
+    render();
+    requestAnimationFrame(loop);
+  }
+
+  /* ============================================================
+     INICIO / REINICIO
+     ============================================================ */
+  function iniciarPartida(){
+    state.score = 0;
+    state.inventory = { hacha:false, red:false, palo:false };
+    state.equipped = null;
+    state.objectivesDone = 0;
+    state.activeQuestion = null;
+
+    chests.forEach(function(c){ c.opened = false; });
+    objectives.forEach(function(o){
+      o.resolved = false;
+      if(o.type === 'police'){
+        const p = o.patrol;
+        if(p.axis === 'y'){ o.y = p.min; } else { o.x = p.min; }
+        p.dir = 1;
+      }
+    });
+
+    player.x = 40; player.y = 200; player.dir = 'down';
+
+    actualizarHUD();
+    state.screen = 'playing';
+    el.welcomeScreen.classList.remove('active');
+    el.resultScreen.classList.remove('active');
+    toast('¡Misión iniciada! Busca los cofres 🧰', null);
+  }
+
+  el.startBtn.addEventListener('click', iniciarPartida);
+  el.restartBtn.addEventListener('click', iniciarPartida);
+
+  actualizarHUD();
+  mostrarPantalla('welcome');
+  requestAnimationFrame(loop);
+
+})();
+</script>
+
+</body>
+</html>
