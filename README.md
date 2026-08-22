@@ -11,13 +11,16 @@
 
 ## Sobre este portafolio
 
-Este repositorio reúne los prototipos y videojuegos desarrollados durante las primeras clases de la asignatura **Game Development**, como parte de la práctica *"Construcción creativa"*. Cada proyecto explora una mecánica y un mensaje distinto, combinando aprendizaje técnico con temas sociales y educativos relevantes para La Paz, Bolivia.
+Este repositorio reúne los prototipos y videojuegos desarrollados durante las primeras clases de la asignatura **Game Development**, como parte de la práctica "Construcción creativa". Cada proyecto explora una mecánica y un mensaje distinto, combinando aprendizaje técnico con temas sociales y educativos relevantes para La Paz, Bolivia.
+
+Para una vista interactiva de la colección, abre [`index.html`](./index.html) en el navegador.
 
 ---
 
 ## Galería de videojuegos
 
-### 01 · Evo y Baldor: Misión en el Chapare
+### 01 — Evo y Baldor: Misión en el Chapare
+
 ![Inicio](juego-01-evo-baldor/screenshots/inicio.png)
 
 | | |
@@ -25,12 +28,12 @@ Este repositorio reúne los prototipos y videojuegos desarrollados durante las p
 | **Descripción** | RPG educativo donde el jugador resuelve operaciones matemáticas para desbloquear herramientas y avanzar en su misión por el Chapare. |
 | **Género** | RPG / Educativo |
 | **Tecnología** | HTML5, CSS, JavaScript |
-| **Proyecto** | [Ver carpeta](./juego-01-evo-baldor) |
 | **Jugar** | [Abrir juego](./juego-01-evo-baldor/build/evo-baldor-rpg.html) |
 
 ---
 
-### 02 · La Paz Limpia
+### 02 — La Paz Limpia
+
 ![Inicio](juego-02-la-paz-limpia/screenshots/inicio.png)
 
 | | |
@@ -38,12 +41,12 @@ Este repositorio reúne los prototipos y videojuegos desarrollados durante las p
 | **Descripción** | Juego de ritmo donde debes clasificar residuos (papel, plástico, vidrio, orgánico) presionando la tecla correcta a tiempo. |
 | **Género** | Ritmo / Arcade / Educativo |
 | **Tecnología** | HTML5, CSS, JavaScript |
-| **Proyecto** | [Ver carpeta](./juego-02-la-paz-limpia) |
 | **Jugar** | [Abrir juego](<./juego-02-la-paz-limpia/build/La Paz Limpia.html>) |
 
 ---
 
-### 03 · Manzana Copacabana
+### 03 — Manzana Copacabana
+
 ![Inicio](juego-03-manzana-copacabana/screenshots/inicio.png)
 
 | | |
@@ -51,12 +54,12 @@ Este repositorio reúne los prototipos y videojuegos desarrollados durante las p
 | **Descripción** | Clon estilo Pac-Man donde una manzana verde debe comer alimentos saludables mientras evade a la comida chatarra. |
 | **Género** | Arcade / Educativo |
 | **Tecnología** | HTML5, CSS, JavaScript |
-| **Proyecto** | [Ver carpeta](./juego-03-manzana-copacabana) |
 | **Jugar** | [Abrir juego](<./juego-03-manzana-copacabana/build/Manzana Copacabana.html>) |
 
 ---
 
-### 04 · VillaSanta — Aprende a cuidar el agua de La Paz
+### 04 — VillaSanta: Aprende a cuidar el agua de La Paz
+
 ![Inicio](juego-04-villasanta/screenshots/inicio.png)
 
 | | |
@@ -64,17 +67,25 @@ Este repositorio reúne los prototipos y videojuegos desarrollados durante las p
 | **Descripción** | Experiencia educativa estilo mapa de niveles sobre el cuidado del agua, desde los glaciares hasta el grifo. |
 | **Género** | Educativo / Puzzle |
 | **Tecnología** | HTML5, CSS, JavaScript |
-| **Proyecto** | [Ver carpeta](./juego-04-villasanta) |
 | **Jugar** | [Abrir juego](./juego-04-villasanta/build/VillaSanta.html) |
 
 ---
 
-### 05 · Proyecto en desarrollo
-*(En proceso — pendiente de actualizar por el autor)*
+### 05 — Mica: un video, muchos caminos
+
+![Inicio](juego-05-bulling/screenshots/inicio.png)
+
+| | |
+|---|---|
+| **Descripción** | Historia interactiva con minijuegos sobre lo que ocurre cuando un video privado se viraliza sin permiso. Cada decisión abre una rama distinta y un final propio. |
+| **Género** | Narrativa interactiva |
+| **Tecnología** | HTML5, CSS, JavaScript |
+| **Jugar** | [Abrir juego](./juego-05-bulling/build/bulling.html) |
 
 ---
 
-### 06 · 2000 Bs: La Ciudad de las Decisiones
+### 06 — 2000 Bs: La Ciudad de las Decisiones
+
 ![Inicio](juego-06-ambar-club/screenshots/inicio.png)
 
 | | |
@@ -82,14 +93,13 @@ Este repositorio reúne los prototipos y videojuegos desarrollados durante las p
 | **Descripción** | Simulador de decisiones financieras donde administras 2000 Bs entre casino, inversión, ropa, zapatería y comida. |
 | **Género** | Simulación / Estrategia |
 | **Tecnología** | HTML5, CSS, JavaScript |
-| **Proyecto** | [Ver carpeta](./juego-06-ambar-club) |
 | **Jugar** | [Abrir juego](<./juego-06-ambar-club/build/Ambar Casino & Club.html>) |
 
 ---
 
 ## Tecnologías utilizadas
 
-Todos los prototipos están desarrollados con **HTML5, CSS y JavaScript puro**, sin frameworks ni motores externos, priorizando que cada juego sea autocontenido y ejecutable directamente en el navegador.
+Todos los prototipos están desarrollados con HTML5, CSS y JavaScript puro, sin frameworks ni motores externos, priorizando que cada juego sea autocontenido y ejecutable directamente en el navegador.
 
 ## Apoyo de IA
 
@@ -108,4 +118,4 @@ Todos los prototipos están desarrollados con **HTML5, CSS y JavaScript puro**, 
 
 ---
 
-Portafolio desarrollado para la asignatura **Game Development** — Introducción al desarrollo de videojuegos.
+Portafolio desarrollado para la asignatura Game Development — Introducción al desarrollo de videojuegos.
