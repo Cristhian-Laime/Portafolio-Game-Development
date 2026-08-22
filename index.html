@@ -60,7 +60,11 @@
     display:flex; align-items:center; justify-content: space-between;
     padding: 14px 24px;
   }
-  .nav-brand{ font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+  .nav-brand{
+    display:flex; align-items:center; gap: 10px;
+    font-size: 15px; font-weight: 600; letter-spacing: -0.01em;
+  }
+  .nav-brand img{ height: 30px; width: auto; display:block; }
   .nav-links{ display:flex; align-items:center; gap: 30px; }
   .nav-link{ font-size: 13px; color: var(--text-muted); font-weight: 500; transition: color .2s; }
   .nav-link:hover{ color: var(--text); }
@@ -90,6 +94,9 @@
     text-align:center;
     padding: 140px 24px 80px;
     background: var(--bg);
+  }
+  .hero-logo{
+    width: 88px; height: 88px; margin-bottom: 24px;
   }
   .eyebrow{
     font-size: 13px; font-weight: 600; color: var(--accent);
@@ -253,7 +260,10 @@
 
 <nav class="nav">
   <div class="nav-inner">
-    <div class="nav-brand">Crishtian Laime</div>
+    <div class="nav-brand">
+      <img src="img/logo.png" alt="Laime Company">
+      Crishtian Laime
+    </div>
     <div class="nav-links">
       <a class="nav-link nav-link-text" href="#proyectos">Proyectos</a>
       <a class="nav-link nav-link-text" href="#sobre-mi">Sobre mí</a>
@@ -263,6 +273,7 @@
 </nav>
 
 <section class="hero">
+  <img class="hero-logo" src="img/logo.png" alt="Laime Company">
   <div class="eyebrow">Portafolio de Game Development</div>
   <h1>Seis prototipos, seis maneras de contar una historia jugable.</h1>
   <p>Diseño y desarrollo de videojuegos educativos y narrativos construidos con HTML5, CSS y JavaScript puro, pensados desde La Paz para hablar de temas que importan.</p>
